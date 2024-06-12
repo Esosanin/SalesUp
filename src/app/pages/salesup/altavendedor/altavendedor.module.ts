@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { AltavendedorPageRoutingModule } from './altavendedor-routing.module';
 import { AltavendedorPage } from './altavendedor.page';
-
+// HOla
 @NgModule({
   imports: [
     CommonModule,
