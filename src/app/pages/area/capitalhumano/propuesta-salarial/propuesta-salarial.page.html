@@ -1,0 +1,467 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-buttons slot="start">
+          <ion-back-button defaultHref="tabs/area/capitalhumano"></ion-back-button>
+      </ion-buttons>
+      <ion-title>{{titlePropuesta}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="col-md-12">
+    <ion-grid>
+      <div>
+        <ion-row>
+          <ion-col class="grid-content" size="12" size-lg>
+              <ion-text>
+                <ion-item class="class-item_start0" (click)="openDiv({tipo: 'Informacion General'})">
+                  <ion-icon class="class-icon_end10" *ngIf="InformacionGeneral" slot="start" name="remove"></ion-icon>
+                  <ion-icon class="class-icon_end10" *ngIf="!InformacionGeneral" slot="start" name="add"></ion-icon>
+                  <ion-label><h3>Información general</h3></ion-label>
+                </ion-item>
+                <br>
+                <div *ngIf="InformacionGeneral">
+                  <ion-item>
+                    <ion-label>
+                      <h3>Colaborador</h3>
+                      <p>{{propuestaColaborador.nombre_comp}}</p>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label>
+                      <h3>Tipo de empleado</h3>
+                      <p>{{propuestaColaborador.tipoEmpleado_desc}}</p>
+                      <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.tipo_empleado2 !== propuestaData.tipoEmpleado_id && propuestaData.id_colaborador > 0 && propuestaData.tipoEmpleado_desc2">Actual: {{propuestaData.tipoEmpleado_desc2}}</small>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label>
+                      <h3>Posición de apoyo</h3>
+                      <p>{{propuestaColaborador.puesto_n}}</p>
+                      <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.id_puesto && propuestaData.id_puesto!==propuestaData.puesto && propuestaData.id_colaborador > 0 && propuestaData.puesto_n2">Actual: {{propuestaData.puesto_n2}}</small>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label>
+                      <h3>Sucursal</h3>
+                      <p>{{propuestaColaborador.sucursal_n}} ({{propuestaColaborador.codigo_region}})</p>
+                      <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.id_sucursal!==propuestaData.sucursal && propuestaData.id_colaborador > 0 && propuestaData.sucursal_n2">Actual: {{propuestaData.sucursal_n2}}</small>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label>
+                      <h3>Departamento</h3>
+                      <p>{{propuestaColaborador.departamentos_desc}}</p>
+                      <p>(área: {{propuestaColaborador.area_n}})</p>
+                      <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.id_departamentos!==propuestaData.depto && propuestaData.id_colaborador > 0 && propuestaData.departamentos_desc2">Actual: {{propuestaData.departamentos_desc2}}</small>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="stacked">A partir de / fecha de inicio</ion-label>
+                    <ion-input type="date" id="PS_fecha_inicio" name="PS_fecha_inicio" [(ngModel)]="propuestaData.fecha_inicio" #PS_fecha_inicio="ngModel" [readonly]="propuestaData.estado === 3"></ion-input>
+                  </ion-item>
+                  <ion-item *ngIf="propuestaData.tipo_empleado === 1">
+                    <ion-label>
+                      <h3>Tipo de contrato</h3>
+                      <ion-input type="text" placeholder="Ejm.: Obra determinada P-1545" id="PS_contrato" name="PS_contrato" [(ngModel)]="propuestaData.contrato" #PS_contrato="ngModel" [readonly]="propuestaData.estado === 3"></ion-input>
+                    </ion-label>
+                  </ion-item>
+                  <ion-item *ngIf="propuestaData.tipo_empleado === 1">
+                    <ion-label>
+                      <h3>Sueldo bruto semanal</h3>
+                      <ion-input type="number" placeholder="Ejemplo: $1000.00" id="PS_sueldo" name="PS_sueldo" [(ngModel)]="propuestaData.tmp_sueldo" #PS_sueldo="ngModel" [readonly]="propuestaData.estado === 3"></ion-input>
+                    </ion-label>
+                  </ion-item>
+                  <div>
+                    <ion-item>
+                      <ion-label><h3>Información adicional</h3></ion-label>
+                    </ion-item>
+                    <ion-item>
+                      <ion-textarea class="textarea" rows="7" id="PS_infoAdicional" name="PS_infoAdicional" [(ngModel)]="propuestaData.infoextra" #PS_infoAdicional="ngModel"
+                                    [readonly]="propuestaData.estado === 3"></ion-textarea>
+                    </ion-item>
+                  </div>
+
+                  <br><br>
+
+                  <div *ngIf="propuestaData.estado !== 3">
+                    <ion-button (click)="btnGuardarInformacion()" expand="block" fill="solid" shape="round">
+                      Guardar Información
+                    </ion-button>
+                    <ion-button (click)="btnEliminarSolicitud()" style="color: red;" expand="block" fill="outline" shape="round">
+                      Eliminar Solicitud
+                    </ion-button>
+                  </div>
+                </div>
+                <br>
+              </ion-text>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="(propuestaData.estado !== 2 && propuestaData.estado !== 3) && propuestaData.tipoEmpleado_id !== 1">
+        <ion-row>
+          <ion-col class="grid-content" size="12" size-lg>
+            <ion-text>
+              <ion-item class="class-item_start0" (click)="openDiv({tipo: 'Nueva Propuesta'})">
+                <ion-icon class="class-icon_end10" *ngIf="NuevaPropuesta" slot="start" name="remove"></ion-icon>
+                <ion-icon class="class-icon_end10" *ngIf="!NuevaPropuesta" slot="start" name="add"></ion-icon>
+                <ion-label><h3>Nueva opción</h3></ion-label>
+              </ion-item>
+              <br>
+              <div *ngIf="NuevaPropuesta">
+                <ion-item>
+                  <ion-icon slot="start" name="reader-outline"></ion-icon>
+                  <ion-label position="stacked"><h3>Hoja / Especialidad</h3></ion-label>
+                  <ion-select id="NOp_especialidad" name="NOp_especialidad" [(ngModel)]="especialidadSeleccionada"
+                              #NOp_especialidad="ngModel" interface="popover" placeholder="Elegir" (ionChange)="selectEspecialidad_HojaFecha('', '', especialidadSeleccionada)">
+                    <ion-select-option *ngFor="let especialidad of hojaEspecialidades; let i = index;" [value]="i" >{{especialidad.hoja}} ({{especialidad.fecha}})</ion-select-option>
+                  </ion-select>
+                  <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.hoja && propuestaData.hoja !== '' && (propuestaData.hoja !== nuevaPropuesta.hoja) ">Actual: {{propuestaData.hoja}} ({{propuestaData.fechatb}})</small>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-icon slot="start" name="reader-outline"></ion-icon>
+                  <ion-label position="stacked"><h3>Posición de apoyo</h3></ion-label>
+                  <ion-select id="NOp_apoyo" name="NOp_apoyo" interface="popover" placeholder="Elegir" [(ngModel)]="posicionSeleccionada"
+                              #NOp_apoyo="ngModel" (ionChange)="selectPosicionApoyo('', posicionSeleccionada)">
+                    <ion-select-option *ngFor="let posicion of hojaPosicionApoyo; let i = index;" [value]="i">{{posicion.posicion_apoyo}} ({{posicion.fecha}})</ion-select-option>
+                  </ion-select>
+                  <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.posicion_apoyo && propuestaData.posicion_apoyo !== '' && (propuestaData.posicion_apoyo !== nuevaPropuesta.posicion)">Actual: {{propuestaData.posicion_apoyo}} ({{propuestaData.fechatb}})</small>
+                </ion-item>
+                <br>
+                <ion-text *ngIf="hojaCategoria.length > 0">
+                  <table class="table table-sm table-bordered" style="width: 100%">
+                    <thead>
+                      <tr class="ion-text-center">
+                        <td style="font-size: 13px;">Categoría</td>
+                        <td style="font-size: 13px;">Nvl. 1</td>
+                        <td style="font-size: 13px;">Nvl. 2</td>
+                        <td style="font-size: 13px;">Nvl. 3</td>
+                        <td style="font-size: 13px;">Nvl. 4</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="ion-text-center" *ngFor="let categoria of hojaCategoria; let i = index;">
+                        <td>{{categoria.cat}}</td>
+                        <td style="font-size: 13px;" title="{{hojaNivel_title[i].n1}}">{{hojaNivel_aumento[i].n1}}</td>
+                        <td style="font-size: 13px;" title="{{hojaNivel_title[i].n2}}">{{hojaNivel_aumento[i].n2}}</td>
+                        <td style="font-size: 13px;" title="{{hojaNivel_title[i].n3}}">{{hojaNivel_aumento[i].n3}}</td>
+                        <td style="font-size: 13px;" title="{{hojaNivel_title[i].n4}}">{{hojaNivel_aumento[i].n4}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </ion-text>
+                <br>
+                <ion-item>
+                  <ion-icon slot="start" name="reader-outline"></ion-icon>
+                  <ion-label position="stacked"><h3>Categoría</h3></ion-label>
+                  <ion-select id="NOp_apoyo" name="NOp_apoyo" interface="popover" placeholder="Elegir" [(ngModel)]="categoriaSeleccionada" #NOp_apoyo="ngModel" (ionChange)="selectCategoriaNivel(categoriaSeleccionada, nivelSeleccionada)">
+                    <ion-select-option *ngFor="let categoria of hojaCategoria; let i = index;" [value]="i" >{{categoria.cat}}</ion-select-option>
+                  </ion-select>
+                  <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.categoria && propuestaData.categoria !== '' && (propuestaData.categoria !== nuevaPropuesta.categoria)">Actual: {{propuestaData.categoria}}</small>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-icon slot="start" name="reader-outline"></ion-icon>
+                  <ion-label position="stacked"><h3>Nivel</h3></ion-label>
+                  <ion-select id="NOp_apoyo" name="NOp_apoyo" interface="popover" placeholder="Elegir" [(ngModel)]="nivelSeleccionada" #NOp_apoyo="ngModel" (ionChange)="selectCategoriaNivel(categoriaSeleccionada, nivelSeleccionada)" [disabled]="categoriaSeleccionada === 0">
+                    <ion-select-option [value]="1" >Nivel 1</ion-select-option>
+                    <ion-select-option [value]="2" >Nivel 2</ion-select-option>
+                    <ion-select-option [value]="3" >Nivel 3</ion-select-option>
+                    <ion-select-option [value]="4" >Nivel 4</ion-select-option>
+                  </ion-select>
+                  <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.tab_nivel && propuestaData.tab_nivel !== 0 && (propuestaData.tab_nivel !== nuevaPropuesta.nivel)">Actual: {{propuestaData.tab_nivel}}</small>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-label>
+                    <div style="width: 100;"><h3>Punto guía: </h3></div>
+                    <ion-input type="text" id="PS_puntoguia" name="PS_puntoguia" [(ngModel)]="nuevaPropuesta.puntoGuia_n" readonly></ion-input>
+                    <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.puntoGuia > 0 && (propuestaData.puntoGuia !== nuevaPropuesta.puntoGuia)">Actual: {{propuestaData.puntoGuia_n}}</small>
+                  </ion-label>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-label style="max-width: 100% !important; width: 100%;">
+                    <h3>Porcentaje </h3>
+                    <ion-input type="number" id="PS_porcentaje" name="PS_porcentaje" [(ngModel)]="nuevaPropuesta.porcentaje" #PS_porcentaje="ngModel" (ionChange)="selectPorcentaje(nuevaPropuesta.porcentaje)"></ion-input>
+                    <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.porcentaje > 0 && (propuestaData.porcentaje !== nuevaPropuesta.porcentaje)">Actual: {{propuestaData.porcentaje}}%</small>
+                  </ion-label>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-label>
+                    <h3>Ingreso/Sueldo bruto mensual </h3>
+                    <ion-input type="text" id="PS_sueldo" name="PS_sueldo" [(ngModel)]="nuevaPropuesta.ingresoBruto_n" readonly></ion-input>
+                    <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.ingresoBruto > 0 && (propuestaData.ingresoBruto !== nuevaPropuesta.ingresoBruto)">Actual: {{propuestaData.ingresoBruto_n}}</small>
+                  </ion-label>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-label>
+                    <h3>Premios de puntualidad 10.55% </h3>
+                    <ion-input type="text" id="PS_puntualidad" name="PS_puntualidad" [(ngModel)]="nuevaPropuesta.puntualidad_n" readonly></ion-input>
+                    <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.puntualidad > 0 && (propuestaData.puntualidad !== nuevaPropuesta.puntualidad)">Actual: {{propuestaData.puntualidad_n}}</small>
+                  </ion-label>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-label>
+                    <h3>Premios de asistencia 10.55% </h3>
+                    <ion-input type="text" id="PS_asistencia" name="PS_asistencia" [(ngModel)]="nuevaPropuesta.asistencia_n" readonly></ion-input>
+                    <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.asistencia > 0 && (propuestaData.asistencia !== nuevaPropuesta.asistencia)">Actual: {{propuestaData.asistencia_n}}</small>
+                  </ion-label>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-label>
+                    <h3>Vales de despensa </h3>
+                    <ion-input type="text" id="PS_despensa" name="PS_despensa" [(ngModel)]="nuevaPropuesta.despensa_n" readonly></ion-input>
+                    <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.despensa > 0 && (propuestaData.despensa !== nuevaPropuesta.despensa)">Actual: {{propuestaData.despensa_n}}</small>
+                  </ion-label>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-label>
+                    <h3>Fondo de ahorro 4% </h3>
+                    <ion-input type="text" id="PS_ahorro" name="PS_ahorro" [(ngModel)]="nuevaPropuesta.fondoAhorro_n" readonly></ion-input>
+                    <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.fondoAhorro > 0 && (propuestaData.fondoAhorro !== nuevaPropuesta.fondoAhorro)">Actual: {{propuestaData.fondoAhorro_n}}</small>
+                  </ion-label>
+                </ion-item>
+                <br>
+                <ion-item>
+                  <ion-label>
+                    <h3>Salario bruto mensual </h3>
+                    <ion-input type="text" id="PS_salarioMensual" name="PS_salarioMensual" [(ngModel)]="nuevaPropuesta.salarioBruto_n" readonly></ion-input>
+                    <small style="padding-left: 15px; color: blue;" *ngIf="propuestaData.salarioBruto > 0 && (propuestaData.salarioBruto !== nuevaPropuesta.salarioBruto)">Actual: {{propuestaData.salarioBruto_n}}</small>
+                  </ion-label>
+                </ion-item>
+                <br><br>
+                <ion-button (click)="btnAplicarPropuesta()" expand="block" fill="solid" shape="round">Agregar propuesta</ion-button>
+              </div>
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="(propuestaData.estado !== 2 && propuestaData.estado !== 3) && ( (propuestaData.ingresoBruto + propuestaData.puntualidad + propuestaData.asistencia)!==0 ) && ( propuestaData.id_colaborador > 0 )">
+        <ion-row>
+          <ion-col class="grid-content" size="12" size-lg>
+            <ion-text>
+              <ion-item class="class-item_start0" (click)="openDiv({tipo: 'Propuesta Actual'})">
+                <ion-icon class="class-icon_end10" *ngIf="PropuestaActual" slot="start" name="remove"></ion-icon>
+                <ion-icon class="class-icon_end10" *ngIf="!PropuestaActual" slot="start" name="add"></ion-icon>
+                <ion-label><h3>Propuesta actual</h3></ion-label>
+              </ion-item>
+              <br>
+              <ion-grid *ngIf="PropuestaActual">
+                <ion-row>
+                  <ion-col class="col_grid_title" size="12">
+                    PLAN DE VIDA Y CARRERA
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Posición actual</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{propuestaData.puesto_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Nivel Actual</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{propuestaData.posicion_apoyo}} {{propuestaData.categoria}} {{propuestaData.tab_nivel}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Punto Guía</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{propuestaData.puntoGuia_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">% Posición</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{propuestaData.porcentaje}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Nombre</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{propuestaData.nombre_comp}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="align-text_center" size="12">TAB {{propuestaData.fechatb}}</ion-col>
+                </ion-row>
+                <br>
+                <ion-row>
+                  <ion-col class="col_grid_title" size="12">
+                    Actual
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="12">Más prestaciones</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Sueldo bruto mensual</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{propuestaData.ingresoBruto_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Premio de puntualidad</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{propuestaData.puntualidad_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Premio de asistencia</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{propuestaData.asistencia_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Ingreso bruto mensual</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{propuestaData.ingreso_asistencia_puntualidad_n}}</ion-col>
+                </ion-row>
+                <br>
+                <ion-row>
+                  <ion-col size="6">Vales de despensa Mensual</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{propuestaData.despensa_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Fondo de ahorro mensual empresa</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{propuestaData.fondoAhorro_n}}</ion-col>
+                </ion-row>
+                <br>
+                <ion-row>
+                  <ion-col size="6">Costo de nómina mensual</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{propuestaData.salarioBruto_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Más cuotas patronales (40%)</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{propuestaData.costoNomina_n}}</ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12"></ion-col>
+        </ion-row>
+      </div>
+      <div *ngFor="let data of infoDefinitiva; let i = index;">
+        <ion-row>
+          <ion-col class="grid-content" size="12" size-lg>
+            <ion-text>
+              <ion-item class="class-item_start0" (click)="openDiv({tipo: 'Propuesta Definitiva', index: i})">
+                <ion-icon class="class-icon_end10" *ngIf="definitvaPropuestasB[i]" slot="start" name="remove"></ion-icon>
+                <ion-icon class="class-icon_end10" *ngIf="!definitvaPropuestasB[i]" slot="start" name="add"></ion-icon>
+                <ion-label><h3>Propuesta {{data.numeroPropuesta}}</h3></ion-label>
+              </ion-item>
+              <br>
+              <ion-grid *ngIf="definitvaPropuestasB[i]">
+                <ion-row>
+                  <ion-col size="4">Nueva posición</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{propuestaData.puesto_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Nuevo nivel</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{data.posicionApoyo}} {{data.categoria}} {{data.nivelTab}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Punto guía</ion-col>
+                  <ion-col class="col_grid_end" size="8" title="Aumento (sucursal) * Monto base = {{data.base}} * {{data.aumento}}">{{data.puntoGuia_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">% Posición</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{data.porcentaje_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">Nombre</ion-col>
+                  <ion-col class="col_grid_end" size="8">{{propuestaData.nombre_comp}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="align-text_center" size="12">Tab {{data.fechaTab}}</ion-col>
+                </ion-row>
+                <br>
+                <ion-row>
+                  <ion-col size="12">Más prestaciones</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Sueldo bruto mensual</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.ingresoBruto_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Premio de puntualidad</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.puntualidad_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Premio de asistencia</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.asistencia_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Ingreso bruto mensual</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.ingresoBrutoPremio_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Vales de despensa mensual</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.despensa_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Fondo de ahorro mensual empresa</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.fondoAhorro_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Costo de nómina mensual</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.subTotal_n}}</ion-col>
+                </ion-row>
+                <ion-row *ngIf="data.crecimiento !== 0">
+                  <ion-col size="6">% de crecimiento salarial</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.crecimiento_n}}</ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">Más cuotas patronales (40%)</ion-col>
+                  <ion-col class="col_grid_end" size="6">{{data.costoNomina_n}}</ion-col>
+                </ion-row>
+                <br><br>
+                <ion-row *ngIf="data.status === 2">
+                  <ion-col size="12">
+                    <ion-button (click)="generatePDF('Propuesta Definitiva')" expand="block" fill="solid" shape="round">
+                      Descargar propuesta en PDF
+                    </ion-button>
+                  </ion-col>
+                  <ion-col *ngIf="propuestaData.estado !== 3" size="12">
+                    <ion-button id="PS_actualizarColaborador" (click)="btnActualizarColaborador()" expand="block" fill="solid" shape="round">
+                      Actualizar información a tabla maestra
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="data.status !== 2">
+                  <ion-col size="12">
+                    <ion-button (click)="btnEliminarPropuesta(i)" style="color: red;" expand="block" fill="outline" shape="round">
+                      Eliminar opción
+                    </ion-button>
+                    <ion-button (click)="btnDefinitiva(i)" expand="block" fill="solid" shape="round">
+                      Seleccionar propuesta como definitiva
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12"></ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="propuestaData.tipoEmpleado_id === 1 && ( propuestaData.estado === 3 || propuestaData.estado === 1 )">
+        <ion-row *ngIf="propuestaData.estado === 3">
+          <ion-col size="12">
+            <ion-button (click)="generatePDF('Propuesta PDF T1')" expand="block" fill="solid" shape="round">
+              Descargar propuesta en PDF
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="propuestaData.estado === 1">
+          <ion-col size="12">
+            <ion-button (click)="generatePDF('Propuesta PDF T1')" expand="block" fill="solid" shape="round">
+              Descargar propuesta en PDF
+            </ion-button>
+          </ion-col>
+          <ion-col size="12">
+            <ion-button id="PS_actualizarColaborador" (click)="btnActualizarColaborador()" expand="block" fill="solid" shape="round">
+              Actualizar información a tabla maestra
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-grid>
+  </div>
+</ion-content>

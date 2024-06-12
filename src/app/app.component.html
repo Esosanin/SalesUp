@@ -1,0 +1,165 @@
+<ion-app>
+  <ion-split-pane contentId="main-content">
+      <ion-menu menu-id="ecnMenu" contentId="main-content" disabled>
+          <ion-content>
+              <ion-avatar class="avatar">
+                  <img [src]="service.foto">
+              </ion-avatar>
+              <ion-item>
+                  <ion-label color="medium" style="text-align: center; text-transform: uppercase; font-size:1.5ch;">
+                      {{service.nombres}}</ion-label>
+              </ion-item>
+              <ion-list lines="none">
+                  <ion-list-header>
+                      <ion-label color="primary">ECN Automation</ion-label>
+                  </ion-list-header>
+                  <ion-menu-toggle autoHide="false" *ngFor="let p of appPages; let i = index">
+                    <ion-item [routerLink]="[p.url]" routerLinkActive="selected"
+                        detail="false">
+                        <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
+                        <ion-label>
+                            {{p.title}}
+                        </ion-label>
+                    </ion-item>
+                </ion-menu-toggle>
+                  <ion-menu-toggle autoHide="false">
+                      <ion-item [routerLink]="['/tabs/checador']" routerLinkActive="selected"
+                          detail="false">
+                          <ion-icon color="primary" slot="start" name="time-outline"></ion-icon>
+                          <ion-label>
+                              Checador
+                          </ion-label>
+                      </ion-item>
+                  </ion-menu-toggle>
+                      <ion-item [routerLink]="['/tabs2/salesup']">
+                          <ion-icon slot="start" src="./assets/icon/up.svg"></ion-icon>
+                          <ion-label>
+                              Sales Up
+                          </ion-label>
+                      </ion-item>
+              </ion-list>
+
+              <ion-list lines="none">
+                  <ion-list-header>
+                      <ion-label color="primary">Cuenta</ion-label>
+                  </ion-list-header>
+                  <ion-menu-toggle autoHide="false">
+                      <ion-item [routerLink]="['/tabs/cuenta']" routerLinkActive="selected"
+                          detail="false">
+                          <ion-icon color="primary" slot="start" name="person-outline"></ion-icon>
+                          <ion-label>
+                              Mi cuenta
+                          </ion-label>
+                      </ion-item>
+                  </ion-menu-toggle>
+                  <ion-item button (click)="logout()">
+                      <ion-icon color="primary" slot="start" name="log-out-outline"></ion-icon>
+                      <ion-label>
+                          Cerrar sesión
+                      </ion-label>
+                  </ion-item>
+              </ion-list>
+
+              <ion-list lines="none">
+                  <ion-list-header>
+                      <ion-label color="primary">Estilo</ion-label>
+                  </ion-list-header>
+                  <ion-menu-toggle autoHide="false">
+                      <ion-item>
+                          <ion-icon color="primary" slot="start" name="moon-outline"></ion-icon>
+                          <ion-toggle [(ngModel)]="darkMode" (ionChange)="darkChange()">Modo oscuro</ion-toggle>
+                      </ion-item>
+                  </ion-menu-toggle>
+              </ion-list>
+          </ion-content>
+      </ion-menu>
+
+
+      <ion-menu menu-id="salesupMenu" contentId="main-content" disabled>
+          <ion-content>
+              <ion-avatar class="avatar">
+                  <img [src]="service.foto">
+              </ion-avatar>
+              <ion-item>
+                  <ion-label color="medium" style="text-align: center; text-transform: uppercase; font-size:1.5ch;">
+                      {{service.nombres}}</ion-label>
+              </ion-item>
+              <ion-list lines="none">
+                  <ion-list-header>
+                      <ion-label color="medium" class="ion-text-center ion-margin-bottom" style="font-weight: bold;">
+                          <span>Sales </span><ion-icon style="vertical-align:middle;" size="large" src="./assets/icon/up.svg"></ion-icon>
+                      </ion-label>
+                  </ion-list-header>
+                  <ion-menu-toggle autoHide="false" *ngFor="let p of salesUpPages; let i = index">
+                      <ion-item [routerLink]="p.url" routerLinkActive="selected"
+                          detail="false">
+                          <ion-icon color="primary" slot="start" [name]="p.icon"></ion-icon>
+                          <ion-label>
+                              {{p.title}}
+                          </ion-label>
+                      </ion-item>
+                  </ion-menu-toggle>
+                      <ion-item button [routerLink]="['/tabs/filosofia']" lines="none">
+                          <ion-icon color="primary" slot="start" name="home-outline"></ion-icon>
+                          <ion-label>
+                              Checador y cuenta
+                          </ion-label>
+                      </ion-item>
+              </ion-list>
+              <ion-list lines="none">
+                  <ion-list-header>
+                      <ion-label color="primary">Cuenta</ion-label>
+                  </ion-list-header>
+                  <!-- <ion-menu-toggle autoHide="false">
+                    <ion-item [routerLink]="['/tabs2/checador']" routerLinkActive="selected"
+                        detail="false">
+                        <ion-icon color="primary" slot="start" name="time-outline"></ion-icon>
+                        <ion-label>
+                            Checador
+                        </ion-label>
+                    </ion-item>
+                </ion-menu-toggle>
+                  <ion-menu-toggle autoHide="false">
+                    <ion-item [routerLink]="['/tabs2/micuenta']" routerLinkActive="selected"
+                        detail="false">
+                        <ion-icon color="primary" slot="start" name="person-outline"></ion-icon>
+                        <ion-label>
+                            Mi cuenta
+                        </ion-label>
+                    </ion-item>
+                </ion-menu-toggle> -->
+                  <ion-item button (click)="logout()">
+                      <ion-icon color="primary" slot="start" name="log-out-outline"></ion-icon>
+                      <ion-label>
+                          Cerrar sesión
+                      </ion-label>
+                  </ion-item>
+              </ion-list>
+              <ion-list lines="none">
+                <ion-list-header>
+                    <ion-label color="primary">Estilo</ion-label>
+                </ion-list-header>
+                <ion-menu-toggle autoHide="false">
+                    <ion-item>
+                        <ion-icon color="primary" slot="start" name="moon-outline"></ion-icon>
+                        <ion-toggle [(ngModel)]="darkMode" (ionChange)="darkChange()">Modo oscuro</ion-toggle>
+                    </ion-item>
+                </ion-menu-toggle>
+            </ion-list>
+
+              <!-- <ion-list lines="none">
+                  <ion-list-header>
+                      <ion-label color="primary">Estilo</ion-label>
+                  </ion-list-header>
+                  <ion-menu-toggle autoHide="false">
+                      <ion-item>
+                          <ion-icon color="primary" slot="start" name="moon-outline"></ion-icon>
+                          <ion-toggle [(ngModel)]="service.dark" (ionChange)="darkChange($event)">Modo oscuro</ion-toggle>
+                      </ion-item>
+                  </ion-menu-toggle>
+              </ion-list> -->
+          </ion-content>
+      </ion-menu>
+      <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

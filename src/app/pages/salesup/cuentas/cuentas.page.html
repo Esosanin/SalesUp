@@ -1,0 +1,385 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="!showSearchbar">
+      <ion-button (click)="showSearchbar = true; focus();">
+        <ion-icon color="primary" slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">Cuentas</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always"
+      (ionInput)="segment==='sap'?searchCuentas2($event,true):searchCuentas2($event,false)"
+      (ionCancel)="showSearchbar=false; segment==='sap'?searchCuentas2($event,true):searchCuentas2($event,false);"
+      (ionClear)="segment==='sap'?searchCuentas2($event,true):searchCuentas2($event,false)" placeholder="Buscar">
+    </ion-searchbar>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button value="sap">
+        <ion-label>Cuentas en SAP</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="lead">
+        <ion-label>Cuentas leads</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding animarElemento">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-row *ngIf="segment === 'sap'">
+    <ion-col size="12" size-sm="4" *ngFor="let cuenta of cuentasSap.slice(0,limite); let i = index;">
+      <ion-item button (click)="editCuenta(true,i, true)">
+        <ion-label class="items">
+          <h5>{{cuenta.CardName}}</h5>
+          <p>{{cuenta.descripcion}}</p>
+          <p>{{cuenta.LicTradNum}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-modal [isOpen]="detCuenta" class="modalNormal" (didDismiss)="detCuenta = false;">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Detalles de la cuenta</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="detCuenta = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-row>
+          <ion-col size="12" size-sm="6" *ngFor="let detalle of detalles">
+            <ion-item lines="none">
+              <ion-icon slot="start" [name]="detalle.icon + '-outline'" color="primary"></ion-icon>
+              <ion-label>
+                <h5>{{detalle.title}}</h5>
+                <p style="white-space: pre-line;">{{detalle.text}}</p>
+              </ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-row *ngIf="segment === 'lead'">
+    <ion-list-header>
+      <ion-label color="primary">Filtro</ion-label>
+    </ion-list-header>
+    <ion-col size="12" size-sm="3" *ngIf="tipoVendedor==='Corporativo'">
+      <ion-item lines="none">
+        <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+        <ion-select okText="Seleccionar" [(ngModel)]="zona" (ionChange)="filtroZonaChange()" cancelText="Cancelar"
+          value="todas" placeholder="Seleccionar..." label="Zona" labelPlacement="stacked">
+          <ion-select-option value="todas">Todas</ion-select-option>
+          <ion-select-option *ngFor="let zona of zonas" [value]="zona.id">{{zona.zona}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-col>
+    <ion-col size="12" size-sm="3">
+      <ion-item lines="none">
+        <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+        <ion-select okText="Seleccionar" (ionChange)="filtroTipoChange()" cancelText="Cancelar" [(ngModel)]="tipo"
+          value="cualquiera" placeholder="Seleccionar..." label="Tipo" labelPlacement="stacked">
+          <ion-select-option value="cualquiera">Cualquiera</ion-select-option>
+          <ion-select-option value="General">General</ion-select-option>
+          <ion-select-option value="Corporativo">Corporativo</ion-select-option>
+          <ion-select-option value="Clave">Clave</ion-select-option>
+          <ion-select-option value="Compras y contratos">Compras y contratos</ion-select-option>
+          <ion-select-option value="Holding">Holding</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-item class="ion-padding-top" lines="none" *ngIf="(segment ==='lead' && cuentasLeads.length <=0) || (segment ==='sap' && cuentasSap.length <=0)">
+    <ion-icon size="small" slot="start" name="information-circle-outline" color="danger"></ion-icon>
+    <ion-label color="danger">No se encontraron registros.</ion-label>
+  </ion-item>
+  <!-- <ion-row *ngIf="segment === 'sap'">
+    <ion-col size="12" size-sm="4" *ngFor="let cuenta of cuentasSap">
+      <ion-item>
+        <ion-label>{{cuenta.cuenta}}</ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row> -->
+  <ion-fab *ngIf="segment === 'lead'" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="editCuenta(false,0,false)">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-row *ngIf="segment === 'lead'" class="ion-margin-top">
+    <ion-col size="12" size-sm="4" *ngFor="let cuenta of cuentasLeads; let i = index">
+      <ion-item button (click)="editCuenta(true,i,false)">
+        <ion-label class="items">
+          <h3>{{cuenta.cuenta}}</h3>
+          <p>{{cuenta.raz_social}}</p>
+          <p>{{cuenta.rfc}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-modal [isOpen]="showCuenta" class="modalGrande" (didDismiss)="showCuenta = false;">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Agregar cuenta</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showCuenta = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="leadsFormGroup" (ngSubmit)="saveCuenta()">
+          <ion-row>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+                <ion-input type="text" labelPlacement="floating" formControlName="cuenta" label="Cuenta"
+                  position="stacked"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="bookmark-outline" color="primary"></ion-icon>
+                <ion-input type="text" labelPlacement="floating" formControlName="raz_social"
+                  label="Razón social"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Tipo" cancelText="Cancelar"
+                  formControlName="tipo" placeholder="Seleccionar...">
+                  <ion-select-option value="General">General</ion-select-option>
+                  <ion-select-option value="Corporativo">Corporativo</ion-select-option>
+                  <ion-select-option value="Clave">Clave</ion-select-option>
+                  <ion-select-option value="Compras y contratos">Compras y contratos</ion-select-option>
+                  <ion-select-option value="Holding">Holding</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="receipt-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="rfc" label="RFC"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4" *ngIf="tipoVendedor !== 'Vendedor'">
+              <!-- <ion-item lines="inset">
+                <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Líder de cuenta</ion-label>
+                <ionic-selectable closeButtonText="Cerrar" (onChange)="liderChange()" modalCssClass="selectModal" [hasInfiniteScroll]="true"
+                  (onInfiniteScroll)="getMoreVendedores($event)" (onSearch)="searchVendedores($event)"
+                  [(ngModel)]="vendedorSelected" [ngModelOptions]="{standalone: true}"
+                  [items]="vendedores2.slice(0,limiteSelects)" itemValueField="id_sap" itemTextField="nombre"
+                  [canSearch]="true" searchPlaceholder="Buscar" searchFailText="No se encontraron elementos."
+                  #vendedorSelect placeholder="Seleccionar..."> -->
+                  <!-- <ng-template ionicSelectableHeaderTemplate>
+                    <ion-toolbar>
+                      <ion-header>
+                        <ion-toolbar color="light">
+                          <ion-title>Seleccionar vendedor</ion-title>
+                          <ion-buttons slot="end">
+                            <ion-button (click)="vendedorSelect.close()">
+                              <ion-icon slot="icon-only" name="close"></ion-icon>
+                            </ion-button>
+                          </ion-buttons>
+                        </ion-toolbar>
+                      </ion-header>
+                    </ion-toolbar>
+                  </ng-template> -->
+                <!-- </ionic-selectable>
+              </ion-item> -->
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="bookmarks-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Industria" cancelText="Cancelar"
+                  formControlName="id_industria" placeholder="Seleccionar...">
+                  <ion-select-option *ngFor="let industria of industrias"
+                    [value]="industria.id">{{industria.industria}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="build-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="produce" label="Produce"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="number" formControlName="telefono"
+                  label="Teléfono"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="direccion"
+                  label="Dirección"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="municipio"
+                  label="Municipio"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="estado" label="Estado"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="link-outline" color="primary"></ion-icon>
+                <ion-checkbox (ionChange)="asociadaChange()" #checkAsociada formControlName="asociada">Asociada</ion-checkbox>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4" *ngIf="checkAsociada.checked">
+              <!-- <ion-item lines="inset">
+                <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Cuenta asociada</ion-label>
+                <ionic-selectable (onChange)="cuentaChange()" modalCssClass="selectModal" [hasInfiniteScroll]="true"
+                  (onInfiniteScroll)="getMoreCuentas($event,false,true)" (onSearch)="searchCuentas($event)"
+                  [(ngModel)]="cuentaSelected" [ngModelOptions]="{standalone: true}"
+                  [items]="cuentasSelect.slice(0,limiteSelects)" itemValueField="CardCode" itemTextField="CardName"
+                  [canSearch]="true" searchPlaceholder="Buscar" searchFailText="No se encontraron elementos."
+                  #cuentaSelect placeholder="Seleccionar..." closeButtonText="Cerrar"> -->
+                  <!-- <ng-template ionicSelectableHeaderTemplate>
+                    <ion-toolbar>
+                      <ion-header>
+                        <ion-toolbar color="light">
+                          <ion-title>Seleccionar cuenta asociada</ion-title>
+                          <ion-buttons slot="end">
+                            <ion-button (click)="cuentaSelect.close()">
+                              <ion-icon slot="icon-only" name="close"></ion-icon>
+                            </ion-button>
+                          </ion-buttons>
+                        </ion-toolbar>
+                      </ion-header>
+                    </ion-toolbar>
+                  </ng-template> -->
+                <!-- </ionic-selectable>
+              </ion-item> -->
+            </ion-col>
+            <ion-col size="12" size-sm="4" *ngIf="checkAsociada.checked">
+              <ion-item>
+                <ion-icon slot="start" name="location-outline" color="primary"></ion-icon>
+                <ion-select formControlName="LineNumCorp" name="LineNum" label="Sucursal" labelPlacement="stacked" interface="popover" placeholder="Seleccionar...">
+                  <ion-select-option *ngFor="let sucursal of sucursales" [value]="sucursal.LineNum">{{sucursal.descripcion}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="bar-chart-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Potencial" cancelText="Cancelar"
+                  formControlName="potencial" placeholder="Seleccionar...">
+                  <ion-select-option value="Potencial bajo">Potencial bajo</ion-select-option>
+                  <ion-select-option value="Potencial medio no pertenece a corporativo de mayor potencial">Potencial
+                    medio no pertenece a corporativo de mayor potencial</ion-select-option>
+                  <ion-select-option value="Potencial medio y pertenece a corporativo de mayor potencial">Potencial
+                    medio y pertenece a corporativo de mayor potencial</ion-select-option>
+                  <ion-select-option value="Potencial importante">Potencial importante</ion-select-option>
+                  <ion-select-option value="Gran potencial">Gran potencial</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Preferencia en equipo"
+                  cancelText="Cancelar" formControlName="pref_equipo" placeholder="Seleccionar...">
+                  <ion-select-option value="No aplica">No aplica</ion-select-option>
+                  <ion-select-option value="Competencia (MS < 10%)">Competencia (MS < 10%)</ion-select-option>
+                      <ion-select-option value="Neutral (MS 10-25%)">Neutral (MS 10-25%)</ion-select-option>
+                      <ion-select-option value="Si (MS > 25%)">Si (MS > 25%)</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Preferencia en proyecto"
+                  cancelText="Cancelar" formControlName="pref_proyecto" placeholder="Seleccionar...">
+                  <ion-select-option value="No aplica">No aplica</ion-select-option>
+                  <ion-select-option value="Competencia (MS < 10%)">Competencia (MS < 10%)</ion-select-option>
+                      <ion-select-option value="Neutral (MS 10-25%)">Neutral (MS 10-25%)</ion-select-option>
+                      <ion-select-option value="Si (MS > 25%)">Si (MS > 25%)</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Preferencia en servicio"
+                  cancelText="Cancelar" formControlName="pref_servicio" placeholder="Seleccionar...">
+                  <ion-select-option value="No aplica">No aplica</ion-select-option>
+                  <ion-select-option value="Competencia (MS < 10%)">Competencia (MS < 10%)</ion-select-option>
+                      <ion-select-option value="Neutral (MS 10-25%)">Neutral (MS 10-25%)</ion-select-option>
+                      <ion-select-option value="Si (MS > 25%)">Si (MS > 25%)</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <!-- <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="number" formControlName="tam"
+                  label="Tamaño de mercado"></ion-input>
+              </ion-item>
+            </ion-col> -->
+            <!-- <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="number" formControlName="market_share"
+                  label="Market share"></ion-input>
+              </ion-item>
+            </ion-col> -->
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Tipo de cuenta" cancelText="Cancelar"
+                  formControlName="tipo_cuenta" placeholder="Seleccionar...">
+                  <ion-select-option value="AA">AA</ion-select-option>
+                  <ion-select-option value="A">A</ion-select-option>
+                  <ion-select-option value="B+">B+</ion-select-option>
+                  <ion-select-option value="B-">B-</ion-select-option>
+                  <ion-select-option value="C">C</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-justify-content-end ion-padding-top">
+            <ion-col size="6" size-sm="2">
+              <ion-button type="submit" shape="round" expand="full" [disabled]="!leadsFormGroup.valid">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-infinite-scroll
+    [disabled]="(segment==='sap' && cuentasSap.length <= limite) || (segment==='lead' && cuentasLeads.length <= limite)"
+    position="bottom"
+    (ionInfinite)="segment==='sap'?getMoreCuentas($event,true,false):getMoreCuentas($event,false,false)">
+    <ion-infinite-scroll-content loadingSpinner="circles" loadingText="Cargando...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

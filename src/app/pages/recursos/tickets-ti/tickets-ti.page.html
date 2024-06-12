@@ -1,0 +1,337 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+      <ion-menu-button></ion-menu-button>
+      <ion-back-button defaultHref="tabs/recursos"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="!showSearchbar">
+      <ion-button (click)="showSearchbar = true; focus();">
+        <ion-icon color="primary" slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">Solicitudes de soporte TI</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always"
+      (ionChange)="searchTicket($event); content.scrollToTop();"
+      (ionCancel)="showSearchbar=false; searchTicket($event); content.scrollToTop();" placeholder="Buscar">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="newTicket()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+    <ion-row *ngIf="tickets.length > 0">
+      <ion-col size="12" size-sm="4" *ngFor="let ticket of tickets.slice(0,limite)">
+        <ion-item button (click)="detalles(ticket.Peticion_ID)">
+          <ion-label
+            [ngClass]="{finalizada: ticket.Peticion_Estatus==='Finalizado',enproceso: ticket.Peticion_Estatus==='Backlog',pendiente: ticket.Peticion_Estatus!=='Backlog' && ticket.Peticion_Estatus!=='Finalizado'}">
+            <h3>{{ticket.Nombre_Modulo}}</h3>
+            <p>{{ticket.Peticion_Titulo}}</p>
+            <p>{{datePipe.transform(ticket.Peticion_Fecha,'dd/MM/yyyy')}}</p>
+          </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-text *ngIf="tickets.length <=0" class="ion-padding">
+      <p class="ion-padding">No se encontraron tickets.</p>
+    </ion-text>
+  <ion-modal #detallesModal [isOpen]="openTicket" class="modalNormal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button (click)="openTicket = false;">
+              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>Detalle del ticket</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-list>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Título</h3>
+              <p>{{ticketData.Peticion_Titulo}}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Descripción</h3>
+              <p style="white-space: pre-wrap;">{{ticketData.Peticion_Descripcion}}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none" *ngIf="ticketData.Peticion_Foto">
+            <ion-icon slot="start" name="image-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Anexo</h3>
+              <a href="{{ticketFiles + ticketData.Peticion_Foto}}">{{ticketData.Peticion_Foto}}</a>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Módulo</h3>
+              <p>{{ticketData.peticion_Modulo}}</p>
+            </ion-label>
+          </ion-item>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Hora de registro</h3>
+                  <p>{{datePipe.transform(ticketData.Peticion_Hora,'hh:mm a')}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Fecha de registro</h3>
+                  <p>{{datePipe.transform(ticketData.Peticion_Fecha,'dd/MM/yyyy')}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Asignado a</h3>
+                  <p>{{ticketData.Asignado}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Medio</h3>
+                  <p>{{ticketData.Peticion_medio}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="alert-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Prioridad</h3>
+                  <p>{{ticketData.Peticion_Prioridad === 1?'Baja':ticketData.Peticion_Prioridad ===
+                    2?'Media':ticketData.Peticion_Prioridad === 3?'Crítica':'Sin prioridad'}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="checkmark-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Estado</h3>
+                  <p>{{ticketData.Peticion_Estatus}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Hora de atención</h3>
+                  <p>{{datePipe.transform('1990-01-01' + ' ' + ticketData.Peticion_Hora_Atencion,'hh:mm a')}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Fecha de atención</h3>
+                  <p>{{datePipe.transform(ticketData.Peticion_Fecha_Atencion,'dd/MM/yyyy')}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Hora de solución</h3>
+                  <p>{{datePipe.transform('1990-01-01' + ' ' + ticketData.Peticion_Hora_Solucion,'hh:mm a')}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Fecha de solución</h3>
+                  <p>{{datePipe.transform(ticketData.Peticion_Fecha_Solucion,'dd/MM/yyyy')}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-icon slot="start" name="chatbox-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Comentario solución</h3>
+                  <p style="white-space: pre-wrap;">{{ticketData.Peticion_comentarioTI}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6" class="ion-text-center">
+              <ion-button (click)="openTicket = false;" shape="round" expand="full">
+                <ion-icon slot="start" name="refresh-outline"></ion-icon>
+                Reabrir ticket
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal #newTicketModal [isOpen]="openNewTicket" class="modalNormal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button (click)="openNewTicket = false;">
+              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>Nuevo ticket</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="ticketForm" (ngSubmit)="submitTicket()">
+          <ion-row>
+            <ion-col size="12">
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="text-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Título</ion-label>
+                <ion-input formControlName="titulo" type="text" [clearInput]="true"
+                  placeholder="Título de la solicitud"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="id_area === 11">
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Usuario</ion-label>
+                <ionic-selectable modalCssClass="selectModal" headerColor="primary" placeholder="Seleccionar"
+                  [hasInfiniteScroll]="true" (onInfiniteScroll)="getMoreUsuarios($event)" formControlName="usuario"
+                  [items]="usuarios.slice(0,limiteSelects)" itemValueField="id_colaborador" itemTextField="nombre"
+                  (onSearch)="searchUsuarios($event)" [canSearch]="true" searchPlaceholder="Buscar"
+                  searchFailText="No se encontraron elementos." #usuarioSelect>
+                  <ng-template ionicSelectableHeaderTemplate>
+                    <ion-toolbar>
+                      <ion-header>
+                        <ion-toolbar color="primary">
+                          <ion-title>Seleccionar usuario</ion-title>
+                          <ion-buttons slot="end">
+                            <ion-button (click)="usuarioSelect.close()">
+                              <ion-icon slot="icon-only" name="close"></ion-icon>
+                            </ion-button>
+                          </ion-buttons>
+                        </ion-toolbar>
+                      </ion-header>
+                    </ion-toolbar>
+                  </ng-template>
+                </ionic-selectable>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Medio</ion-label>
+                <ion-select formControlName="medio" multiple="false" placeholder="Seleccionar"
+                  interface="action-sheet" cancelText="Cancelar">
+                  <ion-select-option [value]="1">Intranet</ion-select-option>
+                  <ion-select-option [value]="2">Teléfono</ion-select-option>
+                  <ion-select-option [value]="3">Personal</ion-select-option>
+                  <ion-select-option [value]="4">Skype</ion-select-option>
+                  <ion-select-option [value]="5">Correo electrónico</ion-select-option>
+                  <ion-select-option [value]="6">Otro</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="alert-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Prioridad</ion-label>
+                <ion-select formControlName="prioridad" multiple="false" placeholder="Seleccionar"
+                  interface="action-sheet" cancelText="Cancelar">
+                  <ion-select-option [value]="1">Baja</ion-select-option>
+                  <ion-select-option [value]="2">Media</ion-select-option>
+                  <ion-select-option [value]="3">Crítica</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Categoría</ion-label>
+                <ion-select formControlName="categoria" multiple="false" placeholder="Seleccionar"
+                  interface="action-sheet" cancelText="Cancelar">
+                  <ion-select-option *ngFor="let categoria of categorias"
+                    [value]="categoria.Modulo_ID">{{categoria.Modulo_Nombre}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="chatbox-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Descripción</ion-label>
+                <ion-textarea [autoGrow]="true" placeholder="Descripción de la solicitud"
+                  formControlName="descripcion"></ion-textarea>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="document-attach-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Anexo</ion-label>
+                <ion-input type="file" #archivo (ionChange)="addFile()"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-justify-content-end">
+            <ion-col size="12" size-sm="6">
+              <ion-item lines="none">
+                <ion-label>
+                  <ion-button shape="round" size="medium" expand="full" color="primary" type="submit"
+                    [disabled]="ticketForm.invalid">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                    Guardar
+                  </ion-button>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-infinite-scroll threshold="25%" [disabled]="tickets.length <= limite" position="bottom" (ionInfinite)="getMoreTickets()">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

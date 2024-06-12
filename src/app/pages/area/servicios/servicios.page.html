@@ -1,0 +1,443 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+        <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+        <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="!showSearchbar && segment !== 'Indicadores SVA'" (click)="showSearchbar = true; focus();">
+          <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">{{titleServicios}}</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always" (ionChange)="search = 'searchInput?.value'; onChangeSegment(); content.scrollToTop();" (ionCancel)="showSearchbar=false; search = ''; onChangeSegment(); content.scrollToTop();" placeholder="Buscar"></ion-searchbar>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button title="Indicadores de Servicios" value="Indicadores de Servicios" (click)="onChangeSegment();">
+        <ion-icon name="document-text"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button title="Embudo de Ventas" value="Embudo de Ventas" (click)="onChangeSegment();">
+        <ion-icon name="timer"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button title="Indicadores SVA" value="Indicadores SVA" (click)="onChangeSegment();">
+        <ion-icon name="bar-chart"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="segment === 'Indicadores de Servicios'" >
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" >
+      <ion-fab-button [disabled]="!IS_fab">
+          <ion-icon name="menu"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-list side="top">
+          <ion-fab-button title="Colaboradores" (click)="onChangeList('Colaboradores');" >
+              <ion-icon name="person-outline"></ion-icon>
+          </ion-fab-button>
+          <ion-fab-button (click)="onChangeList('Servicios 1');" title="Servicios 1">
+              <ion-icon name="reader-outline"></ion-icon>
+          </ion-fab-button>
+          <ion-fab-button (click)="onChangeList('Servicios 2');" title="Servicios 2">
+              <ion-icon name="reader-outline"></ion-icon>
+          </ion-fab-button>
+      </ion-fab-list>
+  </ion-fab>
+
+  <div class="class-content_spaces">
+    <ion-item>
+      <ion-label position="stacked">Fecha inicio:</ion-label>
+      <ion-input type="date" id="IS_fechaInicio" [(ngModel)]="IS_fechas.fechaI" #IS_fechaInicio="ngModel" [max]="IS_fechas.fechaF" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Fecha fin:</ion-label>
+      <ion-input type="date" id="IS_fechaFin" [(ngModel)]="IS_fechas.fechaF" #IS_fechaFin="ngModel" [min]="IS_fechas.fechaI" required></ion-input>
+    </ion-item>
+    <br>
+    <ion-button (click)="Reporteservicio_consulta();" expand="block" fill="solid" shape="round">
+      Consultar
+    </ion-button>
+  </div>
+  <div class="class-content_spaces">
+    <div class="ion-text-center">
+      <ion-label class="class-label_title"><b>{{list}}</b></ion-label>
+    </div>
+    <hr>
+    <div *ngIf="list === 'Colaboradores'">
+      <div class="ion-text-center">
+        <ion-button fill="clear" shape="round" (click)="createPDF();" [disabled]="!(this.IS_fechas.fechaI_copy && this.IS_fechas.fechaF_copy)"><img height="40px" width="auto" src="assets/icon/pdf.svg"></ion-button>
+        <ion-button fill="clear" shape="round" (click)="createXLS();" [disabled]="!(this.IS_fechas.fechaI_copy && this.IS_fechas.fechaF_copy)"><img height="40px" width="auto" src="assets/icon/xls.svg"></ion-button>
+      </div>
+      <div *ngFor="let data of IS_colab; let i = index;">
+        <ion-grid class="class-cursorpointer" [ngClass]="{'class-div_infoCard-small': i < limite}" *ngIf="i < limite">
+          <ion-row class="class-row_infoCard-borderB">
+            <ion-col size="9">
+              <ion-label>
+                <h3>Colaborador: </h3>
+                <p>{{data.nombre}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col size="3">
+              <ion-label class="ion-text-center">
+                <h3>Zona:</h3>
+                <p>{{data.zona}}</p>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-text-center">
+            <ion-col size-sm="4">
+              <ion-label>
+                <h3>Calidad del servicio:</h3>
+                <p>{{data.avg}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col size-sm="4">
+              <ion-label>
+                <h3>Esfuerzo:</h3>
+                <p>{{data.metrica}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col size-sm="4">
+              <ion-label>
+                <h3>Tiempo de Entrega:</h3>
+                <p>{{data.te}}</p>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+    <div *ngIf="list === 'Servicios 1'">
+      <div class="ion-text-center">
+        <ion-button fill="clear" shape="round" (click)="createPDF();" [disabled]="!(this.IS_fechas.fechaI_copy && this.IS_fechas.fechaF_copy)"><img height="40px" width="auto" src="assets/icon/pdf.svg"></ion-button>
+        <ion-button fill="clear" shape="round" (click)="createXLS();" [disabled]="!(this.IS_fechas.fechaI_copy && this.IS_fechas.fechaF_copy)"><img height="40px" width="auto" src="assets/icon/xls.svg"></ion-button>
+      </div>
+      <div *ngFor="let data of IS_servicios1; let i = index;">
+        <ion-grid class="class-cursorpointer" [ngClass]="{'class-div_infoCard-small': i < limite}" *ngIf="i < limite"
+                  (click)="IS_createModal(i);">
+          <ion-row>
+            <ion-col size="9">
+              <ion-label>
+                <h3>Nombre:</h3>
+                <p>{{data.prjname}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col size="3">
+              <ion-label class="ion-text-center">
+                <h3>Proyecto:</h3>
+                <p>{{data.prjcode}}</p>
+                <h3>Zona:</h3>
+                <p>{{data.zona}}</p>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+    <div *ngIf="list === 'Servicios 2'">
+      <div class="ion-text-center">
+        <ion-button fill="clear" shape="round" (click)="createPDF();" [disabled]="!(this.IS_fechas.fechaI_copy && this.IS_fechas.fechaF_copy)"><img height="40px" width="auto" src="assets/icon/pdf.svg"></ion-button>
+        <ion-button fill="clear" shape="round" (click)="createXLS();" [disabled]="!(this.IS_fechas.fechaI_copy && this.IS_fechas.fechaF_copy)"><img height="40px" width="auto" src="assets/icon/xls.svg"></ion-button>
+      </div>
+      <div *ngFor="let data of IS_servicios2; let i = index;">
+        <ion-grid class="class-cursorpointer" [ngClass]="{'class-div_infoCard-small': i < limite}" *ngIf="i < limite">
+          <ion-row class="class-row_infoCard-borderB">
+            <ion-col size="9">
+              <ion-label>
+                <h3>Nombre:</h3>
+                <p>{{data.prjname}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col size="3">
+              <ion-label class="ion-text-center">
+                <h3>Proyecto:</h3>
+                <p>{{data.prjcode}}</p>
+                <h3>Zona:</h3>
+                <p>{{data.zona}}</p>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3">
+              <ion-label>
+                <h3>Resultado:</h3>
+              </ion-label>
+            </ion-col>
+            <ion-col size="9">
+              <ion-label>
+                <p>{{data.metrica}}</p>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+    <div *ngIf="(list === 'Colaboradores' && IS_colab.length === 0) ||
+                (list === 'Servicios 1' && IS_servicios1.length === 0) ||
+                (list === 'Servicios 2' && IS_servicios2.length === 0)">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12">
+            <br>
+            <ion-label class="ion-text-center"><h3>- No hay información -</h3></ion-label>
+            <hr class="class-color_danger">
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
+
+  <ion-infinite-scroll *ngIf="length >= 20" (ionInfinite)="addItems($event)" style="display: flex; height: 1%;">
+    <ion-infinite-scroll-content>
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+
+  <!-- DETALLES -->
+  <ion-modal #IS_ModalDetalles [isOpen]="IS_modalDetalles" width="auto">
+    <ng-template>
+      <ion-header translucent="true">
+        <ion-toolbar>
+          <ion-title>Detalles de servicio</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="IS_modalDetalles = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <div class="class-label_spacesOrder">
+            <ion-item>
+              <ion-label class="class-h3 class-label">Proyecto:</ion-label>
+              <p>{{IS_modalServicio.prjcode}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label class="class-h3 class-label">Nombre:</ion-label>
+              <p>{{IS_modalServicio.prjname}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label class="class-h3 class-label">Zona:</ion-label>
+              <p>{{IS_modalServicio.zona}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label class="class-h3 class-label">Fecha de compromiso:</ion-label>
+              <p>{{IS_modalServicio.fechaComp}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label class="class-h3 class-label">Fecha de terminación:</ion-label>
+              <p>{{IS_modalServicio.fechaTerm}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label class="class-h3 class-label">Diferencia:</ion-label>
+              <p>{{IS_modalServicio.dif}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label class="class-h3 class-label">Resultado:</ion-label>
+              <p>{{IS_modalServicio.metrica}}</p>
+            </ion-item>
+          </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal> <!-- END -->
+</ion-content>
+
+<ion-content *ngIf="segment === 'Embudo de Ventas'">
+  <iframe width="95%" height="95%" src="https://app.powerbi.com/view?r=eyJrIjoiYWVlMzk2YTgtNzAyNS00MTQ2LTkyOWMtNzY4MzRkOTQ5OWIxIiwidCI6IjEwMTM2YTk4LWFkOGEtNDEwYS05OGI5LWFhMzc5ZThlMTgxOSIsImMiOjR9&pageName=ReportSection66f0383f594ee2502b8e" frameborder="0" allowFullScreen="true"></iframe>
+</ion-content>
+<ion-content *ngIf="segment === 'Embudo de Ventas'">
+  <div class="ion-text-center">
+    <ion-button fill="clear" shape="round" (click)="createXLS();" [disabled]="!IS_usar"><img height="40px" width="auto" src="assets/icon/xls.svg"></ion-button>
+  </div>
+  <div *ngFor="let data of ES_listEmbudo; let i = index;">
+    <ion-grid *ngIf="i<limite">
+      <ion-row class="class-div_box" [ngStyle]="{'background-color': data.diff >= 0 ? '#ffabab52' : ''}">
+        <ion-col size="8" size-sm="10">
+          <ion-label>
+            <h3>#Cotización:</h3>
+            <p>{{data.DocNum}}</p>
+            <h3>Cliente:</h3>
+            <p>{{data.Cliente}}</p>
+            <h3>Importe USD: </h3>
+            <p>{{data.TOTAL_n}}</p>
+          </ion-label>
+        </ion-col>
+        <ion-col class="class-icon_center" size="4" size-sm="2">
+          <ion-label>
+            <ion-button (click)="ES_createModal(0, i);" expand="block" fill="clear" shape="round">
+              <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="ES_createModal(1, i);" expand="block" fill="clear" shape="round">
+              <ion-icon slot="icon-only" name="pencil-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="ES_verCotizacion(data.DocNum);" expand="block" fill="clear" shape="round">
+              <ion-icon slot="icon-only" name="document-outline"></ion-icon>
+            </ion-button>
+          </ion-label>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div *ngIf="ES_listEmbudo.length === 0">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <br>
+          <ion-label class="ion-text-center"><h3>- No hay información -</h3></ion-label>
+          <hr class="class-color_danger">
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <ion-infinite-scroll *ngIf="ES_listEmbudo.length >= 20" (ionInfinite)="addItems($event)" style="display: flex; height: 1%;">
+    <ion-infinite-scroll-content>
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+
+
+  <!-- DETALLES -->
+  <ion-modal #ES_ModalDetalles [isOpen]="ES_modalDetalles" width="auto">
+    <ng-template>
+      <ion-header translucent="true">
+        <ion-toolbar>
+          <ion-title>Detalles de cotización</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="ES_modalDetalles = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <div class="class-label_spacesOrder">
+            <ion-item>
+              <ion-label position="stacked"><b># Cotización:</b></ion-label>
+              <p>{{ES_cotizacion.DocNum}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Fecha de contabilización:</b></ion-label>
+              <p>{{ES_cotizacion.FechaCont_n}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Cliente:</b></ion-label>
+              <p>{{ES_cotizacion.Cliente}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Importe USD:</b></ion-label>
+              <p>{{ES_cotizacion.TOTAL_n}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Referencia:</b></ion-label>
+              <p>{{ES_cotizacion.Referencia}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Porcentaje de cierre:</b></ion-label>
+              <p>{{ES_cotizacion.porc_cierre}}%</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Vendedor:</b></ion-label>
+              <p>{{ES_cotizacion.vendedor}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Region:</b></ion-label>
+              <p>{{ES_cotizacion.zona}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Oficina:</b></ion-label>
+              <p>{{ES_cotizacion.oficina}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Industria:</b></ion-label>
+              <p>{{ES_cotizacion.industria}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Fecha cierre:</b></ion-label>
+              <p>{{ES_cotizacion.U_FECHACIERRE_n}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Comentarios:</b></ion-label>
+              <p>{{ES_cotizacion.comments}}</p>
+            </ion-item>
+          </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal> <!-- END -->
+
+  <!-- DETALLES -->
+  <ion-modal #ES_ModalUpdate [isOpen]="ES_modalUpdate" width="auto">
+    <ng-template>
+      <ion-header translucent="true">
+        <ion-toolbar>
+          <ion-title>Actualizar</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="ES_modalUpdate = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <div class="class-label_spacesOrder">
+            <ion-item>
+              <ion-label position="stacked"><b># Cotización:</b></ion-label>
+              <p>{{ES_cotizacion.DocNum}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Cliente:</b></ion-label>
+              <p>{{ES_cotizacion.Cliente}}</p>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Porcentaje de cierre:</b></ion-label>
+              <ion-select name="UC_PorcentajeCierre_select" multiple="false" placeholder="Seleccionar porcentaje"
+                          [(ngModel)]="ES_modalEmbudo.porc_cierre" #UC_PorcentajeCierre_select="ngModel" interface="popover"
+                          (ionChange)="ES_changePorcCierre();">
+                <ion-select-option [value]="0" [disabled]="ES_modalEmbudo.etapacodigo === 60 || ES_modalEmbudo.etapacodigo === 70">0%</ion-select-option>
+                <ion-select-option [value]="10" [disabled]="ES_modalEmbudo.etapacodigo !== 60">10%</ion-select-option>
+                <ion-select-option [value]="30" [disabled]="ES_modalEmbudo.etapacodigo !== 70">30%</ion-select-option>
+                <ion-select-option [value]="50" [disabled]="ES_modalEmbudo.etapacodigo !== 70">50%</ion-select-option>
+                <ion-select-option [value]="80" [disabled]="ES_modalEmbudo.etapacodigo !== 70">80%</ion-select-option>
+                <ion-select-option [value]="100" [disabled]="ES_modalEmbudo.etapacodigo !== 70">100%</ion-select-option>
+              </ion-select>
+              <small class="class-color_info" *ngIf="ES_cotizacion.porc_cierre !== ES_modalEmbudo.porc_cierre">Antes: {{ES_cotizacion.porc_cierre}}%</small>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">Etapa:</ion-label>
+              <ion-select id="UC_Etapa_select" name="UC_Etapa_select" multiple="false" placeholder="Seleccionar etapa"
+                          [(ngModel)]="ES_modalEmbudo.etapacodigo" #UC_Etapa_select="ngModel" interface="popover" (ionChange)="Embudo_changeEtapa();">
+                <ion-select-option *ngFor="let element of ES_selectEtapa;" id="e{{element.CODE}}" value="{{element.CODE}}">{{element.NAME}}</ion-select-option>
+              </ion-select>
+              <small class="class-color_info" *ngIf="ES_modalEmbudo.etapacodigo !== ES_cotizacion.etapacodigo">{{ES_cotizacion.Etapa}}</small>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><b>Fecha cierre:</b></ion-label>
+              <ion-input type="date" name="UC_FechaCierre" [(ngModel)]="ES_modalEmbudo.U_FECHACIERRE" [min]="ES_modalEmbudo.fecha_actual" #UC_FechaCierre="ngModel"></ion-input>
+              <small class="class-color_info" *ngIf="ES_cotizacion.U_FECHACIERRE !== ES_modalEmbudo.U_FECHACIERRE">Antes: {{ES_cotizacion.U_FECHACIERRE_n}}</small>
+            </ion-item>
+            <div>
+              <ion-item>
+                <ion-label position="stacked"><b>Comentarios:</b></ion-label>
+                <textarea name="UC_Comentarios" [(ngModel)]="ES_modalEmbudo.comments" #UC_Comentarios="ngModel"></textarea>
+              </ion-item>
+            </div>
+          </div>
+      </ion-content>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-button (click)="Embudo_updateCotizacion(); ES_modalUpdate = false;" expand="block" fill="solid" shape="round" [disabled]="ES_isDisabledGuardar()">
+            <ion-icon slot="start" name="save-outline"></ion-icon>
+            Guardar
+          </ion-button>
+        </ion-toolbar>
+      </ion-footer>
+    </ng-template>
+  </ion-modal> <!-- END -->
+</ion-content>
+
+<ion-content *ngIf="segment === 'Indicadores SVA'">
+  <iframe style="padding: 5%;" width="100%" height="95%" src="https://app.powerbi.com/view?r=eyJrIjoiZmU1YmNlZjYtNDgzOS00NzIzLWFmOTgtYjQ4Mjg0MjU5MDY4IiwidCI6IjEwMTM2YTk4LWFkOGEtNDEwYS05OGI5LWFhMzc5ZThlMTgxOSIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+</ion-content>

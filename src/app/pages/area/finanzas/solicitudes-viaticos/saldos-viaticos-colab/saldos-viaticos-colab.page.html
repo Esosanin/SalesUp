@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+        <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+        <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="!showSearchbar">
+      <ion-button (click)="showSearchbar = true; focus();">
+          <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">Saldos en viaticos</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always" (ionChange)="SVC_changeSearch(searchInput.value);" (ionCancel)="showSearchbar=false; SVC_changeSearch(searchInput.value);" placeholder="Buscar"></ion-searchbar>
+  </ion-toolbar>
+  <ion-progress-bar type="indeterminate" *ngIf="IR_showLoader"></ion-progress-bar>
+</ion-header>
+
+<ion-content>
+  <!-- 
+  <div title="Colaboradores">
+    <ion-item>
+      <ion-label>Colaborador</ion-label>
+      <ionic-selectable placeholder="Seleccionar" closeButtonText="Cancelar" searchPlaceholder="Buscar" 
+                        id="colaboradores" name="colaboradores" #colaboradores="ngModel" 
+                        [(ngModel)]="SVC_colaborador.id" [items]="SVC_colaboradores" itemValueField="colaborador"
+                        itemTextField="name" [canSearch]="true">
+      </ionic-selectable>
+    </ion-item>
+  </div>
+  <div title="Descripción">
+    <ion-label><h3>El saldo en viáticos de {{SVC_colaborador.name}} al día de hoy es:<h2><u>{{SVC_colaboradorSaldo}} MXN</u></h2></h3></ion-label>
+  </div>
+  -->
+
+  <ion-list class="class-content_spaces">
+    <div *ngFor="let data of SVC_colaboradores; let i = index;">
+      <ion-grid class="class-div_box"  *ngIf="i<limite">
+        <ion-row>
+          <ion-col size="8">
+            <ion-label>
+              <h3>Num. Colaborador:</h3>
+              <p>{{data.colaborador}}</p>
+              <h3>Nombre:</h3>
+              <p>{{data.name}}</p>
+            </ion-label>
+          </ion-col>
+          <ion-col class="class-content_center" size="4">
+            <ion-label>
+              <h3>Saldo (MXN):</h3>
+              <p>{{data.saldo}}</p>
+            </ion-label>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    
+    <ion-infinite-scroll *ngIf="length >= 20" (ionInfinite)="addItems($event)">
+        <ion-infinite-scroll-content>
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ion-list>
+</ion-content>

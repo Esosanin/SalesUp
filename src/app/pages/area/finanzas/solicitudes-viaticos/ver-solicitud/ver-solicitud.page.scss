@@ -1,0 +1,112 @@
+.class-color_danger{
+    color: brown;
+}
+.class-color_success{
+    color: green;
+}
+.class-color_info{
+    color: rgb(45, 45, 212);
+}
+.class-color_none{
+    color: none;
+}
+
+.class-content_spaces {
+    padding: 10px;
+    margin: 10px;
+}
+
+.class-div_infoCard{
+    border: 1px solid #eee;
+    padding: 24px; 
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+}
+.class-div_infoCard-small{
+    border: 1px solid #eee;
+    padding: 8px; 
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+}
+.class-div_infoCard-medium{
+    border: 1px solid #eee;
+    padding: 16px; 
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+}
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+}
+.class-div_box_under {
+    border: 1px solid rgb(250, 250, 250);
+    padding: 10px;
+    box-shadow: 0px 0px 10px 5px rgba(240, 240, 240, 0.75);
+    margin: 10px 10px;
+    background: rgb(250, 250, 250);
+}
+
+hr.class-hr_style{
+    height: 1px;
+    width: 100%;
+    background-color: rgb(192, 192, 192);
+}
+
+.class-textcolor_gray{
+    font-size: 14px;
+    color: gray;
+}
+
+ion-item.class-cursorpointer{
+    cursor: pointer;
+}
+
+ion-label.class-h3 h3{
+    width: auto;
+    max-width: 150px;
+    min-width: 150px;
+    padding-right: 10px;
+}
+
+ion-label.class-label{
+    //align-self: baseline;
+    flex: 1 1 0% !important;
+    white-space: initial !important;
+    width: auto;
+    max-width: none;
+    min-width: 150px;
+}
+ion-row ion-col.grid-content{
+    border: 1px solid #eee;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+ion-textarea, ion-select, 
+ion-checkbox, ion-input {
+    background: white;
+}
+
+ion-select{
+    font-size: 14px;
+}
+ion-checkbox{
+    margin-right: 5px;
+}
+ion-input{
+    text-align: end;
+    font-size: 14px;
+}
+ion-textarea{
+    overflow: auto;
+    font-size: 14px;
+}
+
+.class-disabled_text{
+    color: gray;
+}
+
+ul#display-content { padding-inline-start: inherit !important; }
+#display-content * { list-style: none;}
+#display-content li{ line-height: 180%;}

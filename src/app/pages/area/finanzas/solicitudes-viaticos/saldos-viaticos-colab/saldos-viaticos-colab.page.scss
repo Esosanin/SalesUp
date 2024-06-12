@@ -1,0 +1,24 @@
+.class-content_spaces {
+    padding: 10px;
+    margin: 10px;
+}
+
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+
+    cursor: pointer;
+}
+
+ion-infinite-scroll-content{
+    min-height: 1px;
+}
+
+.class-content_center {
+    align-self: center;
+    text-align: center;
+}
+
+ion-label p { color: gray; }

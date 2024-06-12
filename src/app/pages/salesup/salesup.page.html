@@ -1,0 +1,163 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Indicadores semanales</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding animarElemento">
+  <app-select-with-search #select></app-select-with-search>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event,select.selectedValue)" pullFactor="0.8" pullMin="60"
+    pullMax="120">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-grid [fixed]="true" *ngIf="tipo==='Vendedor'">
+    <ion-row>
+      <ion-col size="6" size-sm="4">
+        <ion-list>
+          <ion-list-header>
+            <ion-label color="primary">Semana</ion-label>
+          </ion-list-header>
+          <ion-item lines="none">
+            <ion-select labelPlacement="stacked" (ionChange)="refreshData(select.selectedValue)"
+              [(ngModel)]="numeroSemana" okText="Seleccionar" cancelText="Cancelar">
+              <ion-select-option *ngFor="let semana of semanas" [value]="semana">{{semana}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid [fixed]="true" *ngIf="tipo==='Gerente' || tipo==='Corporativo'">
+    <ion-row class="ion-justify-content-center" *ngIf="{z:zonas$ | async, v: vendedores$ | async} as response">
+      <ion-col size="6" size-md="2">
+        <ion-select fill="outline" label="Semana" labelPlacement="stacked" [(ngModel)]="numeroSemana"
+          okText="Seleccionar" cancelText="Cancelar">
+          <ion-icon slot="start" name="calendar-outline" color="primary" aria-hidden="true"></ion-icon>
+          <ion-select-option *ngFor="let semana of semanas" [value]="semana">{{semana}}</ion-select-option>
+        </ion-select>
+      </ion-col>
+      <ion-col size="6" size-md="8" class="ion-text-center ion-border">
+        <ion-radio-group value="zona" [(ngModel)]="indicadoresValue">
+          <ion-radio value="zona" labelPlacement="stacked">Zona</ion-radio>
+          <ion-radio value="vendedor" labelPlacement="stacked">Vendedor</ion-radio>
+        </ion-radio-group>
+      </ion-col>
+      <ion-col size="12" size-md="2" *ngIf="indicadoresValue==='zona' && tipo==='Corporativo'">
+        <ion-select fill="outline" label="Zona" labelPlacement="stacked" [(ngModel)]="id_zona" placeholder="Seleccionar"
+          cancelText="Cancelar" okText="Seleccionar">
+          <ion-icon slot="start" name="map-outline" color="primary" aria-hidden="true"></ion-icon>
+          <ion-select-option *ngFor="let zona of response.z?.zonas" [value]="zona.id">{{zona.zona}}</ion-select-option>
+        </ion-select>
+      </ion-col>
+      <ion-col size="12" size-md="2" *ngIf="indicadoresValue==='vendedor'">
+        <ion-select [(ngModel)]="select.selectedValue.id_sap" (click)="select.open()" disabled class="select"
+          fill="outline" label="Vendedor" labelPlacement="stacked" placeholder="Seleccionar">
+          <ion-icon slot="start" name="person-outline" color="primary" aria-hidden="true"></ion-icon>
+          <ion-select-option [value]="select.selectedValue.id_sap">{{select.selectedValue.nombre}}</ion-select-option>
+        </ion-select>
+        <!-- <ion-button class="select ion-padding" (click)="select.open()" fill="outline" size="small">
+          <ion-icon slot="start" name="person-outline" color="primary" size="small"></ion-icon>
+          <ion-icon class="selectIcon" slot="end" name="caret-down-outline" color="medium"></ion-icon>
+          Seleccionar
+        </ion-button> -->
+      </ion-col>
+      <ion-col size="12" size-md="3">
+        <ion-button
+          [disabled]="(indicadoresValue=='vendedor'&& (select.selectedValue | json) == '{}') || (indicadoresValue=='zona' && id_zona=='0')"
+          (click)="refreshData(select.selectedValue)" fill="solid" expand="block">
+          <ion-icon slot="start" name="refresh-outline"></ion-icon>
+          Cargar datos
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-text color="primary" *ngIf="indicadoresValue==='zona' && tipo==='Gerente' && showCards">
+    <h1 class="ion-text-center">{{zona}}</h1>
+  </ion-text>
+  <ion-grid [fixed]="true" *ngIf="showCards" class="animarElemento">
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let card of cards; let i=index"
+        [ngClass]="{'ion-hide': card.titulo==='Acompañamientos' && tipo!=='Vendedor' && indicadoresValue==='zona'}">
+        <ion-card color="light">
+          <ion-card-header>
+            <ion-card-title>{{card.titulo}}</ion-card-title>
+            <ion-card-subtitle>{{card.subtitulo}}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <!-- <canvas (chartClick)="planesCapturados($event)" style="margin-top:24px;" *ngIf="i===9" [legend]="false" baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'"></canvas> -->
+            <ion-text *ngIf="card.rendimiento!==''" style="display: block; margin-top: 12px; margin-bottom: 12px;"
+              class="ion-text-center"
+              [color]="card.rendimiento==='Rendimiento óptimo'?'success':card.rendimiento==='Rendimiento promedio'?'warning':'danger'">
+              <p style="font-weight: bold;">
+                <ion-icon size="small" style="vertical-align: text-top;"
+                  [name]="card.rendimiento==='Rendimiento bajo'?'alert-circle-outline':'checkmark-circle-outline'"></ion-icon>
+                {{card.rendimiento}}
+              </p>
+            </ion-text>
+            <circle-progress unitsFontSize="8" *ngIf="i!==9" style="margin:0 auto;" [unitsFontSize]="'30'"
+              [titleFontSize]="'35'" [showSubtitle]="false" [percent]="card.porcentaje" [responsive]="true"
+              [radius]="90" [space]="-15" [innerStrokeWidth]="16" [outerStrokeWidth]="16" [showInnerStroke]="true"
+              [outerStrokeColor]="'#0157b8'" [innerStrokeColor]="salesUpService.inner" [animation]="true"
+              [unitsColor]="salesUpService.units" [titleColor]="salesUpService.title" [animationDuration]="300"
+              [renderOnClick]="false">
+            </circle-progress>
+            <p *ngIf="i!==9" class="ion-text-center contenidoText">{{card.contenido}}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-modal [isOpen]="modalCaptura" class="modalChico" (didDismiss)="modalCaptura = false;">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{modalCapturaTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="modalCaptura = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-list>
+          <ion-item *ngFor="let vendedor of vendedoresCaptura">
+            <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+            <ion-label>{{vendedor.nombre}}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <!-- <ion-modal #detallesModal [isOpen]="showModal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{modalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showModal = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list *ngIf="detalles.length > 0">
+          <ion-item *ngFor="let detalle of detalles">
+            <ion-label class="finalizada" style="padding-left: 10px;">
+              <h3>{{detalle.title}}</h3>
+              <p>
+                {{detalle.text1}}
+              </p>
+              <p>
+                {{detalle.text2}}
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal> -->
+</ion-content>

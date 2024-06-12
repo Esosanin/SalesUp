@@ -1,0 +1,31 @@
+<ion-modal [isOpen]="openModal" class="selectModal" (didDismiss)="openModal = false;">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Seleccionar</ion-title>
+        <ion-buttons slot="start">
+          <ion-button (click)="openModal = false;">
+            Cerrar
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+      <ion-toolbar>
+        <ion-searchbar #search color="light" class="selectSearch" animated="true"
+          (ionInput)="searchChange(search.value)" placeholder="Buscar..."></ion-searchbar>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-radio-group (ionChange)="close()" [(ngModel)]="selectedValue" alignment="end">
+          <ion-item *ngFor="let value of values.slice(0,limite)">
+            <ion-radio justify="start" labelPlacement="end" [value]="value">{{value.nombre}}</ion-radio>
+          </ion-item>
+        </ion-radio-group>
+      </ion-list>
+      <ion-infinite-scroll [disabled]="values.length <= limite" position="bottom" (ionInfinite)="getMoreValues($event)">
+        <ion-infinite-scroll-content loadingSpinner="circles" loadingText="Cargando...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-content>
+  </ng-template>
+</ion-modal>

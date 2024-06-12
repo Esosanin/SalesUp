@@ -1,0 +1,146 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Filosofía ECN</ion-title>
+    </ion-toolbar>
+    <ion-toolbar>
+        <ion-segment [(ngModel)]="segment" [scrollable]="true">
+            <ion-segment-button value="politicas">
+                <ion-label>Políticas</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="mision">
+                <ion-label>Misión y visión</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="codigos">
+                <ion-label>Códigos</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="vehiculos">
+                <ion-label>Vehículos</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+    </ion-toolbar>
+</ion-header>
+<ion-content *ngIf="segment==='politicas'" class="ion-padding animarElemento">
+    <ion-grid [fixed]="true">
+        <ion-row>
+            <ion-col size="12" size-sm="4" *ngFor="let menu of politicasMenu">
+                <ion-list lines="none">
+                    <ion-item button (click)="menuClick(menu)">
+                        <ion-icon slot="start" name="{{menu.icon}}-outline" color="primary"></ion-icon>
+                        <ion-label>{{menu.label}}</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+    <ion-modal (didDismiss)="showModalMenu = false" [isOpen]="showModalMenu" [breakpoints]="[0.5]"
+        [initialBreakpoint]="0.5">
+        <ng-template>
+            <ion-content>
+                <ion-list>
+                    <ion-item *ngFor="let material of materiales" lines="inset" button (click)="menuClick(material)">
+                        <ion-icon slot="start" name="{{material.icon}}" color="primary"></ion-icon>
+                        <ion-label>{{material.name}}</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+        </ng-template>
+    </ion-modal>
+</ion-content>
+<ion-content *ngIf="segment==='mision'" class="ion-padding animarElemento">
+    <ion-grid [fixed]="true">
+        <ion-row>
+            <ion-col size="12" size-sm="6">
+                <ion-card class="cards ion-padding">
+                    <ion-card-content>
+                        <img class="mision ion-padding-bottom" [src]="imagesUrl + 'mision.png'" alt="mision">
+                        <ion-text>
+                            <p>Misión: Construimos valor y confianza centrados en nuestros clientes, entendiendo sus
+                                necesidades y proponiendo soluciones innovadoras e integrales, operando una empresa ágil
+                                con un equipo de trabajo resuelto y destacado, mejorando
+                                consistentemente con una fuerte conciencia ambiental.</p>
+                        </ion-text>
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+                <ion-card class="cards ion-padding">
+                    <ion-card-content>
+                        <img class="mision ion-padding-bottom" [src]="imagesUrl + 'vision.png'" alt="mision">
+                        <ion-text>
+                            <p>Visión: Ser elegidos por ser una empresa confiable para realizar soluciones integrales e
+                                innovativas, que incrementen la eficiencia, seguridad y sustentabilidad de procesos
+                                industriales, basados en tecnologías de automatización,
+                                digitalización y análisis de información, diseñado por un equipo humano de alto
+                                desempeño.</p>
+                        </ion-text>
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col size="12" size-sm="4">
+                <ion-item lines="none" button (click)="menuClick({file:'LIBRO FILOSOFIA Y VALORES.pdf'})">
+                    <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+                    <ion-label>Libro de filosofía y valores</ion-label>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+<ion-content *ngIf="segment==='codigos'" class="ion-padding animarElemento">
+    <ion-grid [fixed]="true">
+        <ion-row>
+            <ion-col size="12" size-sm="4">
+                <ion-item button (click)="menuClick({file:'ECN-PT-CH-001.pdf'})">
+                    <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+                    <ion-label>Código de ética y conducta</ion-label>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+                <ion-item button (click)="menuClick({file:'ECN-PT-CH-013.pdf'})">
+                    <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+                    <ion-label>Código de vestimenta</ion-label>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+<ion-content *ngIf="segment==='vehiculos'" class="ion-padding animarElemento">
+    <ion-grid [fixed]="true">
+        <ion-row>
+            <ion-col size="12" size-sm="4">
+                <ion-item button (click)="menuClick({file:'Manual de Asignación de Vehículos_.pdf'})">
+                    <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+                    <ion-label>Manual de uso vehicular</ion-label>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+                <ion-item button (click)="menuClick({file:'Estandarización recarga de combustible.pdf'})">
+                    <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+                    <ion-label>Recargas de combustible</ion-label>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+                <ion-item button (click)="menuClick({file:'CVM.pdf'})">
+                    <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+                    <ion-label>Checklist</ion-label>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+                <ion-item button (click)="menuClick({file:'HDT-Subasta de unidades.pdf'})">
+                    <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+                    <ion-label>Subasta de unidades</ion-label>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+                <ion-item [routerLink]="['/tabs/filosofia/seguros']">
+                    <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+                    <ion-label>Relación de seguros / flotilla</ion-label>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>

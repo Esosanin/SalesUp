@@ -1,0 +1,38 @@
+export class Conceptos {
+    icon: boolean = false;
+
+	con_id: number = 0;
+	con_sol_id: number = 0;
+	con_origen: string = '';
+	con_destino: string = '';
+	con_tipoSolicitud: number = 0;
+	con_precioUnitario: number = 0;
+    con_precioUnitario_n: string = '';
+	con_cantidad: number = 0;
+	con_tipoComidas: number = 0;
+	con_ciudad: string = '';
+	con_fechaLlegada: string = '';
+	con_fechaSalida: string = '';
+	con_PersonasCantidad: number = 0;
+	con_cantidadNoches: number = 0;
+	con_numEconomico: string = '';
+	con_rendimiento: number = 0;
+	con_kmViaje: number = 0;
+	con_celular: number = 0;
+	con_comentario: string = '';
+	con_TOTAL: number = 0;
+	con_TOTAL_n: string = '';
+	con_edit: number = 0;
+	con_modificado: number = 0;
+	con_modificadoComentarios: string = '';
+	con_descripcion: string = '';
+	con_descripcion2: string = '';
+	con_cantidad2: number = 0;
+	con_precioUnitario2: number = 0;
+	con_precioUnitario2_n: string = '';
+	con_descripcion3: string = '';
+	con_cantidad3: number = 0;
+	con_precioUnitario3: number = 0;
+	con_precioUnitario3_n: string = '';
+	con_fecharegistro: string = '';
+}

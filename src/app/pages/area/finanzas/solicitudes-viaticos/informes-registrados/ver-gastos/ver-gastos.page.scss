@@ -1,0 +1,63 @@
+div#class-div_gastos{
+    height: 300px;
+    min-height: 300px;
+}
+
+div.class-div_tableText{
+    height: 100px;
+    min-height: 100px;
+    overflow: auto;
+}
+div.class-view_PDF{
+    overflow: auto;
+}
+
+div.class-div_space{
+    margin: 20px 10px;
+}
+
+p{
+    font-size: 14px;
+}
+
+.class-textcolor_gray{
+    color: gray;
+}
+
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+}
+
+hr.class-hr_style{
+    height: 1px;
+    width: 100%;
+    background-color: rgb(192, 192, 192);
+}
+
+ion-list {
+    height: 300px;
+    overflow: auto;
+}
+
+ion-item.class-item_pointer{
+    cursor: pointer;
+}
+
+ion-label.class-h3 h3{
+    width: auto;
+    max-width: 150px;
+    min-width: 150px;
+    padding-right: 10px;
+}
+
+ion-label.class-label{
+    //align-self: baseline;
+    flex: 1 1 0% !important;
+    white-space: initial !important;
+    width: auto;
+    max-width: none;
+    min-width: 150px;
+}

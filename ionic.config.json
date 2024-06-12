@@ -1,0 +1,7 @@
+{
+  "name": "salesup",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,20 @@
+.box {
+    position: relative;
+    margin-left: 20px;
+  }
+  .box:before{
+    position: absolute;
+    left: -20px;
+    content: "";
+    height:20px;
+    width:20px;
+    margin-bottom:15px;
+    border:1px solid black;
+  }
+  .box.red:before{
+    background-color:red;
+  }
+
+  .green {
+    background-color: #11c900;
+  }

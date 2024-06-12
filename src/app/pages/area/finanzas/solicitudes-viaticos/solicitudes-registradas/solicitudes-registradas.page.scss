@@ -1,0 +1,55 @@
+.class-content_spaces {
+    padding: 10px;
+    margin: 10px;
+}
+
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+
+    cursor: pointer;
+}
+
+.class-icon_center{
+    align-self: center;
+    text-align: center;
+}
+.class-icon_fontSize h3 a {
+    font-size: 20px;
+}
+
+hr.class-hr_style{
+    height: 1px;
+    width: 100%;
+    background-color: gray;
+}
+
+.class-span_text_p {
+    font-size: 14px;
+    color: gray;
+    white-space: initial !important;
+}
+a.class-span_text_p {
+    color: default;
+}
+a{
+    cursor: pointer;
+}
+
+ion-label.class-h3_modal h3{
+    width: auto;
+    max-width: 150px;
+    min-width: 150px;
+    padding-right: 10px;
+}
+
+ion-label.class-label_modal{
+    align-self: baseline;
+    flex: 1 1 0% !important;
+    white-space: initial !important;
+    width: auto;
+    max-width: none;
+    min-width: 150px;
+}

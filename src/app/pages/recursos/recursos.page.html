@@ -1,0 +1,87 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Mis recursos</ion-title>
+    </ion-toolbar>
+    <ion-toolbar>
+        <ion-segment [(ngModel)]="segment" [scrollable]="true">
+            <ion-segment-button value="solicitudes">
+                <ion-label>Solicitudes</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="reportes" disabled>
+                <ion-label>Reportes</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="repotros">
+                <ion-label>Reportes otros</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="otros" disabled>
+                <ion-label>Otros</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+    </ion-toolbar>
+</ion-header>
+
+<!-- SOLICITUDES -->
+<ion-content *ngIf="segment==='solicitudes'" class="ion-padding">
+    <ion-grid [fixed]="true">
+        <ion-row>
+            <ion-col size="12" size-sm="4" *ngFor="let solicitud of solicitudes">
+                <ion-item [routerLink]="[solicitud.url]">
+                    <ion-icon slot="start" name="{{solicitud.icon}}-outline" color="primary"></ion-icon>
+                    <ion-label>{{solicitud.title}}</ion-label>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+
+<!-- REPORTES -->
+<ion-content *ngIf="segment==='reportes'" class="ion-padding">
+    <ion-text color="primary" class="ion-text-center">
+        <h1>Reportes SAP</h1>
+    </ion-text>
+    <ion-list>
+        <ion-row>
+            <ion-col size="12" size-sm="4" *ngFor="let reporte of reportes">
+                <ion-item [routerLink]="[reporte.url]">
+                    <ion-icon slot="start" name="{{reporte.icon}}" color="primary"></ion-icon>
+                    <ion-label>{{reporte.title}}</ion-label>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-list>
+</ion-content>
+
+<!-- REPORTES OTROS -->
+<ion-content *ngIf="segment==='repotros'" class="ion-padding">
+    <ion-text color="primary" class="ion-text-center">
+        <h1>Reportes otros</h1>
+    </ion-text>
+        <ion-row>
+            <ion-col size="12" size-sm="4" *ngFor="let repotro of repotros">
+                <ion-item [routerLink]="[repotro.url]">
+                    <ion-icon slot="start" name="{{repotro.icon}}-outline" color="primary"></ion-icon>
+                    <ion-label>{{repotro.title}}</ion-label>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+</ion-content>
+
+<!-- OTROS -->
+<ion-content *ngIf="segment==='otros'" class="ion-padding">
+    <ion-text color="primary" class="ion-text-center">
+        <h1>Otras solicitudes</h1>
+    </ion-text>
+    <ion-list>
+        <ion-row>
+            <ion-col size="12" size-sm="4" *ngFor="let otro of otros">
+                <ion-item [routerLink]="[otro.url]">
+                    <ion-icon slot="start" name="{{otro.icon}}" color="primary"></ion-icon>
+                    <ion-label>{{otro.title}}</ion-label>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-list>
+</ion-content>

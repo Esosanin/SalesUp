@@ -1,0 +1,189 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+        <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+        <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="!showSearchbar">
+      <ion-button (click)="showSearchbar = true; focus();">
+          <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">Solicitudes en depósito</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always" (ionChange)="search = searchInput.value; onChangeSegment(); content.scrollToTop();" (ionCancel)="showSearchbar=false; search = ''; onChangeSegment(); content.scrollToTop();" placeholder="Buscar"></ion-searchbar>
+
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="segment">
+        <ion-segment-button title="por depositar" value="por depositar" (click)="onChangeSegment()" [disabled]="btn_changeSegment">
+            <ion-icon name="people"></ion-icon>
+        </ion-segment-button>
+        <ion-segment-button title="pagadas" value="pagadas"  (click)="onChangeSegment()" [disabled]="btn_changeSegment">
+            <ion-icon name="reader"></ion-icon>
+        </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+  <ion-progress-bar type="indeterminate" *ngIf="SD_showLoader"></ion-progress-bar>
+</ion-header>
+
+<ion-content>
+  <div class="class-content_spaces">
+    <div class="class-content_spaces ion-text-center"><ion-label><b>Solicitudes {{segment}}</b></ion-label></div>
+    <div *ngIf="segment === 'por depositar'">
+      <div *ngFor="let data of SD_solicitudesDeposito; let i = index;">
+        <ion-grid *ngIf="i<limite">
+          <ion-row class="class-div_box">
+            <ion-col size="9" (click)="SD_openModal_detalles(i);">
+              <ion-label>
+                <h3>Informe:</h3>
+                <p>{{data.sol_nombre_solicitud}}</p>
+                <h3>Clave:</h3>
+                <p>{{data.codigo}}</p>
+                <h3>Solicitante:</h3>
+                <p>{{data.nombre}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col class="class-btns_center" size="3" *ngIf="data.sol_estado === 3 && data.sol_retenida === 2">
+              <ion-button title="Ver solicitud" (click)="SD_verSolicitud(data.sol_id);"
+                          expand="block" fill="clear" shape="round">
+                <ion-icon slot="icon-only" name="document-outline"></ion-icon>
+              </ion-button>
+              <ion-button title="Archivar" (click)="SD_openModal_comentarios(data.sol_id); "
+                          expand="block" fill="clear" shape="round">
+                <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+    <div *ngIf="segment === 'pagadas'">
+      <div *ngFor="let data of SD_solicitudesDeposito; let i = index;">
+        <ion-grid *ngIf="i<limite">
+          <ion-row class="class-div_box">
+            <ion-col size="9" (click)="SD_openModal_detalles(i);">
+              <ion-label>
+                <h3>Informe:</h3>
+                <p>{{data.sol_nombre_solicitud}}</p>
+                <h3>Clave:</h3>
+                <p>{{data.codigo}}</p>
+                <h3>Fecha de deposito:</h3>
+                <p>{{data.fecha_deposito_n}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col class="class-btns_center" size="3">
+              <ion-button title="Ver solicitud" (click)="SD_verSolicitud(data.sol_id);"
+                          *ngIf="data.sol_retenida === 3" expand="block" fill="clear" shape="round">
+                <ion-icon slot="icon-only" name="document-outline"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+
+    <ion-infinite-scroll *ngIf="length >= 20" (ionInfinite)="addItems($event)">
+      <ion-infinite-scroll-content>
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content>
+
+
+
+<!-- Comentario -->
+<ion-modal #ModalComentario [isOpen]="modalComentarios" width="auto">
+  <ng-template>
+      <ion-header translucent="true">
+      <ion-toolbar>
+          <ion-title>Comentarios:</ion-title>
+          <ion-buttons slot="end">
+          <ion-button (click)="modalComentarios = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+          </ion-buttons>
+      </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <form #nuevoComentarioForm="ngForm">
+              <br>
+              <div>
+                  <ion-textarea id="comentario" name="comentario" placeholder="Comentar..." [(ngModel)]="SD_modalComentario.comment" #comentario="ngModel" rows="7" style="border-bottom: solid 1px black;"></ion-textarea>
+              </div>
+              <br>
+          </form>
+      </ion-content>
+      <ion-footer>
+          <ion-grid fixed>
+              <ion-row>
+                  <ion-col size="6">
+                      <ion-button (click)="modalComentarios = false;" color="warning" expand="block" fill="solid" shape="round">
+                          Regresar
+                      </ion-button>
+                  </ion-col>
+                  <ion-col size="6">
+                      <ion-button (click)="modalComentarios = false; SD_comentario();" color="primary" expand="block" fill="solid" shape="round">
+                          Confirmar
+                      </ion-button>
+                  </ion-col>
+              </ion-row>
+          </ion-grid>
+      </ion-footer>
+  </ng-template>
+</ion-modal> <!-- END -->
+
+<!-- Detalles de la solicitud -->
+<ion-modal #ModalDetalles [isOpen]="modalDetalles" width="auto">
+  <ng-template>
+      <ion-header translucent="true">
+      <ion-toolbar>
+          <ion-title>Detalles</ion-title>
+          <ion-buttons slot="end">
+          <ion-button (click)="modalDetalles = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+          </ion-buttons>
+      </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <ion-item>
+              <ion-label class="class-label class-h3_modal">Nombre de la solicitud:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.sol_nombre_solicitud}}</p>
+          </ion-item>
+          <ion-item>
+              <ion-label class="class-label class-h3_modal">Nombre del solicitante:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.nombre}}</p>
+          </ion-item>
+          <ion-item>
+              <ion-label class="class-label class-h3_modal">Origen:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.sol_origen}}</p>
+          </ion-item>
+          <ion-item>
+              <ion-label class="class-label class-h3_modal">Destino:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.sol_destino}}</p>
+          </ion-item>
+          <ion-item>
+              <ion-label class="class-label class-h3_modal">Tipo de pago:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.sol_cuentaDePago_n}}</p>
+          </ion-item>
+          <ion-item>
+              <ion-label class="class-label class-h3_modal">Cuenta:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.sol_cuentaPersonal_n}}</p>
+          </ion-item>
+          <ion-item>
+              <ion-label class="class-label class-h3_modal">Banco:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.sol_cuentaEmpresarial_n}}</p>
+          </ion-item>
+          <ion-item *ngIf="segment === 'pagadas'">
+              <ion-label class="class-label class-h3_modal">Fecha depósito:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.fecha_deposito_n}}</p>
+          </ion-item>
+          <ion-item>
+              <ion-label class="class-label class-h3_modal">Monto solicitado:</ion-label>
+              <p class="class-textcolor_gray">{{SD_modalDetalles.sumaTotal_n}}</p>
+          </ion-item>
+      </ion-content>
+  </ng-template>
+</ion-modal> <!-- END -->

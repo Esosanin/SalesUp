@@ -1,0 +1,933 @@
+<ion-header translucent="true">
+    <ion-toolbar>
+        <ion-buttons slot="start" *ngFor="let datosWoDetalleArray of datosWoDetalleArray">
+            <ion-menu-button></ion-menu-button>
+            <ion-back-button defaultHref="{{backD()}}"></ion-back-button>
+            <ion-title>Órdenes de trabajo: {{datosWoDetalleArray.prjcode}}</ion-title>
+            <ion-text>{{datosWoDetalleArray.prjname}}</ion-text>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar *ngFor="let datosGetWOPermisosArray of datosGetWOPermisosArray">
+        <ion-segment [(ngModel)]="segment">
+            <ion-segment-button value="InfoGralOT" ><!--  -->
+                Información general
+            </ion-segment-button>
+            <ion-segment-button value="EncuestaOT" *ngIf="datosGetWOPermisosArray.li_EncuestaOT >= 1"><!-- *ngIf="datosGetWOPermisosArray.li_EncuestaOT >= 1" -->
+                Encuesta del servicio
+            </ion-segment-button>
+            <!--<ion-segment-button value="ArchivosOT">
+                Archivos
+            </ion-segment-button>  -->
+        </ion-segment>
+    </ion-toolbar>
+</ion-header>
+
+
+<ion-content *ngIf="segment==='InfoGralOT'">
+  <ion-row *ngFor="let datosWoDetalleArray of datosWoDetalleArray">
+    <ion-col size-sm="12" size-md="6" style="margin-bottom: 20px; font-size: 14px;" *ngIf="datosWoDetalleArray.anticipo > 0 " >
+      <ion-accordion-group>
+        <ion-accordion value="third">
+          <ion-item slot="header" color="warning" style="text-align: left;">
+            <ion-label>Solicitar anticipo</ion-label>
+          </ion-item>
+          <div class="ion-padding" slot="content" style="border: 1px solid #ffc409; ">
+            <ion-accordion-group>
+              <ion-accordion value="uno">
+                <ion-item slot="header" color="light" style="text-align: left;">
+                  <ion-label>Monto completo</ion-label>
+                </ion-item>
+                <div class="ion-padding" slot="content" style="border: 1px solid #ededed; ">
+                  <form #anticipofacturadocompleto="ngForm">
+                    <ion-item>
+                      <ion-label position="">Comentarios
+                        <ion-text color="danger">*</ion-text>
+                      </ion-label>
+                      <ion-textarea required rows="5" id="coment_anticipo_completo" name="coment_anticipo_completo" #comentAnticipoCompleto="ngModel" [(ngModel)]="formFacturarAnticipoCompleto.coment_anticipo_completo" required></ion-textarea>
+                    </ion-item>
+                    <ion-button expand="block" id="btn_svAnticipo" [disabled]="!anticipofacturadocompleto.valid" (click)="FormWOAntiFactComp(anticipofacturadocompleto);">
+                      Facturar el monto completo
+                    </ion-button>
+                  </form>
+                </div>
+              </ion-accordion>
+              <ion-accordion value="dos">
+                <ion-item slot="header" color="light" style="text-align: left;">
+                    <ion-label>Monto parcial</ion-label>
+                </ion-item>
+                <div class="ion-padding" slot="content" style="border: 1px solid #ececec; ">
+                  <form #anticipofacturadoparcial="ngForm">
+                    <ion-item>
+                      <ion-input id="monto_facturar" type="number" min="0" placeholder="Escriba monto a facturar" required name="monto_facturar" #comentMontoFacturar="ngModel" [(ngModel)]="formFacturarAnticipoParcial.monto_facturar"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                      <ion-label position="">Comentarios
+                        <ion-text color="danger">*</ion-text>
+                      </ion-label>
+                      <ion-textarea required rows="5"  id="coment_anticipo" name="coment_anticipo_parcial" #comentAnticipoParcial="ngModel" [(ngModel)]="formFacturarAnticipoParcial.coment_anticipo_parcial" required></ion-textarea>
+                    </ion-item>
+                    <ion-button expand="block" id="btn_svAnticipoP" [disabled]="!anticipofacturadoparcial.valid" (click)="FormWOAntiFactParc(anticipofacturadoparcial);">
+                      Mandar a facturar
+                    </ion-button>
+                  </form>
+                </div>
+              </ion-accordion>
+            </ion-accordion-group>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-col>
+  </ion-row>
+
+    <ion-grid style="font-size: 14px;" *ngFor="let datosWoDetalleArray of datosWoDetalleArray">
+      <div id="InfoOT">
+
+        <ion-row *ngFor="let datosGetWOPermisosArray of datosGetWOPermisosArray">
+          <ion-col size-sm="12" size-md="6" size-lg="6" style="margin-bottom: 20px; font-size: 14px;">
+
+
+            <ion-text><b>Fecha confirmada</b>:</ion-text>
+            <div *ngIf="datosGetWOPermisosArray.OT_fecha_confirmada===1"><!--  -->
+              <ion-item *ngFor="let datosGetWODetalleArray of datosGetWODetalleArray">
+                <ion-text>{{datosGetWODetalleArray.fecha_confirmada}}</ion-text>
+              </ion-item>
+              <ion-item>
+                  <ion-text><small>Actualizar fecha: </small></ion-text><br>
+                  <form #formfechaconfirmada="ngForm">
+                    <ion-item >
+                      <ion-input type="date" id="OT_fecha_confirmada" name="OTfechaConfirmada" #OTfechaConfirmada="ngModel" [(ngModel)]="formFechaConfirmada.OTfechaConfirmada" required></ion-input>
+                      <ion-button expand="block" id="" [disabled]="!formfechaconfirmada.valid" (click)="FormFechaConfirmada(formfechaconfirmada);">
+                        <ion-icon name="send"></ion-icon>
+                      </ion-button>
+                    </ion-item>
+                  </form>
+              </ion-item>
+            </div>
+            <div *ngIf="datosGetWOPermisosArray.OT_fecha_confirmada!==1">
+              <ion-item *ngFor="let datosGetWODetalleArray of datosGetWODetalleArray">
+                <ion-input type="date" id="OT_fecha_confirmada" value="{{datosGetWODetalleArray.fecha_confirmada}}" disabled></ion-input>
+              </ion-item>
+            </div>
+
+
+            <br>
+            <ion-text><b>Fecha compromiso de entrega</b>:</ion-text>
+            <ion-item *ngFor="let datosGetWODetalleArray of datosGetWODetalleArray">
+              <ion-input type="date" id="OT_fecha_compromiso" value="{{datosGetWODetalleArray.fecha_compromiso}}" disabled></ion-input>
+            </ion-item>
+            <br>
+            <br>
+
+
+            <div id="div_RptsOT" >
+              <ion-item lines="none">
+                <ion-text><b>Reporte del servicio</b>:</ion-text><br>
+              </ion-item>
+              <ion-item *ngIf="datosGetWOPermisosArray.OTFile===1"><!--btn_UPOTFile==1 -->
+                <input type="file" id="OTFile" >
+                <ion-button expand="block" id="btn_UPOTFile">
+                  <ion-icon name="send"></ion-icon>
+                </ion-button>
+              </ion-item>
+                <div style="border: 1px solid #e5e6e7; padding-top: 5px; margin-top: 10px; ">
+                  <!--ion-item lines="none">
+                    <ion-text>Reporte de servicio y generadores:</ion-text>
+                  </ion-item-->
+                  <ion-item *ngFor="let adjuntosOTArray of adjuntosOTArray" style="font-size: 14px;">
+                    <ion-text>
+                      <a href="http://intranet.ecn.com.mx:8060/intranet/{{adjuntosOTArray.att_name_dir}}" target="_blank"><ion-icon name="open"></ion-icon> {{adjuntosOTArray.att_name}}</a>
+                      <ion-button size="small" fill="outline" id="" *ngIf="adjuntosOTArray.permisoborrar >= 1" (click)="BotonBorrarAnxOT(adjuntosOTArray.att_id);"> <!-- *ngIf="adjuntosOTArray.permisoborrar >= 1" -->
+                        <ion-icon name="trash"></ion-icon>
+                      </ion-button>
+                    </ion-text>
+                  </ion-item>
+                </div>
+              </div>
+              <br>
+            <br>
+            <br>
+
+
+            <ion-text><b>Fecha de terminación del servicio</b>:</ion-text>
+            <div *ngIf="datosGetWOPermisosArray.OT_fecha_terminacion===1"><!--  -->
+              <ion-item *ngFor="let datosGetWODetalleArray of datosGetWODetalleArray">
+                <ion-text>{{datosGetWODetalleArray.fecha_terminacion}}</ion-text>
+              </ion-item>
+              <ion-item>
+                <ion-text><small>Actualizar fecha: </small></ion-text><br>
+                <form #formfechaterminacion="ngForm">
+                  <ion-item >
+                    <ion-input type="date" id="OT_fecha_terminacion" name="OTfechaTerminacion" #OTfechaTerminacion="ngModel" [(ngModel)]="formFechaTerminacion.OTfechaTerminacion" required></ion-input>
+                    <ion-button expand="block" id="" [disabled]="!formfechaterminacion.valid" (click)="FormFechaTerminacion(formfechaterminacion);">
+                      <ion-icon name="send"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                </form>
+            </ion-item>
+            </div>
+            <div *ngIf="datosGetWOPermisosArray.OT_fecha_terminacion!==1">
+              <ion-item *ngFor="let datosGetWODetalleArray of datosGetWODetalleArray">
+                <ion-input type="date" id="OT_fecha_terminacion" value="{{datosGetWODetalleArray.fecha_terminacion}}" disabled></ion-input>
+              </ion-item>
+            </div>
+
+
+            <div *ngIf="datosGetWOPermisosArray.div_correo_encuesta===1">
+            <br>
+            <ion-text><b>Correo del cliente al que se enviará la encuesta de satisfacción</b>:</ion-text>
+            <ion-item>
+              <ion-input placeholder="Escriba correo" type="text" id="c_email" ></ion-input>
+            </ion-item>
+            </div>
+
+            <ion-col size-sm="12" style="margin-bottom: 20px; margin-top: 40px; font-size: 14px;" id="div_facturacion" *ngIf="datosGetWOPermisosArray.div_facturacion===1">
+              <h4>Facturación:</h4>
+              <ion-accordion-group>
+                <ion-accordion value="uno">
+                  <ion-item slot="header" color="light" style="text-align: left;">
+                    <ion-label>Monto completo</ion-label>
+                  </ion-item>
+                  <div class="ion-padding" slot="content" style="border: 1px solid #ededed; ">
+                    <form #anticipofacturadocompleto2="ngForm">
+                      <ion-item>
+                        <ion-label position="">Comentarios
+                          <ion-text color="danger">*</ion-text>
+                        </ion-label>
+                        <ion-textarea required rows="5" id="coment_anticipo_completo" name="coment_anticipo_completo" #comentAnticipoCompleto="ngModel" [(ngModel)]="formFacturarAnticipoCompleto.coment_anticipo_completo" required></ion-textarea>
+                      </ion-item>
+                      <ion-button expand="block" id="btn_svAnticipo" [disabled]="!anticipofacturadocompleto2.valid" (click)="FormWOAntiFactComp(anticipofacturadocompleto2);">
+                        Facturar el monto completo
+                      </ion-button>
+                    </form>
+                  </div>
+                </ion-accordion>
+                <ion-accordion value="dos">
+                  <ion-item slot="header" color="light" style="text-align: left;">
+                      <ion-label>Monto parcial</ion-label>
+                  </ion-item>
+                  <div class="ion-padding" slot="content" style="border: 1px solid #ececec; ">
+                    <form #anticipofacturadoparcial2="ngForm">
+                      <ion-item>
+                        <ion-input id="monto_facturar" type="number" min="0" placeholder="Escriba monto a facturar" required name="monto_facturar" #comentMontoFacturar="ngModel" [(ngModel)]="formFacturarAnticipoParcial.monto_facturar"></ion-input>
+                      </ion-item>
+                      <ion-item>
+                        <ion-label position="">Comentarios
+                          <ion-text color="danger">*</ion-text>
+                        </ion-label>
+                        <ion-textarea required rows="5"  id="coment_anticipo" name="coment_anticipo_parcial" #comentAnticipoParcial="ngModel" [(ngModel)]="formFacturarAnticipoParcial.coment_anticipo_parcial" required></ion-textarea>
+                      </ion-item>
+                      <ion-button expand="block" id="btn_svAnticipoP" [disabled]="!anticipofacturadoparcial2.valid" (click)="FormWOAntiFactParc(anticipofacturadoparcial2);">
+                        Mandar a facturar
+                      </ion-button>
+                    </form>
+                  </div>
+                </ion-accordion>
+              </ion-accordion-group>
+          </ion-col>
+
+          </ion-col>
+          <ion-col size-sm="12" size-md="6" size-lg="6" style="margin-bottom: 20px;">
+            <label><b>Comentarios</b>:</label>
+                <br>
+                <div style="border: 1px solid #e5e6e7; padding-top: 15px; margin-top: 10px; ">
+                <ion-item *ngFor="let datosWoHistComentsArray of datosWoHistComentsArray" style="margin-bottom: 20px;">
+                    <ion-text style="font-size: 14px;" id="HistComents_OT">
+                        ({{datosWoHistComentsArray.coment_date}}) {{datosWoHistComentsArray.colaborador}}
+                        <br>{{datosWoHistComentsArray.coment_ot}}
+                    </ion-text>
+                </ion-item>
+                <ion-item *ngIf="datosGetWOPermisosArray.coment_ot===1"><!-- btn_sendComentOT   -->
+                  <form #comentariosWoHistComents="ngForm">
+                    <ion-label position=""><b>Comentario</b>:
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-textarea required rows="3"  id="coment_ot" name="comentOt" #comentOt="ngModel" [(ngModel)]="formFacturarAnticipoCompleto.comentOt" required></ion-textarea>
+                    <ion-button expand="block" id="btn_sendComentOT" [disabled]="!comentariosWoHistComents.valid" (click)="FormWOHistorialComent(comentariosWoHistComents);">
+                      <ion-icon name="send"></ion-icon>
+                    </ion-button>
+                  </form>
+                </ion-item>
+              </div>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-grid>
+
+    <div class="clearfix"></div>
+    <br>
+
+    <ion-grid id="InfoIntra" *ngFor="let datosWoDetalleArray of datosWoDetalleArray" style="font-size: 14px;">
+
+      <ion-row *ngIf="datosWoDetalleArray.id_cotizacion > 0">
+
+          <ion-col size-sm="12" style="margin-bottom: 20px;">
+              <h4>Cotización y pedido:</h4>
+          </ion-col>
+
+          <ion-col size-sm="12" size-md="6" size-lg="6" style="margin-bottom: 20px;">
+              <label><b>Cotización</b>:</label><br>
+              <div style="border: 1px solid #e5e6e7; padding-top: 5px; margin-top: 10px; ">
+              <ion-item>
+                Archivos:
+              </ion-item>
+              <ion-item *ngFor="let datosWoDetalleArchivosCotArray of datosWoDetalleArchivosCotArray" style="font-size: 14px;">
+                    <ion-label><a href="http://intranet.ecn.com.mx:8060/intranet/{{datosWoDetalleArchivosCotArray.anexos_adjuntar}}" target="_blank"><ion-icon name="open"></ion-icon> {{datosWoDetalleArchivosCotArray.anexos_archivo}}</a></ion-label>
+              </ion-item>
+              </div>
+              <br>
+              <br>
+
+              <label><b>Orden de compra y pedido</b>:</label><br>
+                <div id="div_archivos_ocpS" >
+                  <div style="border: 1px solid #e5e6e7; padding-top: 5px; margin-top: 10px; ">
+                  <ion-item>
+                    Archivos:
+                  </ion-item>
+                    <ion-item *ngFor="let datosWoDetalleArchivosOCPArray of datosWoDetalleArchivosOCPArray" style="font-size: 14px;">
+                        <ion-label><a href="http://intranet.ecn.com.mx:8060/intranet/{{datosWoDetalleArchivosOCPArray.anexos_adjuntar}}" target="_blank"><ion-icon name="open"></ion-icon> {{datosWoDetalleArchivosOCPArray.anexos_archivo}}</a></ion-label>
+                    </ion-item>
+                    </div>
+                </div>
+          </ion-col>
+
+          <ion-col size-sm="12" size-md="6" size-lg="6">
+                <label><b>Comentarios</b>:</label>
+                <br>
+                <div style="border: 1px solid #e5e6e7; padding-top: 15px; margin-top: 10px; ">
+                <ion-item *ngFor="let datosWoDetalleHistComentariosArray of datosWoDetalleHistComentariosArray" style="margin-bottom: 20px;">
+                    <ion-text style="font-size: 14px;">
+                        ({{datosWoDetalleHistComentariosArray.appComentarios_comentariosFecha}}) {{datosWoDetalleHistComentariosArray.nombrecolaborador}}
+                        <br>{{datosWoDetalleHistComentariosArray.appComentarios_comentarios}}
+                    </ion-text>
+                </ion-item>
+              </div>
+          </ion-col>
+      </ion-row>
+
+      <ion-row *ngFor="let datosGetWOPermisosArray of datosGetWOPermisosArray">
+        <ion-col size-sm="12" size-md="6" style="margin-bottom: 60px;">
+          <!-- Cancelar *ngIf="datosGetWOPermisosArray.btn_CancelarWO == 1 || this.othorasregistradasproy < 1" -->
+          <ion-accordion-group *ngIf="datosGetWOPermisosArray.btn_CancelarWO === 1 || this.othorasregistradasproy < 1">
+            <ion-accordion value="uno">
+              <ion-item slot="header" color="danger" style="text-align: center;">
+                <ion-label>Cancelar Orden</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" style="border: 1px solid #ededed; ">
+                <form #formcancelarot="ngForm">
+                  <ion-item>¿Porqué se está cancelando la orden de trabajo? </ion-item>
+                  <ion-item>
+                    <ion-textarea required rows="5" id="coment_cancel_ot" name="comentcancelot" #comentcancelot="ngModel" [(ngModel)]="formCancelarOT.comentcancelot" required></ion-textarea>
+                  </ion-item>
+                  <ion-button expand="block" id="btn_FinCancelarWO" [disabled]="!formcancelarot.valid" (click)="FormWOCancelar(formcancelarot);">
+                    Cancelar
+                  </ion-button>
+                </form>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+        </ion-col>
+        <ion-col size-sm="12" size-md="6" style="margin-bottom: 60px;">
+
+          <!-- *ngIf="datosGetWOPermisosArray.btn_RegEPWO == 1" -->
+          <ion-button id="btn_RegEPWO"  (click)="regresarEPWO(this.idDetalleWO)" color="warning" *ngIf="datosGetWOPermisosArray.btn_RegEPWO === 1">
+            Regresar a en proceso
+          </ion-button>
+
+          <!--Terminar  *ngIf="(datosGetWOPermisosArray.btn_TerminarWO == 1) && (datosGetWODetalleArray.existe_fecha_terminacion==1) && (datosGetWODetalleArray.encuestas_total <= datosGetWODetalleArray.encuestas_hechas)" -->
+          <div *ngFor="let datosGetWODetalleArray of datosGetWODetalleArray">
+          <ion-accordion-group *ngIf="(datosGetWOPermisosArray.btn_TerminarWO === 1) && (datosGetWODetalleArray.existe_fecha_terminacion===1) && (datosGetWODetalleArray.encuestas_total <= datosGetWODetalleArray.encuestas_hechas)">
+            <ion-accordion value="uno">
+              <ion-item slot="header" color="primary" style="text-align: center;">
+                <ion-label>Terminar Orden</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" style="border: 1px solid #ededed; ">
+                <ion-accordion-group>
+                  <ion-accordion value="uno">
+                    <ion-item slot="header" color="light" style="text-align: left;">
+                      <ion-label>Facturar monto completo</ion-label>
+                    </ion-item>
+                    <div class="ion-padding" slot="content" style="border: 1px solid #ededed; ">
+                      <form #anticipofacturadocompleto3="ngForm">
+                        <ion-item>
+                          <ion-label position="">Comentarios
+                            <ion-text color="danger">*</ion-text>
+                          </ion-label>
+                          <ion-textarea required rows="5" id="coment_anticipo_completo" name="coment_anticipo_completo" #comentAnticipoCompleto="ngModel" [(ngModel)]="formFacturarAnticipoCompleto.coment_anticipo_completo" required></ion-textarea>
+                        </ion-item>
+                        <ion-button expand="block" id="btn_svAnticipo" [disabled]="!anticipofacturadocompleto3.valid" (click)="FormTerminarWOFactComp(anticipofacturadocompleto3);">
+                          Terminar Orden
+                        </ion-button>
+                      </form>
+                    </div>
+                  </ion-accordion>
+                  <ion-accordion value="dos">
+                    <ion-item slot="header" color="light" style="text-align: left;">
+                        <ion-label>Facturar monto parcial</ion-label>
+                    </ion-item>
+                    <div class="ion-padding" slot="content" style="border: 1px solid #ececec; ">
+                      <form #anticipofacturadoparcial3="ngForm">
+                        <ion-item>
+                          <ion-input id="monto_facturar" type="number" min="0" placeholder="Escriba monto a facturar" required name="monto_facturar" #comentMontoFacturar="ngModel" [(ngModel)]="formFacturarAnticipoParcial.monto_facturar"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                          <ion-label position="">Comentarios
+                            <ion-text color="danger">*</ion-text>
+                          </ion-label>
+                          <ion-textarea required rows="5"  id="coment_anticipo" name="coment_anticipo_parcial" #comentAnticipoParcial="ngModel" [(ngModel)]="formFacturarAnticipoParcial.coment_anticipo_parcial" required></ion-textarea>
+                        </ion-item>
+                        <ion-button expand="block" id="btn_svAnticipoP" [disabled]="!anticipofacturadoparcial3.valid" (click)="FormTerminarWOFactParc(anticipofacturadoparcial3);">
+                          Terminar Orden
+                        </ion-button>
+                      </form>
+                    </div>
+                  </ion-accordion>
+                </ion-accordion-group>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+
+          <!-- *ngIf="(datosGetWOPermisosArray.btn_EjecutarWO == 1) && (datosGetWODetalleArray.existe_fecha_confirmada==1)" -->
+          <!--ion-button id="btn_EjecutarWO" >
+            Ejecutada
+          </ion-button-->
+          <ion-accordion-group *ngIf="(datosGetWOPermisosArray.btn_EjecutarWO === 1) && (datosGetWODetalleArray.existe_fecha_confirmada===1)">
+            <ion-accordion value="uno">
+              <ion-item slot="header" color="primary" style="text-align: center;">
+                <ion-label>Ejecutada</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" style="border: 1px solid #ededed; ">
+                <form #formencuestasatisf="ngForm">
+                  <ion-item>Correo del cliente al que se enviará la encuesta de satisfacción:</ion-item>
+                  <ion-item>
+                    <ion-input placeholder="Escriba correo" type="email" id="c_email" name="mailencuestasatisf" #mailencuestasatisf="ngModel" [(ngModel)]="formencuestasatisf2.mailencuestasatisf" required></ion-input>
+                  </ion-item>
+                  <ion-button expand="block" id="" [disabled]="!formencuestasatisf.valid" (click)="FormEjecutar(formencuestasatisf);">
+                    Ejecutada
+                  </ion-button>
+                </form>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+          </div>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+</ion-content>
+
+
+
+
+<ion-content *ngIf="segment==='EncuestaOT'">
+  <br>
+  <div *ngFor="let datosGetWOPermisosArray of datosGetWOPermisosArray">
+  <div *ngFor="let datosGetWODetalleArray of datosGetWODetalleArray">
+
+    <div *ngIf="(datosGetWODetalleArray.com_encuesta <= 0) && (datosGetWOPermisosArray.GetSurveyComent>0)" > <!-- *ngIf="(datosGetWODetalleArray.com_encuesta <=0) && (datosGetWOPermisosArray.GetSurveyComent>0)" -->
+      <ion-row>
+        <ion-col size-sm="12">
+          <form #formencuestacomentsugerencia="ngForm">
+            <ion-item>¿Qué se tiene que reconsiderar para el siguiente año? <small> Min. 30 caracteres sin espacios</small></ion-item>
+            <ion-item>
+              <ion-textarea rows="5" id="encuestacomentsugerencia" name="encuestacomentsugerencia" #encuestacomentsugerencia="ngModel" [(ngModel)]="formSugerenciaOT.encuestacomentsugerencia" minlength="33" required></ion-textarea>
+            </ion-item>
+            <ion-button expand="block" id="btn_saveSurvey_coment" [disabled]="!formencuestacomentsugerencia.valid" (click)="FormEncSugerenciaOT(formencuestacomentsugerencia);">
+              Guardar comentario
+            </ion-button>
+          </form>
+          <br>
+          <br>
+        </ion-col>
+      </ion-row>
+      <br>
+      <ion-row>
+        <ion-col size-sm="12">
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <div *ngIf="(datosGetWODetalleArray.com_encuesta > 0) && (datosGetWOPermisosArray.GetSurveyComent>0)"> <!-- *ngIf="(datosGetWODetalleArray.com_encuesta > 0) && (datosGetWOPermisosArray.GetSurveyComent>0)" -->
+      <ion-row >
+        <ion-col size-sm="12" *ngFor="let datosEncuestaServicioRetro of datosEncuestaServicioRetro">
+          <ion-label>
+            <b>¿Qué se tiene que reconsiderar para el siguiente año?:</b>
+          </ion-label>
+          <ion-item >
+            {{datosEncuestaServicioRetro.comentario}}
+            <br>
+            <br>
+            <br>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <br>
+      <br>
+      <ion-row>
+        <ion-col size-sm="12">
+          <h5><b>Evaluaciones a los recursos</b> ({{datosGetWODetalleArray.encuestas_hechas}}/{{datosGetWODetalleArray.encuestas_total}})</h5>
+        </ion-col>
+        <br>
+        <ion-col size-sm="12" *ngIf="datosGetWODetalleArray.encuestas_hechas < datosGetWODetalleArray.encuestas_total"> <!-- *ngIf="datosGetWODetalleArray.encuestas_hechas < datosGetWODetalleArray.encuestas_total" -->
+          <form #formevaluacionrecursos="ngForm">
+            <ion-grid>
+              <ion-row>
+                <ion-col size-sm="12" size-md="3" *ngIf="datosGetWOPermisosArray.GetSurveyResources > 0"><!-- *ngIf="datosGetWOPermisosArray.GetSurveyResources > 0" -->
+                  <!--b id="recursos_encuesta">Recurso</b>
+                  <ion-list>
+                    <ion-radio-group [allowEmptySelection]="false" value="turtles" name="recursoId" #recursoId="ngModel" [(ngModel)]="formRecursosEncuesta.recursoId" required>
+                      <ion-item *ngFor="let datosPersonasXEvaluar of datosPersonasXEvaluar" style="font-size: 14px;">
+                        <div *ngIf="datosPersonasXEvaluar.terminado > 0">
+                          <ion-label>{{datosPersonasXEvaluar.name}}</ion-label>
+                          <ion-radio slot="end" value="{{datosPersonasXEvaluar.IdResource}}"></ion-radio>
+                        </div><br>
+                      </ion-item>
+                    </ion-radio-group>
+                  </ion-list-->
+                  <!--br><br>
+                  <ion-header [translucent]="true">
+                    <ion-toolbar>
+                      <ion-title>
+                        Ionic Radio List
+                      </ion-title>
+                    </ion-toolbar>
+                  </ion-header-->
+
+                  <ion-content>
+                    <ion-list>
+                      <ion-radio-group [allowEmptySelection]="false" value="turtles" name="recursoId" #recursoId="ngModel" [(ngModel)]="formRecursosEncuesta.recursoId" required >
+                        <ion-list-header>
+                          <ion-label style="font-size: 14px;"><b id="recursos_encuesta">Recurso</b></ion-label>
+                        </ion-list-header>
+                        <ion-item lines="none" *ngFor="let datosPersonasXEvaluar of datosPersonasXEvaluar">
+                          <ion-label style="font-size: 14px;" *ngIf="datosPersonasXEvaluar.terminado < 1">{{datosPersonasXEvaluar.name}}</ion-label><!-- *ngIf="datosPersonasXEvaluar.terminado < 1" -->
+                          <ion-radio slot="start" value="{{datosPersonasXEvaluar.IdResource}}" *ngIf="datosPersonasXEvaluar.terminado < 1"></ion-radio><!-- *ngIf="datosPersonasXEvaluar.terminado < 1" -->
+                        </ion-item>
+                      </ion-radio-group>
+                    </ion-list>
+                  </ion-content>
+                </ion-col>
+
+                <ion-col size-sm="12" size-md="9" class="gridencuestaserv" *ngIf="datosGetWOPermisosArray.GetSurveyQuestions > 0"><!-- *ngIf="datosGetWOPermisosArray.GetSurveyQuestions > 0" -->
+                  <ion-row>
+                    <ion-col size-sm="12" size-md="6" style="text-align: left; padding: 15px; background-color: #eee;"><b>Habilidades a calificar</b></ion-col>
+                    <ion-col size-sm="2" size-md="1" id="respuestas_encuesta" style="padding: 15px; background-color: #eee;"><b>M(1)</b></ion-col>
+                    <ion-col size-sm="2" size-md="1" style="padding: 15px; background-color: #eee;"><b>R(2)</b></ion-col>
+                    <ion-col size-sm="2" size-md="1" style="padding: 15px; background-color: #eee;"><b>B(3)</b></ion-col>
+                    <ion-col size-sm="2" size-md="1" style="padding: 15px; background-color: #eee;"><b>MB(4)</b></ion-col>
+                    <ion-col size-sm="2" size-md="1" style="padding: 15px; background-color: #eee;"><b>E(5)</b></ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Coordinación previa al servicio</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="coord" name="coordprevserv" #coordprevserv="ngModel" [(ngModel)]="formRecursosEncuesta.coordprevserv" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1" style="background-color:#eee;"></ion-col>
+                    <ion-col size-sm="2" size-md="1" style="background-color:#eee;"></ion-col>
+                    <ion-col size-sm="2" size-md="1" style="background-color:#eee;"></ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="coord" name="coordprevserv" #coordprevserv="ngModel" [(ngModel)]="formRecursosEncuesta.coordprevserv" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Entrega de parámetros de configuración electrónica o impresa</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="entregaconfelectimp" name="entregaconfelectimp" #entregaconfelectimp="ngModel" [(ngModel)]="formRecursosEncuesta.entregaconfelectimp" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1" style="background-color:#eee;"></ion-col>
+                    <ion-col size-sm="2" size-md="1" style="background-color:#eee;"></ion-col>
+                    <ion-col size-sm="2" size-md="1" style="background-color:#eee;"></ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="entregaconfelectimp" name="entregaconfelectimp" #entregaconfelectimp="ngModel" [(ngModel)]="formRecursosEncuesta.entregaconfelectimp" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Puntualidad</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="puntualidad" name="puntualidad" #puntualidad="ngModel" [(ngModel)]="formRecursosEncuesta.puntualidad" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="puntualidad" name="puntualidad" #puntualidad="ngModel" [(ngModel)]="formRecursosEncuesta.puntualidad" required>
+                        <ion-radio value="2"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="puntualidad" name="puntualidad" #puntualidad="ngModel" [(ngModel)]="formRecursosEncuesta.puntualidad" required>
+                        <ion-radio value="3"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="puntualidad" name="puntualidad" #puntualidad="ngModel" [(ngModel)]="formRecursosEncuesta.puntualidad" required>
+                        <ion-radio value="4"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="puntualidad" name="puntualidad" #puntualidad="ngModel" [(ngModel)]="formRecursosEncuesta.puntualidad" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Uniforme</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="uniforme" name="uniforme" #uniforme="ngModel" [(ngModel)]="formRecursosEncuesta.uniforme" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="uniforme" name="uniforme" #uniforme="ngModel" [(ngModel)]="formRecursosEncuesta.uniforme" required>
+                        <ion-radio value="2"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="uniforme" name="uniforme" #uniforme="ngModel" [(ngModel)]="formRecursosEncuesta.uniforme" required>
+                        <ion-radio value="3"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="uniforme" name="uniforme" #uniforme="ngModel" [(ngModel)]="formRecursosEncuesta.uniforme" required>
+                        <ion-radio value="4"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="uniforme" name="uniforme" #uniforme="ngModel" [(ngModel)]="formRecursosEncuesta.uniforme" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Equipo de seguridad</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="equiposeguridad" name="equiposeguridad" #equiposeguridad="ngModel" [(ngModel)]="formRecursosEncuesta.equiposeguridad" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="equiposeguridad" name="equiposeguridad" #equiposeguridad="ngModel" [(ngModel)]="formRecursosEncuesta.equiposeguridad" required>
+                        <ion-radio value="2"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="equiposeguridad" name="equiposeguridad" #equiposeguridad="ngModel" [(ngModel)]="formRecursosEncuesta.equiposeguridad" required>
+                        <ion-radio value="3"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="equiposeguridad" name="equiposeguridad" #equiposeguridad="ngModel" [(ngModel)]="formRecursosEncuesta.equiposeguridad" required>
+                        <ion-radio value="4"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="equiposeguridad" name="equiposeguridad" #equiposeguridad="ngModel" [(ngModel)]="formRecursosEncuesta.equiposeguridad" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Conocimiento técnico del equipo</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="conocimientotecnicoeq" name="conocimientotecnicoeq" #conocimientotecnicoeq="ngModel" [(ngModel)]="formRecursosEncuesta.conocimientotecnicoeq" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="conocimientotecnicoeq" name="conocimientotecnicoeq" #conocimientotecnicoeq="ngModel" [(ngModel)]="formRecursosEncuesta.conocimientotecnicoeq" required>
+                        <ion-radio value="2"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="conocimientotecnicoeq" name="conocimientotecnicoeq" #conocimientotecnicoeq="ngModel" [(ngModel)]="formRecursosEncuesta.conocimientotecnicoeq" required>
+                        <ion-radio value="3"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="conocimientotecnicoeq" name="conocimientotecnicoeq" #conocimientotecnicoeq="ngModel" [(ngModel)]="formRecursosEncuesta.conocimientotecnicoeq" required>
+                        <ion-radio value="4"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="conocimientotecnicoeq" name="conocimientotecnicoeq" #conocimientotecnicoeq="ngModel" [(ngModel)]="formRecursosEncuesta.conocimientotecnicoeq" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Certeza en detección de problema</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="certezadetecproblema" name="certezadetecproblema" #certezadetecproblema="ngModel" [(ngModel)]="formRecursosEncuesta.certezadetecproblema" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="certezadetecproblema" name="certezadetecproblema" #certezadetecproblema="ngModel" [(ngModel)]="formRecursosEncuesta.certezadetecproblema" required>
+                        <ion-radio value="2"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="certezadetecproblema" name="certezadetecproblema" #certezadetecproblema="ngModel" [(ngModel)]="formRecursosEncuesta.certezadetecproblema" required>
+                        <ion-radio value="3"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="certezadetecproblema" name="certezadetecproblema" #certezadetecproblema="ngModel" [(ngModel)]="formRecursosEncuesta.certezadetecproblema" required>
+                        <ion-radio value="4"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="certezadetecproblema" name="certezadetecproblema" #certezadetecproblema="ngModel" [(ngModel)]="formRecursosEncuesta.certezadetecproblema" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Herramienta y Equipo</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="herramientayeqipo" name="herramientayeqipo" #herramientayeqipo="ngModel" [(ngModel)]="formRecursosEncuesta.herramientayeqipo" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="herramientayeqipo" name="herramientayeqipo" #herramientayeqipo="ngModel" [(ngModel)]="formRecursosEncuesta.herramientayeqipo" required>
+                        <ion-radio value="2"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="herramientayeqipo" name="herramientayeqipo" #herramientayeqipo="ngModel" [(ngModel)]="formRecursosEncuesta.herramientayeqipo" required>
+                        <ion-radio value="3"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="herramientayeqipo" name="herramientayeqipo" #herramientayeqipo="ngModel" [(ngModel)]="formRecursosEncuesta.herramientayeqipo" required>
+                        <ion-radio value="4"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="herramientayeqipo" name="herramientayeqipo" #herramientayeqipo="ngModel" [(ngModel)]="formRecursosEncuesta.herramientayeqipo" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Calidad del reporte de Servicio</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="calidadreporteservicio" name="calidadreporteservicio" #calidadreporteservicio="ngModel" [(ngModel)]="formRecursosEncuesta.calidadreporteservicio" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="calidadreporteservicio" name="calidadreporteservicio" #calidadreporteservicio="ngModel" [(ngModel)]="formRecursosEncuesta.calidadreporteservicio" required>
+                        <ion-radio value="2"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="calidadreporteservicio" name="calidadreporteservicio" #calidadreporteservicio="ngModel" [(ngModel)]="formRecursosEncuesta.calidadreporteservicio" required>
+                        <ion-radio value="3"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="calidadreporteservicio" name="calidadreporteservicio" #calidadreporteservicio="ngModel" [(ngModel)]="formRecursosEncuesta.calidadreporteservicio" required>
+                        <ion-radio value="4"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="calidadreporteservicio" name="calidadreporteservicio" #calidadreporteservicio="ngModel" [(ngModel)]="formRecursosEncuesta.calidadreporteservicio" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col  size-sm="12" size-md="6" style="text-align: left;">Trato personal</ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="tratopersonal" name="tratopersonal" #tratopersonal="ngModel" [(ngModel)]="formRecursosEncuesta.tratopersonal" required>
+                        <ion-radio value="1"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="tratopersonal" name="tratopersonal" #tratopersonal="ngModel" [(ngModel)]="formRecursosEncuesta.tratopersonal" required>
+                        <ion-radio value="2"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="tratopersonal" name="tratopersonal" #tratopersonal="ngModel" [(ngModel)]="formRecursosEncuesta.tratopersonal" required>
+                        <ion-radio value="3"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="tratopersonal" name="tratopersonal" #tratopersonal="ngModel" [(ngModel)]="formRecursosEncuesta.tratopersonal" required>
+                        <ion-radio value="4"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                    <ion-col size-sm="2" size-md="1">
+                      <ion-radio-group [allowEmptySelection]="false" value="tratopersonal" name="tratopersonal" #tratopersonal="ngModel" [(ngModel)]="formRecursosEncuesta.tratopersonal" required>
+                        <ion-radio value="5"></ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  <br>
+                  <br>
+                  <ion-row>
+                    <ion-button expand="block" id="btn_saveSurvey" [disabled]="!formevaluacionrecursos.valid" (click)="FormRecursosEncuestaWO(formevaluacionrecursos);">
+                      Guardar comentario
+                    </ion-button>
+                  </ion-row>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </form>
+        </ion-col>
+
+        <ion-col size-sm="12" *ngIf="datosGetWODetalleArray.encuestas_hechas >= datosGetWODetalleArray.encuestas_total"> <!-- *ngIf="datosGetWODetalleArray.encuestas_hechas >= datosGetWODetalleArray.encuestas_total" -->
+          <ion-accordion-group *ngFor="let datosPersonasXEvaluar of datosPersonasXEvaluar">
+
+            <ion-accordion value="{{datosPersonasXEvaluar.IdResource}}">
+              <ion-item slot="header" color="light">
+                <ion-label>{{datosPersonasXEvaluar.name}}</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" >
+                <ion-grid class="gridencuestaserv">
+                    <ion-row>
+                      <ion-col size-sm="12" size-md="6" style="text-align: left; padding: 15px;"><b>Habilidades a calificar</b></ion-col>
+                      <ion-col size-sm="2" size-md="1" id="respuestas_encuesta" style="padding: 15px; "><b>M(1)</b></ion-col>
+                      <ion-col size-sm="2" size-md="1" style="padding: 15px; "><b>R(2)</b></ion-col>
+                      <ion-col size-sm="2" size-md="1" style="padding: 15px; "><b>B(3)</b></ion-col>
+                      <ion-col size-sm="2" size-md="1" style="padding: 15px; "><b>MB(4)</b></ion-col>
+                      <ion-col size-sm="2" size-md="1" style="padding: 15px; "><b>E(5)</b></ion-col>
+                    </ion-row>
+                    <ion-row *ngFor="let datosEncuestasOT of datosEncuestasOT">
+                      <ion-col size-sm="12" size-md="6" style="text-align: left;" *ngIf="datosPersonasXEvaluar.IdResource === datosEncuestasOT.id_user">
+                        {{datosEncuestasOT.pregunta}}
+                      </ion-col>
+                      <ion-col size-sm="2" size-md="1" *ngIf="datosPersonasXEvaluar.IdResource === datosEncuestasOT.id_user">
+                        <ion-text *ngIf="datosEncuestasOT.id_response===1">
+                          <ion-icon name="checkmark"></ion-icon>
+                        </ion-text>
+                      </ion-col>
+                      <ion-col size-sm="2" size-md="1" *ngIf="datosPersonasXEvaluar.IdResource === datosEncuestasOT.id_user">
+                        <ion-text *ngIf="datosEncuestasOT.id_response===2">
+                          <ion-icon name="checkmark"></ion-icon>
+                        </ion-text>
+                      </ion-col>
+                      <ion-col size-sm="2" size-md="1" *ngIf="datosPersonasXEvaluar.IdResource === datosEncuestasOT.id_user">
+                        <ion-text *ngIf="datosEncuestasOT.id_response===3">
+                          <ion-icon name="checkmark"></ion-icon>
+                        </ion-text>
+                      </ion-col>
+                      <ion-col size-sm="2" size-md="1" *ngIf="datosPersonasXEvaluar.IdResource === datosEncuestasOT.id_user">
+                        <ion-text *ngIf="datosEncuestasOT.id_response===4">
+                          <ion-icon name="checkmark"></ion-icon>
+                        </ion-text>
+                      </ion-col>
+                      <ion-col size-sm="2" size-md="1" *ngIf="datosPersonasXEvaluar.IdResource === datosEncuestasOT.id_user">
+                        <ion-text *ngIf="datosEncuestasOT.id_response===5">
+                          <ion-icon name="checkmark"></ion-icon>
+                        </ion-text>
+                      </ion-col>
+                  </ion-row>
+                </ion-grid>
+
+              </div>
+            </ion-accordion>
+
+          </ion-accordion-group>
+        </ion-col>
+
+        <ion-col size-sm="12">
+          <div id="avg_encuesta" *ngIf="datosGetWOPermisosArray.GetSurveyAVG > 0"><!-- *ngIf="datosGetWOPermisosArray.GetSurveyAVG > 0" -->
+            <ion-item *ngFor="let datosEvaluacionAvg of datosEvaluacionAvg">
+              Calificación total: {{datosEvaluacionAvg.calificacion}}
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+    </div>
+
+
+  </div>
+  </div>
+</ion-content>
+
+<ion-content *ngIf="segment==='ArchivosOT'">
+    <br>
+    <ion-grid id="" style="font-size: 14px;">
+      <ion-row>
+          <ion-col size-sm="12" size-md="6" size-lg="6" style="margin-bottom: 20px;">
+            <!--form #ticketForm="ngForm">
+              <ion-button size="small" (click)="anexar()" style="margin-top: 12px;" shape="round" color="success">
+                <ion-icon slot="start" name="document-outline"></ion-icon>
+                Anexar archivos
+            </ion-button>
+            <ion-button size="small" [disabled]="archivos.length <=0" (click)="vaciar()" color="danger" style="margin-top: 12px;" shape="round">
+                <ion-icon slot="start" name="trash-outline"></ion-icon>
+                Vaciar
+            </ion-button>
+            <ion-list *ngIf="archivos.length > 0" lines="none">
+                <ion-item *ngFor="let archivo of archivos">
+                    <ion-label>{{archivo.name}}</ion-label>
+                </ion-item>
+            </ion-list>
+            <ion-button [disabled]="!ticketForm.valid" style="margin-top: 12px;" (click)="enviarSolicitud()" shape="round" expand="block">
+              <ion-icon slot="start" name="send-outline"></ion-icon>
+              Enviar solicitud
+          </ion-button-->
+
+            <ion-item>
+              <input type="file" (change)="onFileChange($event)" />
+            </ion-item>
+            <ion-button color="primary" expand="full" (click)="submitForm()"
+              >Upload</ion-button
+            >
+          <!--form #adjuntarArchivoOT2="ngForm" >
+              <ion-text><b>Seleccionar archivo</b>:</ion-text>
+              <ion-item lines="none">
+                <input type="file" id="ot_file_backup" name="coment_anticipo_completo" #comentAnticipoCompleto="ngModel" [(ngModel)]="formFacturarAnticipoCompleto.coment_anticipo_completo" required>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-button expand="block" id="btn_UpOTAnx" [disabled]="!adjuntarArchivoOT2.valid" (click)="FormAdjuntarArchivoOT(adjuntarArchivoOT2);">
+                  Guardar
+                </ion-button>
+              </ion-item>
+            </form-->
+              <!--
+                <form #anticipofacturadocompleto2="ngForm">
+                      <ion-item>
+                        <ion-label position="">Comentarios
+                          <ion-text color="danger">*</ion-text>
+                        </ion-label>
+                        <ion-textarea required rows="5" id="coment_anticipo_completo" name="coment_anticipo_completo" #comentAnticipoCompleto="ngModel" [(ngModel)]="formFacturarAnticipoCompleto.coment_anticipo_completo" required></ion-textarea>
+                      </ion-item>
+                      <ion-button expand="block" id="btn_svAnticipo" [disabled]="!anticipofacturadocompleto2.valid" (click)="FormWOAntiFactComp(anticipofacturadocompleto2);">
+                        Facturar el monto completo
+                      </ion-button>
+                    </form>
+
+              -->
+          </ion-col>
+          <ion-col size-sm="12" size-md="6" size-lg="6" style="margin-bottom: 20px;">
+              <div style="border: 1px solid #e5e6e7; padding-top: 5px;  ">
+              <ion-item>
+                Anexos de orden de trabajo:
+              </ion-item>
+              <ion-item *ngFor="let datosOTAnexosWO of datosOTAnexosWO" style="font-size: 14px;">
+                  <ion-text>
+                    <a href="http://intranet.ecn.com.mx:8060/intranet/{{datosOTAnexosWO.att_name_dir}}" target="_blank"><ion-icon name="open"></ion-icon> {{datosOTAnexosWO.att_name}}</a>
+                    <ion-button size="small" fill="outline" id="" (click)="BotonBorrarAnxOT(datosOTAnexosWO.att_id);" *ngIf="datosOTAnexosWO.permisoborrar < 1" > <!-- *ngIf="datosOTAnexosWO.permisoborrar >= 1" -->
+                      <ion-icon name="trash"></ion-icon>
+                    </ion-button>
+                  </ion-text>
+              </ion-item>
+              </div>
+          </ion-col>
+      </ion-row>
+    </ion-grid>
+</ion-content>
+

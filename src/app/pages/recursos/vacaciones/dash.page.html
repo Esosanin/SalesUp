@@ -1,0 +1,547 @@
+<ion-header translucent="true" *ngFor="let miInfo of miInfoArray">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+      <ion-back-button defaultHref="{{back()}}"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Solicitudes de vacaciones y permisos</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button value="missolicitudes">
+        Propias
+      </ion-segment-button>
+      <ion-segment-button value="solicitudesdelpersonal" *ngIf="miInfo.esjefe >= 1"><!--*ngIf="miInfo.esjefe >= 1"-->
+        Mi personal ( {{miInfo.poraprobarcomolider}} )
+      </ion-segment-button>
+      <ion-segment-button value="recursosch" *ngIf="miInfo.esch >= 1"><!--*ngIf="miInfo.esch >= 1"-->
+        CH ( {{miInfo.poraprobarcomoch}} )
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="segment==='missolicitudes'">
+  <div class="content grid1 gridtabla">
+    <br>
+    <br>
+    <ion-grid class="" *ngFor="let miInfo of miInfoArray">
+      <ion-row *ngIf="miInfo.usadosdisponiblesdescanso < 1">
+        <ion-col size="12" size-md="4" size-lg="4"
+          style="border: 1px solid #eee; padding: 24px; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2); text-align: center;">
+          <ion-text>
+            <p style="font-size: 10pt;">
+              <span style="font-size: 24pt; font-weight: bold;">{{miInfo.disponibles}}</span>
+              <br>
+              Días vacacionables
+            </p>
+            <p style="font-size: 10pt;">
+              Antigüedad de {{miInfo.antiguedadanios}} años
+              <br>
+              Has usado {{miInfo.usados}} de {{miInfo.diastotal}}
+              <br>
+              Se renuevan el {{miInfo.caducidad}}
+            </p>
+          </ion-text>
+        </ion-col>
+        <ion-col size="12" size-md="8" size-lg="8">
+          <ion-accordion-group *ngFor="let miInfo of miInfoArray">
+
+
+            <ion-accordion value="third">
+              <ion-item slot="header" color="light">
+                <ion-label>Permisos</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" style="border: 1px solid #eee; padding-bottom: 80px;">
+                <form #getmacroformulario="ngForm">
+                  <ion-item>
+                    <ion-label position="">Fecha inicial
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="fecha_inicial" #fechaInicio="ngModel" [(ngModel)]="getmacroDatos.fecha_inicial"
+                      required type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Fecha final
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="fecha_final" #fechaFin="ngModel" [(ngModel)]="getmacroDatos.fecha_final" required
+                      type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Tipo
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-list>
+                      <ion-item>
+                        <ion-select name="p_motivo" #p_motivo="ngModel" [(ngModel)]="getmacroDatos.p_motivo" required
+                          interface="popover" placeholder="Elegir">
+                          <ion-select-option [value]=1>Personal</ion-select-option>
+                          <ion-select-option [value]=2>Enfermedad</ion-select-option>
+                          <ion-select-option [value]=3>Nacimiento de hijo</ion-select-option>
+                          <ion-select-option [value]=4>Fallecimiento de familiar</ion-select-option>
+                          <ion-select-option [value]=5>Casamiento</ion-select-option>
+                          <ion-select-option [value]=6>Cumpleaños</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-list>
+                  </ion-item>
+                  <ion-button [disabled]="!getmacroformulario.valid" class="btnIngresar"
+                    (click)="getMacroFormpagets(getmacroformulario);" expand="block" fill="solid" shape="round">
+                    Guardar
+                  </ion-button>
+                </form>
+              </div>
+            </ion-accordion>
+
+
+            <ion-accordion value="first">
+              <ion-item slot="header" color="light">
+                <ion-label>Vacaciones</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" style="border: 1px solid #eee; padding-bottom: 80px;">
+                <form #getmacroformularioV="ngForm">
+                  <ion-item>
+                    <ion-label position="">Fecha inicial
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="fecha_inicial" #fechaInicioV="ngModel" [(ngModel)]="getmacroDatosV.fecha_inicial"
+                      required type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Fecha final
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="fecha_final" #fechaFinV="ngModel" [(ngModel)]="getmacroDatosV.fecha_final" required
+                      type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Regreso a labores
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="v_regreso_labores" #v_regreso_labores="ngModel"
+                      [(ngModel)]="getmacroDatosV.v_regreso_labores" required type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Comentarios
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-textarea required rows="7" #v_comentarios="ngModel" name="v_comentarios"
+                      [(ngModel)]="getmacroDatosV.v_comentarios"></ion-textarea>
+                  </ion-item>
+                  <ion-item>
+                    Plan de trabajo:
+                  </ion-item>
+                  <ion-item>
+                    <ion-grid>
+                      <ion-row>
+                        <ion-col>Actividad</ion-col>
+                        <ion-col>Responsable</ion-col>
+                        <ion-col>Fecha limite</ion-col>
+                        <ion-col>Observaciones</ion-col>
+                      </ion-row>
+                      <ion-row>
+                        <ion-col>
+                          <ion-input name="actividad1" #actividad1="ngModel" [(ngModel)]="getmacroDatosV.actividad1"
+                            required type="text" style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="responsables1" #responsables1="ngModel"
+                            [(ngModel)]="getmacroDatosV.responsables1" required type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="fechalimite1" #fechalimite1="ngModel"
+                            [(ngModel)]="getmacroDatosV.fechalimite1" required type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="observaciones1" #observaciones1="ngModel"
+                            [(ngModel)]="getmacroDatosV.observaciones1" required type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row>
+                        <ion-col>
+                          <ion-input name="actividad2" #actividad2="ngModel" [(ngModel)]="getmacroDatosV.actividad2"
+                            type="text" style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="responsables2" #responsables2="ngModel"
+                            [(ngModel)]="getmacroDatosV.responsables2" type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="fechalimite2" #fechalimite2="ngModel"
+                            [(ngModel)]="getmacroDatosV.fechalimite2" type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="observaciones2" #observaciones2="ngModel"
+                            [(ngModel)]="getmacroDatosV.observaciones2" type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                      </ion-row>
+                      <ion-row>
+                        <ion-col>
+                          <ion-input name="actividad3" #actividad3="ngModel" [(ngModel)]="getmacroDatosV.actividad3"
+                            type="text" style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="responsables3" #responsables3="ngModel"
+                            [(ngModel)]="getmacroDatosV.responsables3" type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="fechalimite3" #fechalimite3="ngModel"
+                            [(ngModel)]="getmacroDatosV.fechalimite3" type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                          <ion-input name="observaciones3" #observaciones3="ngModel"
+                            [(ngModel)]="getmacroDatosV.observaciones3" type="text"
+                            style="border: 1px #858585 solid;"></ion-input>
+                        </ion-col>
+                      </ion-row>
+                    </ion-grid>
+                  </ion-item>
+                  <!--lo de a continuacion si me servia para crear nuevos renglones y borrarlos pero no consegui
+                                    tomar todos los valores y pasarlos en array para enviarlos en el formulario de vacaciones-->
+                  <!--ion-item>
+                                    <ion-grid>
+                                    <ion-row >
+                                        <ion-col>Actividad</ion-col>
+                                        <ion-col>Responsable</ion-col>
+                                        <ion-col>Fecha limite</ion-col>
+                                        <ion-col>Observaciones</ion-col>
+                                        <ion-col></ion-col>
+                                    </ion-row>
+                                        <div class="row" *ngFor="let element of elements" >
+                                    <ion-row>
+                                        <ion-col><ion-input style="border: 1px #858585 solid;" name="actividad{{element}}" type="text" ></ion-input></ion-col>
+                                        <ion-col><ion-input style="border: 1px #858585 solid;" name="responsables{{element}}" type="text" ></ion-input></ion-col>
+                                        <ion-col><ion-input style="border: 1px #858585 solid;" name="fechalimite{{element}}" type="text" ></ion-input></ion-col>
+                                        <ion-col><ion-input style="border: 1px #858585 solid;" name="observaciones{{element}}" type="text" ></ion-input></ion-col>
+                                        <ion-col ><button class="button" (click)="caller(element)"><ion-icon name="close"></ion-icon></button></ion-col>
+                                    </ion-row>
+                                        </div>
+                                    </ion-grid>
+                                </ion-item>
+                                    <div>
+                                    <ion-button class="btnappend" (click)="appendElement()">+ Nuevo renglón</ion-button>
+                                    </div-->
+                  <ion-button [disabled]="!getmacroformularioV.valid" class="btnIngresar"
+                    (click)="getMacroFormpagetsV(getmacroformularioV);" expand="block" fill="solid" shape="round">
+                    Guardar
+                  </ion-button>
+                </form>
+              </div>
+            </ion-accordion>
+
+
+            <ion-accordion value="second">
+              <ion-item slot="header" color="light">
+                <ion-label>Descansos</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" style="border: 1px solid #eee; padding-bottom: 80px;">
+                <form #getmacroformularioD="ngForm">
+                  <ion-item>
+                    <ion-label position="">Fecha inicial
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="fecha_inicial" #fechaInicioD="ngModel" [(ngModel)]="getmacroDatosD.fecha_inicial"
+                      required type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Fecha final
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="fecha_final" #fechaFinD="ngModel" [(ngModel)]="getmacroDatosD.fecha_final" required
+                      type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Tipo
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-list>
+                      <ion-item>
+                        <ion-select name="d_motivo" #d_motivo="ngModel" [(ngModel)]="getmacroDatosD.d_motivo" required
+                          interface="popover" placeholder="Elegir">
+                          <ion-select-option [value]=0 *ngIf="miInfo.esproyectos < 1 ">Por día de descanso
+                            laborado</ion-select-option>
+                          <ion-select-option [value]=1>Compensación por jornada extendida</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-list>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Día y proyecto laborados
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-textarea required rows="7" #d_especificar="ngModel" name="d_especificar"
+                      [(ngModel)]="getmacroDatosD.d_especificar"></ion-textarea>
+                  </ion-item>
+                  <ion-button [disabled]="!getmacroformularioD.valid" class="btnIngresar"
+                    (click)="getMacroFormpagetsD(getmacroformularioD);" expand="block" fill="solid" shape="round">
+                    Guardar
+                  </ion-button>
+                </form>
+              </div>
+            </ion-accordion>
+
+
+          </ion-accordion-group>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="miInfo.usadosdisponiblesdescanso >= 1">
+        <ion-col size="12" size-md="4" size-lg="4"
+          style="border: 1px solid #eee; padding: 24px; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2); text-align: center;">
+          <ion-text>
+            <p style="font-size: 10pt;">
+              <span style="font-size: 24pt; font-weight: bold;">{{miInfo.usadosdisponiblesdescanso}}</span>
+              <br>
+              Días de descanso ganados
+            </p>
+            <p style="font-size: 10pt;">
+              Antigüedad de {{miInfo.antiguedadanios}} años
+              <br>
+              Has usado {{miInfo.usados}} de {{miInfo.diastotal}} días de vacaciones
+              <br>
+              Se renuevan el {{miInfo.caducidad}}
+            </p>
+          </ion-text>
+        </ion-col>
+        <ion-col size="12" size-md="8" size-lg="8">
+          <ion-accordion-group>
+
+            <ion-accordion value="second">
+              <ion-item slot="header" color="light">
+                <ion-label>Descansos</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" style="border: 1px solid #eee; padding-bottom: 80px;">
+                <form #getmacroformularioD="ngForm">
+                  <ion-item>
+                    <ion-label position="">Fecha inicial
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="fecha_inicial" #fechaInicioD="ngModel" [(ngModel)]="getmacroDatosD.fecha_inicial"
+                      required type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Fecha final
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-input name="fecha_final" #fechaFinD="ngModel" [(ngModel)]="getmacroDatosD.fecha_final" required
+                      type="date"></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Tipo
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-list>
+                      <ion-item>
+                        <ion-select name="d_motivo" #d_motivo="ngModel" [(ngModel)]="getmacroDatosD.d_motivo" required
+                          interface="popover" placeholder="Elegir">
+                          <ion-select-option [value]=0>Por día de descanso laborado</ion-select-option>
+                        </ion-select>
+                      </ion-item>
+                    </ion-list>
+                  </ion-item>
+                  <ion-item>
+                    <ion-label position="">Día y proyecto laborados
+                      <ion-text color="danger">*</ion-text>
+                    </ion-label>
+                    <ion-textarea required rows="7" #d_especificar="ngModel" name="d_especificar"
+                      [(ngModel)]="getmacroDatosD.d_especificar"></ion-textarea>
+                  </ion-item>
+                  <ion-button [disabled]="!getmacroformularioD.valid" class="btnIngresar"
+                    (click)="getMacroFormpagetsD(getmacroformularioD);" expand="block" fill="solid" shape="round">
+                    Guardar
+                  </ion-button>
+                </form>
+              </div>
+            </ion-accordion>
+
+
+          </ion-accordion-group>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-grid>
+    </ion-grid>
+    <br>
+    <br>
+    <br>
+    <b>Pendientes</b>
+    <br>
+    <ion-grid>
+      <ion-row *ngFor="let misSolPend of misSolicitudesPendientesArray" style="margin-bottom: 10px;">
+        <ion-col size="6" size-md="4" size-lg="2"><b>Folio:</b> {{misSolPend.id}}<br>{{misSolPend.tipo}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">{{misSolPend.estado}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2"><b>Solicitado el:</b> {{misSolPend.fecha_registro}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2"><b>Aprobador:</b> {{misSolPend.aprobador}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">Del {{misSolPend.fecha_inicial}} al {{misSolPend.fecha_final}}
+          <br>{{misSolPend.dias_solicitados}} día(s) solicitados</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">
+          <ion-button color="warning" (click)="cancelElement(misSolPend.id)"
+            style="width: auto; height: 30px; font-size: 10px;">Cancelar</ion-button>
+        </ion-col>
+        <ion-col size="12" size-md="12" size-lg="12" *ngIf="misSolPend.tipo==='Vacaciones' ">
+          <b>Plan de trabajo:</b>
+          <div [innerHTML]="misSolPend.plantrabajo"></div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <br>
+    <br>
+    <br>
+    <b>Aprobadas / Rechazadas</b>
+    <br>
+    <ion-grid class="">
+      <ion-row *ngFor="let misSolicitudes of misSolicitudesArray" style="margin-bottom: 10px;">
+        <ion-col size="6" size-md="4" size-lg="2"><b>Folio:</b> {{misSolicitudes.id}}<br>{{misSolicitudes.tipo}}
+          {{misSolicitudes.con_sueldo}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">{{misSolicitudes.estado}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2"><b>Solicitado el:</b> {{misSolicitudes.fecha_registro}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2"><b>Aprobador:</b> {{misSolicitudes.aprobador}}</ion-col>
+        <ion-col size="6" size-md="8" size-lg="4">Del {{misSolicitudes.fecha_inicial}} al {{misSolicitudes.fecha_final}}
+          <br>{{misSolicitudes.dias_solicitados}} día(s) solicitados
+        </ion-col>
+        <ion-col size="12" size-md="12" size-lg="12" *ngIf="misSolicitudes.tipo==='Vacaciones' ">
+          <b>Plan de trabajo:</b>
+          <div [innerHTML]="misSolicitudes.plantrabajo"></div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <!--ion-grid class="grid2">
+        <ion-row>
+            <ion-col size="6" size-md="3" class="grid2hd"><b>Folio</b></ion-col>
+            <ion-col size="6" size-md="3" class="grid2hd"><b>Estado</b></ion-col>
+            <ion-col size="6" size-md="3" class="grid2hd"><b>Tipo</b></ion-col>
+            <ion-col size="6" size-md="3" class="grid2hd"><b>Solicitado el</b></ion-col>
+        </ion-row>
+        <ion-row *ngFor="let misSolicitudes of misSolicitudesArray">
+
+            <ion-col size="12" size-md="12">
+                <ion-accordion-group #accordionGroup>
+                    <ion-accordion value="first">
+                      <ion-item slot="header" color="light">
+                        <ion-col size="6" size-md="3">{{misSolicitudes.id}}</ion-col>
+                        <ion-col size="6" size-md="3">{{misSolicitudes.estado}}</ion-col>
+                        <ion-col size="6" size-md="3">{{misSolicitudes.tipo}}</ion-col>
+                        <ion-col size="6" size-md="3">{{misSolicitudes.fecha_registro}}</ion-col>
+                      </ion-item>
+                      <div class="ion-padding" slot="content">
+                        Del {{misSolicitudes.fecha_inicial}} al {{misSolicitudes.fecha_final}}<br>
+                        {{misSolicitudes.dias_solicitados}} día(s) solicitados<br>
+                        Aprobador: {{misSolicitudes.aprobador}}
+                      </div>
+                    </ion-accordion>
+                  </ion-accordion-group>
+            </ion-col>
+        </ion-row>
+    </ion-grid-->
+
+    <!--b>Stacked for xs breakpoint, equal width for sm and up</b>
+        <ion-grid>
+        <ion-row>
+            <ion-col size="12" size-sm="3">1</ion-col>
+            <ion-col size="12" size-sm="3">2</ion-col>
+            <ion-col size="12" size-sm="3">3</ion-col>
+            <ion-col size="12" size-sm="3">4</ion-col>
+        </ion-row>
+        </ion-grid>
+        <br>
+        <br>
+        <b>Equal width until md breakpoint, last column takes full width for md and up</b>
+        <ion-grid>
+        <ion-row>
+            <ion-col size-md="6">1</ion-col>
+            <ion-col size-md="6">2</ion-col>
+            <ion-col size-md="12">3</ion-col>
+        </ion-row>
+        </ion-grid>
+        <br>
+        <br>
+        <b>2 per row until md breakpoint, 3 per row for md, equal width for lg and up</b>
+        <ion-grid>
+        <ion-row>
+            <ion-col size="6" size-md="4" size-lg="2">1</ion-col>
+            <ion-col size="6" size-md="4" size-lg="2">2</ion-col>
+            <ion-col size="6" size-md="4" size-lg="2">3</ion-col>
+            <ion-col size="6" size-md="4" size-lg="2">4</ion-col>
+            <ion-col size="6" size-md="4" size-lg="2">5</ion-col>
+            <ion-col size="6" size-md="4" size-lg="2">6</ion-col>
+        </ion-row>
+        </ion-grid-->
+  </div>
+</ion-content>
+<ion-content *ngIf="segment==='solicitudesdelpersonal'">
+  <div class="content grid3 gridtabla">
+    <br>
+    <b>Solicitudes por aprobar</b>
+    <br>
+    <ion-grid class="">
+      <ion-row *ngFor="let misSolPAprobar of misSolicitudesPendientesAprobarArray" style="margin-bottom: 10px;">
+        <ion-col size="6" size-md="4" size-lg="2"><b>Folio:</b>
+          {{misSolPAprobar.id}}<br>{{misSolPAprobar.tipo}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">{{misSolPAprobar.estado}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">
+          <b>Solicitado el:</b> {{misSolPAprobar.fecha_registro}}
+        </ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">
+          <b>{{misSolPAprobar.dias_solicitados}} día(s) solicitados</b>
+          <br>Del {{misSolPAprobar.fecha_inicial}} al {{misSolPAprobar.fecha_final}}
+        </ion-col>
+        <ion-col size="6" size-md="8" size-lg="4" *ngIf="misSolPAprobar.tipo!=='Permiso' ">
+          <ion-button color="success" (click)="aprobarElement(misSolPAprobar.id)"
+            style="width: auto; height: 30px; font-size: 10px;">Aprobar</ion-button>
+          <ion-button color="danger" (click)="rechazarElement(misSolPAprobar.id)"
+            style="width: auto; height: 30px; font-size: 10px;">Rechazar</ion-button>
+        </ion-col>
+        <ion-col size="6" size-md="8" size-lg="4" *ngIf="misSolPAprobar.tipo==='Permiso' ">
+          <ion-button color="success" (click)="aprobarconsueldoElement(misSolPAprobar.id)"
+            style="width: auto; height: 30px; font-size: 10px;">Aprobar (con sueldo)</ion-button>
+          <ion-button color="warning" (click)="aprobarsinsueldoElement(misSolPAprobar.id)"
+            style="width: auto; height: 30px; font-size: 10px;">Aprobar (sin sueldo)</ion-button>
+          <ion-button color="danger" (click)="rechazarElement(misSolPAprobar.id)"
+            style="width: auto; height: 30px; font-size: 10px;">Rechazar</ion-button>
+        </ion-col>
+        <ion-col size="12" size-md="12" size-lg="12" *ngIf="misSolPAprobar.tipo==='Vacaciones' ">
+          <b>Plan de trabajo:</b>
+          <div [innerHTML]="misSolPAprobar.plantrabajo"></div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>
+<ion-content *ngIf="segment==='recursosch'">
+  <div class="content grid4 gridtabla">
+    <br>
+    <b>Solicitudes por aprobar</b>
+    <br>
+    <ion-grid class="">
+      <ion-row *ngFor="let misSolPAprobarCH of misSolicitudesPendientesAprobarCHArray" style="margin-bottom: 10px;">
+        <ion-col size="6" size-md="4" size-lg="2">
+          <b>Folio:</b> {{misSolPAprobarCH.id}}<br>{{misSolPAprobarCH.tipo}} {{misSolPAprobarCH.con_sueldo}}
+        </ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">{{misSolPAprobarCH.estado}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2"><b>Solicitado el:</b> {{misSolPAprobarCH.fecha_registro}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2"><b>Aprobador:</b> {{misSolPAprobarCH.aprobador}}</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">Del {{misSolPAprobarCH.fecha_inicial}} al
+          {{misSolPAprobarCH.fecha_final}}
+          <br>{{misSolPAprobarCH.dias_solicitados}} día(s) solicitados</ion-col>
+        <ion-col size="6" size-md="4" size-lg="2">
+          <ion-button color="danger" (click)="rechazarElementCH(misSolPAprobarCH.id)"
+            style="width: auto; height: 30px; font-size: 10px;">Rechazar</ion-button>
+          <ion-button color="success" (click)="aprobarElementCH(misSolPAprobarCH.id)"
+            style="width: auto; height: 30px; font-size: 10px;">Aprobar</ion-button>
+        </ion-col>
+        <ion-col size="12" size-md="12" size-lg="12" *ngIf="misSolPAprobarCH.tipo==='Vacaciones' ">
+          <b>Plan de trabajo:</b>
+          <div [innerHTML]="misSolPAprobarCH.plantrabajo"></div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

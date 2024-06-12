@@ -1,0 +1,1028 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+        <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+        <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="!showSearchbar && segment === 'Usuarios'" >
+      <ion-button (click)="showSearchbar = true; focus();">
+          <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">{{title}}</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always" (ionChange)="getUsuarios(searchInput?.value); content.scrollToTop();" (ionCancel)="showSearchbar=false; getUsuarios(''); content.scrollToTop();" placeholder="Buscar"></ion-searchbar>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button title="Ofertas" value="Ofertas" (click)="btn_segmentEstabilizador = false; onChangeSegment(segment);" [disabled]="!btn_segmentEstabilizador">
+        <ion-icon name="reader"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button title="Usuarios" value="Usuarios"  (click)="btn_segmentEstabilizador = false; onChangeSegment(segment);" [disabled]="!btn_segmentEstabilizador">
+        <ion-icon name="people"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button title="Estadisticas" value="Estadisticas"  (click)="btn_segmentEstabilizador = false; onChangeSegment(segment);" [disabled]="!btn_segmentEstabilizador">
+        <ion-icon name="bar-chart"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button title="Configuracion" value="Configuracion"  (click)="btn_segmentEstabilizador = false; onChangeSegment(segment);" [disabled]="!btn_segmentEstabilizador">
+        <ion-icon name="settings"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+<ion-content *ngIf="segment === 'Ofertas'">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="createModal('Nueva Oferta',null)">
+        <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <div style="padding: 10px 10px;">
+    <br>
+    <ion-item>
+      <ion-label *ngIf="selectedArea.id === null" position="stacked"><h3>Área</h3></ion-label>
+
+      <ion-select *ngIf="tablaAreas !== null && selectedArea.id === null"
+                  id="O_selectArea" name="O_selectArea" [(ngModel)]="selectedArea.id"
+                  #O_selectArea="ngModel" interface="popover" placeholder="Filtro por áreas" (ionChange)="Ofertas_changeSelectAreaPais_Ofertas($event, selectedPais, 'A')">
+        <ion-select-option *ngFor="let O_area of tablaAreas;" [value]="O_area.id_areas">{{O_area.descripcion}} ({{O_area.total}})</ion-select-option>
+      </ion-select>
+
+      <ion-label *ngIf="selectedArea.id !== null">{{selectedArea.nombre}} ({{selectedArea.num}}) <span style="color:brown;" (click)="Ofertas_cancelarSelectAreaPais_Ofertas(0)">x</span></ion-label>
+    </ion-item>
+    <br>
+    <ion-item>
+      <ion-label *ngIf="selectedPais.id === null" position="stacked"><h3>Pais</h3></ion-label>
+
+      <ion-select *ngIf="tablaPaises !== null && selectedPais.id === null"
+                  id="O_selectPais" name="O_selectPais" [(ngModel)]="selectedPais.id"
+                  #O_selectPais="ngModel" interface="popover" placeholder="Filtro por paises" (ionChange)="Ofertas_changeSelectAreaPais_Ofertas(selectedArea, $event, 'P')">
+        <ion-select-option *ngFor="let O_pais of tablaPaises;" [value]="O_pais.id_pais">{{O_pais.descripcion}} ({{O_pais.total}})</ion-select-option>
+      </ion-select>
+
+      <ion-label *ngIf="selectedPais.id !== null">{{selectedPais.nombre}} ({{selectedPais.num}}) <span style="color:brown;" (click)="Ofertas_cancelarSelectAreaPais_Ofertas(1)">x</span></ion-label>
+    </ion-item>
+  </div>
+  <br>
+  <div *ngFor="let oferta of ofertas" style="padding: 5px 10px;">
+    <div [ngStyle]="{'border': oferta.oferta_urgente === 1 ? '1px solid red' : (oferta.estado === 1 ? '1px solid green' : '') }">
+      <ion-item class="class-item_pointer" (click)="createModal('Detalle Oferta', { oferta: oferta.id_oferta})">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="9">
+              <ion-label>
+                <h3>{{oferta.titulo_comp}}</h3>
+                <p>{{oferta.string_CiuEst}}{{oferta.pais}}</p>
+                <p>Área: {{oferta.area}}</p>
+                <p>Públicado por: </p>
+                <p>{{oferta.nombres}} {{oferta.apellido_p}} {{oferta.apellido_m}}</p>
+                <br>
+              </ion-label>
+            </ion-col>
+            <ion-col size="3">
+              <ion-label class="class-label_Textcenter">
+                <p>Postulados:</p>
+                <p>{{oferta.postulados}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col size="9">
+              <ion-label><p>Estado: {{oferta.estado_n}}</p></ion-label>
+            </ion-col>
+            <ion-col size="3">
+              <ion-label class="class-label_Textcenter"><p><small>{{oferta.urgente_n}}</small></p></ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+    </div>
+  </div>
+
+  <!--      MODAL       -->
+
+  <!-- NUEVA OFERTA-->
+  <ion-modal #ModalNuevaOferta [isOpen]="modalNuevaOferta" width="auto">
+    <ng-template>
+      <ion-header translucent="true">
+        <ion-toolbar>
+          <ion-title>Publicar Oferta</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeEdit()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #nuevaOfertaForm="ngForm">
+          <ion-label><h3>Datos de la oferta</h3></ion-label>
+          <div title="Datos de la oferta">
+            <ion-item>
+              <ion-label><h3>Titulo de la Oferta*</h3></ion-label>
+            </ion-item>
+            <div style="text-align:end;">
+              <ion-item>
+                <ion-input id="NO_cargo" name="NO_cargo" type="text" placeholder="Cargo*" [(ngModel)]="oferta.titulo"  (ngModelChange)="onChangeCargo()" maxlength="128" autocomplete="off" required></ion-input>
+              </ion-item>
+              <small><span [ngClass]="{'class-color_danger': maxTitulo === 0, 'class-color_none': maxTitulo > 0}">{{maxTitulo}}</span>/128</small>
+            </div>
+            <div style="text-align:end;">
+              <ion-item>
+                <ion-input id="NO_complemento" name="NO_complemento" type="text" placeholder="Complemento al Titulo" [(ngModel)]="oferta.subtitulo" (ngModelChange)="onChangeCargo()" maxlength="128" autocomplete="off"></ion-input>
+              </ion-item>
+              <small><span [ngClass]="{'class-color_danger': maxSubtitulo === 0, 'class-color_none': maxSubtitulo > 0}">{{maxSubtitulo}}</span>/128</small>
+            </div>
+            <ion-item>
+              <ion-label position="stacked"><h3>Titulo de la Oferta:</h3></ion-label>
+              <small><span style="font-weight:bold;">{{changeCargo}}</span>{{changeCargo2}}</small>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Área*</h3></ion-label>
+              <ion-select id="NO_area" name="NO_area" [(ngModel)]="oferta.id_area"
+                          #NO_area="ngModel" interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_area of NO_selectArea" [value]="no_area.id_areas">{{no_area.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>País*</h3></ion-label>
+              <ion-select id="NO_pais" name="NO_pais" [(ngModel)]="oferta.id_pais"
+                          #NO_pais="ngModel" interface="popover" placeholder="Seleccionar..." (ionChange)="Ofertas_onChangeEnableEstadoCiudad(0)" required>
+                <ion-select-option *ngFor="let no_pais of NO_selectPais" [value]="no_pais.id_pais">{{no_pais.descripcion}}</ion-select-option>
+              </ion-select>
+              <small class="class-color_info">Solo en México puede seleccionar Estado y Ciudad.</small>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Estado*</h3></ion-label>
+              <ion-select id="NO_estado" name="NO_estado" [(ngModel)]="oferta.id_estado"
+                          #NO_estado="ngModel" interface="popover" placeholder="Seleccionar..." (ionChange)="Ofertas_onChangeEnableEstadoCiudad(1)" [disabled]="btnDisableEstado" required>
+                <ion-select-option *ngFor="let no_estado of NO_selectEstado" [value]="no_estado.cve_ent">{{no_estado.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Ciudad*</h3></ion-label>
+              <ion-select id="NO_ciudad" name="NO_ciudad" [(ngModel)]="oferta.id_ciudad"
+                          #NO_ciudad="ngModel" interface="popover" placeholder="Seleccionar..." [disabled]="btnDisableEstado">
+                <ion-select-option *ngFor="let no_ciudad of NO_selectCiudad" [value]="no_ciudad.cve_mun">{{no_ciudad.nom_loc}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Jornada laboral*</h3></ion-label>
+              <ion-select id="NO_jornada" name="NO_jornada" [(ngModel)]="oferta.id_jornada_laboral"
+                          #NO_jornada="ngModel" interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_jornada of NO_selectJornada" [value]="no_jornada.id_jornada_laboral">{{no_jornada.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Tipo de contrato*</h3></ion-label>
+              <ion-select id="NO_contrato" name="NO_contrato" [(ngModel)]="oferta.id_tipo_contrato"
+                          #NO_contrato="ngModel" interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_contrato of NO_selectContrato" [value]="no_contrato.id_tipo_contrato">{{no_contrato.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Salario (mensual)*</h3></ion-label>
+              <ion-input type="number" id="NO_salario" name="NO_salario" [(ngModel)]="oferta.salario" (ionInput)="Ofertas_onChangeOnlyNumber($event)"
+                          #NO_salario="ngModel" placeholder="Salario*" autocomplete="off" required></ion-input>
+              <small class="class-color_info">Inserte el salario sin puntos ni comas.</small>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Fecha de contratación</h3></ion-label>
+              <ion-input type="date" id="NO_fecha" name="NO_fecha" [(ngModel)]="oferta.fecha_contratacion"
+                          #NO_fecha="ngModel" required></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Cantidad de vacantes*</h3></ion-label>
+              <ion-input type="number" id="NO_vacantes" name="NO_vacantes" [(ngModel)]="oferta.vacantes" (ionInput)="Ofertas_onChangeOnlyNumber($event)"
+                          #NO_vacantes="ngModel" placeholder="Cantidad de vacantes*" autocomplete="off" required></ion-input>
+            </ion-item>
+            <ion-list>
+              <ion-radio-group id="NO_urgente" name="NO_urgente" [(ngModel)]="oferta.oferta_urgente" #NO_urgente="ngModel" [value]="oferta.oferta_urgente" required>
+                <ion-list-header>
+                  <ion-label><h3>Oferta urgente*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label>Si</ion-label>
+                  <ion-radio slot="start" value="1"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label>No</ion-label>
+                  <ion-radio slot="start" value="0"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+          </div>
+          <br>
+          <ion-label><h3>Descripción de la oferta</h3></ion-label>
+          <div title="Descripción de la oferta" [formGroup]="myGroup">
+            <div style="text-align:end;"><small><span [ngClass]="{'class-color_danger': maxDescripcion <= 0, 'class-color_info': maxDescripcion === 3000, 'class-color_none': maxDescripcion < 3000 && maxDescripcion > 0}">{{maxDescripcion}}</span>/3000</small></div>
+            <input [ngxSummernote]="config" type="text" class="form-control" formControlName="htmlText">
+            <div style="text-align:end;"><small><span [ngClass]="{'class-color_danger': maxDescripcion <= 0, 'class-color_info': maxDescripcion === 3000, 'class-color_none': maxDescripcion < 3000 && maxDescripcion > 0}">{{maxDescripcion}}</span>/3000</small></div>
+          </div>
+          <br>
+          <ion-label><h3>Requerimientos de la oferta</h3></ion-label>
+          <div title="Requerimientos de la oferta">
+            <ion-item>
+              <ion-label position="stacked"><h3>Años de experiencia*</h3></ion-label>
+              <ion-select id="NO_experiencia" name="NO_experiencia" [(ngModel)]="oferta.id_experiencia" #NO_experiencia="ngModel"
+                          multiple="false"  interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_experiencia of NO_selectExperiencia;" [value]="no_experiencia.id_experiencia">{{no_experiencia.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Estudios minimos*</h3></ion-label>
+              <ion-select id="NO_estudios" name="NO_estudios" [(ngModel)]="oferta.id_estudios" #NO_estudios="ngModel"
+                          multiple="false"  interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_estudios of NO_selectEstudios;" [value]="no_estudios.id_estudios">{{no_estudios.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <div>
+              <ion-label><h3>Idiomas*</h3></ion-label>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="6" ><ion-label class="class-label_textCenter"><h3>Idioma</h3></ion-label></ion-col>
+                  <ion-col size="6"><ion-label class="class-label_textCenter"><h3>Nivel</h3></ion-label></ion-col>
+                </ion-row>
+                <ion-row *ngFor="let idioma of NO_selectIdioma; let i = index;">
+                  <ion-col size="6">
+                    <ion-item>
+                      <ion-label>
+                        <h3><input type="checkbox" (change)="Ofertas_onChangeIdiomas(0, i, null)"> {{idioma.descripcion}}</h3>
+                      </ion-label>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-item>
+                      <ion-select #NO_nivel name="NO_nivel" interface="popover" placeholder="Seleccionar..." (ionChange)="Ofertas_onChangeIdiomas(1, i, NO_nivel.value)" [disabled]="!NO_selectIdiomasTable[i].idioma">
+                        <ion-select-option *ngFor="let niveles of NO_selectNivel; let o = index;" [value]="niveles.id_niveles">{{niveles.descripcion}}</ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+            <ion-list>
+              <ion-radio-group id="NO_licencia" name="NO_licencia" [(ngModel)]="oferta.licencia" #NO_licencia="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Licencia de conducir*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label><h3>A</h3></ion-label>
+                  <ion-radio slot="start" value="A"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>B</h3></ion-label>
+                  <ion-radio slot="start" value="B"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>C</h3></ion-label>
+                  <ion-radio slot="start" value="C"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>D</h3></ion-label>
+                  <ion-radio slot="start" value="D"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>No necesaria</h3></ion-label>
+                  <ion-radio slot="start" value="No Necesaria"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            <ion-list>
+              <ion-radio-group id="NO_viajar" name="NO_viajar" [(ngModel)]="oferta.dis_viajar" #NO_viajar="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Disponibilidad para viajar*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label><h3>Si</h3></ion-label>
+                  <ion-radio slot="start" value=1></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>No</h3></ion-label>
+                  <ion-radio slot="start" value=0></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            <ion-list>
+              <ion-radio-group id="NO_residencia" name="NO_residencia" [(ngModel)]="oferta.dis_camb_res" #NO_residencia="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Disponibilidad para cambiar de residencia*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label><h3>Si</h3></ion-label>
+                  <ion-radio slot="start" value=1></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>No</h3></ion-label>
+                  <ion-radio slot="start" value=0></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            <ion-list>
+              <ion-radio-group id="NO_discapacidad" name="NO_discapacidad" [(ngModel)]="oferta.discapacidad" #NO_discapacidad="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Personas con discapacidad*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label><h3>Si</h3></ion-label>
+                  <ion-radio slot="start" value=1></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>No</h3></ion-label>
+                  <ion-radio slot="start" value=0></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            <br><br>
+            <div>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-button (click)="closeEdit()" color="warning" expand="block" fill="solid" shape="round">
+                      Regresar
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-button (click)="btn_Ofertas_publicarOferta()" color="primary" expand="block" fill="solid" shape="round">
+                      Publicar
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal> <!-- END -->
+
+  <!-- DETALLES DE OFERTA -->
+  <ion-modal #ModalDetallesOferta [isOpen]="modalDetalleOferta" width="auto">
+    <ng-template>
+      <ion-header translucent="true">
+        <ion-toolbar>
+          <ion-title><strong>Detalles de oferta</strong> <span color="medium"><small> #{{oferta.id_oferta}}</small></span></ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeEdit()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #detalleOfertaForm="ngForm" style="padding:10px 20px;">
+          <ion-label><strong>{{oferta.titulo_comp}}</strong></ion-label>
+          <br><br>
+          <div class="panel-heading"><ion-label><strong>Información</strong></ion-label></div>
+          <br>
+          <ion-text>
+            <ion-item>
+              <ion-label>
+                <h3><strong>Publicado por: </strong></h3>
+                <p>{{oferta.nombres}} {{oferta.apellido_p}} {{oferta.apellido_m}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3><strong>Estado: </strong>(<a (click)="Ofertas_cambiarEstado(oferta.id_oferta, oferta.estado)">Cambiar</a>)</h3>
+                <p>{{oferta.estado_n}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3><strong>Postulados: </strong>(<a (click)="ModalDetallesOferta.dismiss(); Ofertas_PoFiSe(oferta.id_oferta, 'Postulados');">Ver</a>)</h3>
+                <p>{{oferta.postulados}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3><strong>Finalistas: </strong>(<a (click)="ModalDetallesOferta.dismiss(); Ofertas_PoFiSe(oferta.id_oferta, 'Finalistas')">Ver</a>)</h3>
+                <p>{{oferta.finalistas}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3><strong>Seleccionados: </strong>(<a (click)="ModalDetallesOferta.dismiss(); Ofertas_PoFiSe(oferta.id_oferta, 'Seleccionados')">Ver</a>)</h3>
+                <p>{{oferta.seleccionados}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <h3><strong>Fecha de publicación: </strong></h3>
+                <p>{{oferta.fecha_creacion_n}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item *ngIf="oferta.ultima_fecha !== oferta.fecha_creacion">
+              <ion-label>
+                <h3><strong>Última edición: </strong></h3>
+                <p>{{oferta.fecha_creacion_n}}</p>
+              </ion-label>
+            </ion-item>
+          </ion-text>
+          <br><br>
+          <ion-text>
+            <div class="ion-text-right">
+              <ion-button (click)="btn_Oferta_openEditar()" expand="block" fill="solid" shape="round">
+                Editar Oferta
+              </ion-button>
+              <ion-button (click)="btn_Oferta_openDuplicar()" expand="block" fill="solid" shape="round">
+                Duplicar Oferta
+              </ion-button>
+            </div>
+          </ion-text>
+          <br><br>
+          <ion-text>
+            <div>
+              <br>
+              <ion-label>
+                <strong>Resumen del Empleo</strong>
+              </ion-label>
+              <br>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Puesto:</strong></h3>
+                  <p>{{oferta.titulo}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Lugar:</strong></h3>
+                  <p>{{oferta.string_CiuEst}} {{oferta.pais}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Área:</strong></h3>
+                  <p>{{oferta.area}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Tipo de contrato:</strong></h3>
+                  <p>{{oferta.contrato}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Tipo de jornada:</strong></h3>
+                  <p>{{oferta.jornada}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Salario (mensual):</strong></h3>
+                  <p>{{oferta.salario_n}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Fecha de contratación:</strong></h3>
+                  <p>{{oferta.fecha_contratacion_n}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>vacantes:</strong></h3>
+                  <p>{{oferta.vacantes}}</p>
+                </ion-label>
+              </ion-item>
+            </div>
+            <br><br>
+            <div>
+              <ion-label><h3 class="class-text_bold">Descripción</h3></ion-label>
+              <div id="DO_descripcion" name="DO_descripcion" style="padding:10px 20px;"></div>
+            </div>
+            <br><br>
+            <div>
+              <ion-item>
+                <ion-label>
+                  <strong>Requerimientos</strong>
+                </ion-label>
+              </ion-item>
+              <br>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Educación Minima:</strong></h3>
+                  <p>{{oferta.estudios}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Experiencia:</strong></h3>
+                  <p>{{oferta.experiencia}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Licencia de conducir:</strong></h3>
+                  <p>{{oferta.licencia}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Disponibilidad para viajar:</strong></h3>
+                  <p>{{oferta.viajar}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Disponibilidad de cambio de residencia:</strong></h3>
+                  <p>{{oferta.res}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Disponibilidad para discapacitados:</strong></h3>
+                  <p>{{oferta.discapacidad_n}}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>
+                  <h3><strong>Idiomas:</strong></h3>
+                  <ul>
+                    <li *ngFor="let idioma of DO_idiomas; let i = index;">{{idioma.idioma_n}} - {{idioma.nivel_n}}</li>
+                  </ul>
+                </ion-label>
+              </ion-item>
+            </div>
+          </ion-text>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal> <!-- END -->
+
+  <!-- DUPLICAR, EDITAR -->
+  <ion-modal #ModalDuplicarEditarOferta [isOpen]="modalDuplicarEditarOferta" width="auto">
+    <ng-template>
+      <ion-header translucent="true">
+        <ion-toolbar>
+          <ion-title *ngIf="btns_DuplicarEditar === 0">Duplicar Oferta</ion-title>
+          <ion-title *ngIf="btns_DuplicarEditar === 1">Editar Oferta</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeEdit()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #duplicareditarOfertaForm="ngForm">
+          <ion-label><h3>Datos de la oferta</h3></ion-label>
+          <div title="Datos de la oferta">
+            <ion-item>
+              <ion-label><h3>Titulo de la Oferta*</h3></ion-label>
+            </ion-item>
+            <div style="text-align:end;">
+              <ion-item>
+                <ion-input id="DO_cargo" name="DO_cargo" type="text" placeholder="Cargo*" [(ngModel)]="oferta.titulo" (ngModelChange)="onChangeCargo()" maxlength="128" autocomplete="off" [value]="oferta.titulo" required></ion-input>
+              </ion-item>
+              <small><span [ngClass]="{'class-color_danger': maxTitulo === 0, 'class-color_none': maxTitulo > 0}">{{maxTitulo}}</span>/128</small>
+            </div>
+            <div style="text-align:end;">
+              <ion-item>
+                <ion-input id="DO_complemento" name="DO_complemento" type="text" placeholder="Complemento al Titulo" [(ngModel)]="oferta.subtitulo" (ngModelChange)="onChangeCargo()" maxlength="128" autocomplete="off" [value]="oferta.subtitulo"></ion-input>
+              </ion-item>
+              <small><span [ngClass]="{'class-color_danger': maxSubtitulo === 0, 'class-color_none': maxSubtitulo > 0}">{{maxSubtitulo}}</span>/128</small>
+            </div>
+            <ion-item>
+              <ion-label>
+                <h3>Titulo de la Oferta:</h3>
+                <small><span style="font-weight:bold;">{{changeCargo}}</span>{{changeCargo2}}</small>
+              </ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Área*</h3></ion-label>
+              <ion-select id="DO_area" name="DO_area" [(ngModel)]="oferta.id_area"
+                          #DO_area="ngModel" interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_area of NO_selectArea" [value]="no_area.id_areas">{{no_area.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>País*</h3></ion-label>
+              <ion-select id="DO_pais" name="DO_pais" [(ngModel)]="oferta.id_pais"
+                          #DO_pais="ngModel" interface="popover" placeholder="Seleccionar..." (ionChange)="Ofertas_onChangeEnableEstadoCiudad(0)" required>
+                <ion-select-option *ngFor="let no_pais of NO_selectPais" [value]="no_pais.id_pais">{{no_pais.descripcion}}</ion-select-option>
+              </ion-select>
+              <small class="class-color_info">Solo en México puede seleccionar Estado y Ciudad.</small>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Estado*</h3></ion-label>
+              <ion-select id="DO_estado" name="DO_estado" [(ngModel)]="oferta.id_estado"
+                          #DO_estado="ngModel" interface="popover" placeholder="Seleccionar..." (ionChange)="Ofertas_onChangeEnableEstadoCiudad(1)" [disabled]="btnDisableEstado" required>
+                <ion-select-option *ngFor="let no_estado of NO_selectEstado" [value]="no_estado.cve_ent">{{no_estado.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Ciudad*</h3></ion-label>
+              <ion-select id="DO_ciudad" name="DO_ciudad" [(ngModel)]="oferta.id_ciudad"
+                          #DO_ciudad="ngModel" interface="popover" placeholder="Seleccionar..." [disabled]="btnDisableEstado">
+                <ion-select-option *ngFor="let no_ciudad of NO_selectCiudad" [value]="no_ciudad.cve_mun">{{no_ciudad.nom_loc}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Jornada laboral*</h3></ion-label>
+              <ion-select id="DO_jornada" name="DO_jornada" [(ngModel)]="oferta.id_jornada_laboral"
+                          #DO_jornada="ngModel" interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_jornada of NO_selectJornada" [value]="no_jornada.id_jornada_laboral">{{no_jornada.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Tipo de contrato*</h3></ion-label>
+              <ion-select id="DO_contrato" name="DO_contrato" [(ngModel)]="oferta.id_tipo_contrato"
+                          #DO_contrato="ngModel" interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_contrato of NO_selectContrato" [value]="no_contrato.id_tipo_contrato">{{no_contrato.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Salario (mensual)*</h3></ion-label>
+              <ion-input type="number" id="DO_salario" name="DO_salario" [(ngModel)]="oferta.salario" (ionInput)="Ofertas_onChangeOnlyNumber($event)"
+                          #DO_salario="ngModel" placeholder="Salario*" autocomplete="off" required></ion-input>
+              <small class="class-color_info">Inserte el salario sin puntos ni comas.</small>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Fecha de contratación</h3></ion-label>
+              <ion-input type="date" id="DO_fecha" name="DO_fecha" [(ngModel)]="oferta.fecha_contratacion"
+                          #DO_fecha="ngModel" required></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Cantidad de vacantes*</h3></ion-label>
+              <ion-input type="number" id="DO_vacantes" name="DO_vacantes" [(ngModel)]="oferta.vacantes" (ionInput)="Ofertas_onChangeOnlyNumber($event)"
+                          #DO_vacantes="ngModel" placeholder="Cantidad de vacantes*" autocomplete="off" required></ion-input>
+            </ion-item>
+            <ion-list>
+              <ion-radio-group id="DO_urgente" name="DO_urgente" [(ngModel)]="oferta.oferta_urgente" #DO_urgente="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Oferta urgente*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label>Si</ion-label>
+                  <ion-radio slot="start" [value]="1"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label>No</ion-label>
+                  <ion-radio slot="start" [value]="0"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+          </div>
+          <br>
+          <ion-label><h3>Descripción de la oferta</h3></ion-label>
+          <div title="Descripción de la oferta" [formGroup]="myGroup">
+            <div style="text-align:end;"><small><span [ngClass]="{'class-color_danger': maxDescripcion <= 0, 'class-color_info': maxDescripcion === 3000, 'class-color_none': maxDescripcion < 3000 && maxDescripcion > 0}">{{maxDescripcion}}</span>/3000</small></div>
+            <input [ngxSummernote]="config" type="text" class="form-control" formControlName="htmlText">
+            <div style="text-align:end;"><small><span [ngClass]="{'class-color_danger': maxDescripcion <= 0, 'class-color_info': maxDescripcion === 3000, 'class-color_none': maxDescripcion < 3000 && maxDescripcion > 0}">{{maxDescripcion}}</span>/3000</small></div>
+          </div>
+          <br>
+          <ion-label><h3>Requerimientos de la oferta</h3></ion-label>
+          <div title="Requerimientos de la oferta">
+            <ion-item>
+              <ion-label position="stacked"><h3>Años de experiencia*</h3></ion-label>
+              <ion-select id="DO_experiencia" name="DO_experiencia" [(ngModel)]="oferta.id_experiencia" #DO_experiencia="ngModel"
+                          multiple="false"  interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_experiencia of NO_selectExperiencia;" [value]="no_experiencia.id_experiencia">{{no_experiencia.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked"><h3>Estudios minimos*</h3></ion-label>
+              <ion-select id="DO_estudios" name="DO_estudios" [(ngModel)]="oferta.id_estudios" #DO_estudios="ngModel"
+                          multiple="false"  interface="popover" placeholder="Seleccionar..." required>
+                <ion-select-option *ngFor="let no_estudios of NO_selectEstudios;" [value]="no_estudios.id_estudios">{{no_estudios.descripcion}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <div>
+              <ion-label><h3>Idiomas*</h3></ion-label>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="6" ><ion-label class="class-label_textCenter"><h3>Idioma</h3></ion-label></ion-col>
+                  <ion-col size="6"><ion-label class="class-label_textCenter"><h3>Nivel</h3></ion-label></ion-col>
+                </ion-row>
+                <ion-row *ngFor="let idioma of NO_selectIdioma; let i = index;">
+                  <ion-col size="6">
+                    <ion-item>
+                      <ion-label>
+                        <h3><input type="checkbox" (change)="Ofertas_onChangeIdiomas(0, i, null)" [checked]="NO_selectIdiomasTable[i].idioma"> {{idioma.descripcion}}</h3>
+                      </ion-label>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-item>
+                      <ion-select id="{{i}}_DO_nivel" name="{{i}}_DO_nivel" [(ngModel)]="NO_selectIdiomasTable[i].id_nivel" interface="popover" placeholder="Seleccionar..." (ionChange)="Ofertas_onChangeIdiomas(1, i, NO_selectIdiomasTable[i].id_nivel)" [disabled]="!NO_selectIdiomasTable[i].idioma">
+                        <ion-select-option *ngFor="let niveles of NO_selectNivel; let o = index;" [value]="niveles.id_niveles">{{niveles.descripcion}}</ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+            <ion-list>
+              <ion-radio-group id="DO_licencia" name="DO_licencia" [(ngModel)]="oferta.licencia" #DO_licencia="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Licencia de conducir*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label><h3>A</h3></ion-label>
+                  <ion-radio slot="start" value="A"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>B</h3></ion-label>
+                  <ion-radio slot="start" value="B"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>C</h3></ion-label>
+                  <ion-radio slot="start" value="C"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>D</h3></ion-label>
+                  <ion-radio slot="start" value="D"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>No necesaria</h3></ion-label>
+                  <ion-radio slot="start" value="No Necesaria"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            <ion-list>
+              <ion-radio-group id="DO_viajar" name="DO_viajar" [(ngModel)]="oferta.dis_viajar" #DO_viajar="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Disponibilidad para viajar*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label><h3>Si</h3></ion-label>
+                  <ion-radio slot="start" [value]="1"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>No</h3></ion-label>
+                  <ion-radio slot="start" [value]="0"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            <ion-list>
+              <ion-radio-group id="DO_residencia" name="DO_residencia" [(ngModel)]="oferta.dis_camb_res" #DO_residencia="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Disponibilidad para cambiar de residencia*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label><h3>Si</h3></ion-label>
+                  <ion-radio slot="start" [value]="1"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>No</h3></ion-label>
+                  <ion-radio slot="start" [value]="0"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            <ion-list>
+              <ion-radio-group id="DO_discapacidad" name="DO_discapacidad" [(ngModel)]="oferta.discapacidad" #DO_discapacidad="ngModel" required>
+                <ion-list-header>
+                  <ion-label><h3>Personas con discapacidad*</h3></ion-label>
+                </ion-list-header>
+                <ion-item>
+                  <ion-label><h3>Si</h3></ion-label>
+                  <ion-radio slot="start" [value]="1"></ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>No</h3></ion-label>
+                  <ion-radio slot="start" [value]="0"></ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </ion-list>
+            <br><br>
+            <div>
+              <ion-grid fixed>
+                <ion-row *ngIf="btns_DuplicarEditar === 0">
+                  <ion-col size="6">
+                    <ion-button (click)="closeEdit()" color="warning" expand="block" fill="solid" shape="round">
+                      Regresar
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-button (click)="btn_Ofertas_publicarOferta()" color="primary" expand="block" fill="solid" shape="round">
+                      Publicar
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="btns_DuplicarEditar === 1">
+                  <ion-col size="6">
+                    <ion-button (click)="closeEdit()" color="warning" expand="block" fill="solid" shape="round">
+                      Cancelar
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-button (click)="btn_Oferta_editar()" color="primary" expand="block" fill="solid" shape="round">
+                      Editar
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal> <!-- END -->
+
+
+
+</ion-content>
+<ion-content *ngIf="segment === 'Usuarios'">
+  <div style="padding: 10px 10px;">
+    <br>
+    <ion-item>
+      <ion-label *ngIf="U_selectPais.id === null" position="stacked"><h3>Pais</h3></ion-label>
+
+      <ion-select *ngIf="U_selectPaises !== null && U_selectPais.id === null"
+                  id="U_SelectPais" name="U_SelectPais" [(ngModel)]="U_selectPais.id"
+                  #U_SelectPais="ngModel" interface="popover" placeholder="Filtro por paises" (ionChange)="Ofertas_onChangePaises_Usuarios($event)">
+        <ion-select-option *ngFor="let U_pais of U_selectPaises;" [value]="U_pais.id_pais">{{U_pais.descripcion}} ({{U_pais.num}})</ion-select-option>
+      </ion-select>
+
+      <ion-label *ngIf="U_selectPais.id !== null">{{U_selectPais.nombre}} ({{U_selectPais.num}}) <span style="color:brown;" (click)="Ofertas_cancelarSelectPais_Usuarios()">x</span></ion-label>
+    </ion-item>
+  </div>
+  <br>
+  <div *ngFor="let usuario of listUsuarios; let i = index;" style="padding: 5px 10px;">
+    <div [ngStyle]="{'border': usuario.estado_usuario === 0 ? '1px solid red' : '1px solid green'}">
+      <ion-item>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="9">
+              <ion-label>
+                <h3>{{usuario.nombres}} {{usuario.apellido_p}} {{usuario.apellido_m}}</h3>
+                <p>{{usuario.correo}}</p>
+                <p>{{usuario.titulo_curriculum}}</p>
+                <p>Nacionalidad: {{usuario.nacionalidad}}</p>
+                <p>Nacimiento: {{usuario.fecha_nacimiento_n}} <span color="medium">({{usuario.edad}})</span></p>
+                <p *ngFor="let telefono of usuario.telefonos; let i = index;">Telefono: +{{usuario.prefijos[i]}} {{telefono}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col class="class-icon_center" size="3">
+                <a (click)="Ofertas_verCurriculum_Usuarios(usuario.id_usuario);"><ion-icon name="search-outline"></ion-icon></a>
+            </ion-col>
+            <ion-col size="12">
+              <hr class="class-hr_style">
+              <ion-label class="class-label_Textcenter"><p>Estado: {{usuario.estado_usuario_n}} (<a (click)="Ofertas_onChangeEstado_Usuarios(usuario.id_usuario, usuario.estado_usuario)">Cambiar</a>)</p></ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+    </div>
+  </div>
+</ion-content>
+<ion-content *ngIf="segment === 'Estadisticas'">
+  <br>
+  <div style="padding: 10px 10px;" title="Mis estadísticas">
+    <ion-item>
+      <ion-label position="stacked">Ofertas Publicadas: </ion-label>
+      <p>{{E_misEstadisticas.O_total}}</p>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Postulados Finalistas: </ion-label>
+      <p>{{E_misEstadisticas.F_total}}</p>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Postulados Seleccionados: </ion-label>
+      <p>{{E_misEstadisticas.S_total}}</p>
+    </ion-item>
+  </div>
+  <br>
+  <ion-content class="ion-padding">
+    <iframe width="100%" height="70%" src="https://app.powerbi.com/view?r=eyJrIjoiNzUyNTZhMzItZDhkZi00MmZlLThiNTktNTE3MzJlZmY0NDk0IiwidCI6IjEwMTM2YTk4LWFkOGEtNDEwYS05OGI5LWFhMzc5ZThlMTgxOSIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+  </ion-content>
+</ion-content>
+<ion-content *ngIf="segment === 'Configuracion'">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button (click)="createModal('Nueva Configuracion',null)">
+          <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+  </ion-fab>
+  <br>
+  <div>
+    <div class="class-div_infoCard" title="Áreas">
+      <ion-item (click)="Ofertas_changesBox_Configuracion('A')">
+        <ion-icon slot="start" name="add" *ngIf="!C_boxAreas"></ion-icon>
+        <ion-icon slot="start" name="remove" *ngIf="C_boxAreas"></ion-icon>
+        <ion-label><h3><b>Áreas</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="C_boxAreas">
+        <ion-content style="height: 300px">
+          <div *ngFor="let area of C_listRAreas; let i = index;">
+            <ion-item-sliding>
+              <ion-item>
+                <ion-label position="stacked"><h3></h3></ion-label>
+                <ion-input id="C_itemArea{{i}}" [(ngModel)]="C_listRAreas[i].descripcion" #C_itemArea{{i}}="ngModel" required></ion-input>
+              </ion-item>
+              <ion-item-options side="start">
+                <ion-item-option color="danger" button (click)="Ofertas_deleteItem_Configuracion(area.id_areas, area.descripcion, 'A', 'D')"><ion-icon slot="icon-only" name="trash-outline"></ion-icon></ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          </div>
+        </ion-content>
+        <br>
+        <div>
+          <ion-button (click)="Ofertas_CRUD_Configuracion('A', 'U', null)" expand="block" fill="solid" shape="round">
+            Guardar cambios
+          </ion-button>
+        </div>
+      </div>
+    </div>
+    <div class="class-div_infoCard" title="Idiomas">
+      <ion-item (click)="Ofertas_changesBox_Configuracion('I')">
+        <ion-icon slot="start" name="add" *ngIf="!C_boxIdiomas"></ion-icon>
+        <ion-icon slot="start" name="remove" *ngIf="C_boxIdiomas"></ion-icon>
+        <ion-label><h3><b>Idiomas</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="C_boxIdiomas">
+        <ion-content style="height: 300px">
+          <div *ngFor="let idioma of C_listRIdiomas; let i = index;">
+            <ion-item-sliding>
+              <ion-item>
+                <ion-label position="stacked"><h3></h3></ion-label>
+                <ion-input id="C_itemIdioma{{i}}" [(ngModel)]="C_listRIdiomas[i].descripcion" #C_itemIdioma{{i}}="ngModel" required></ion-input>
+              </ion-item>
+              <ion-item-options side="start">
+                <ion-item-option color="danger" button (click)="Ofertas_deleteItem_Configuracion(idioma.id_idiomas, idioma.descripcion, 'I', 'D')"><ion-icon slot="icon-only" name="trash-outline"></ion-icon></ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          </div>
+        </ion-content>
+        <br>
+        <div>
+          <ion-button (click)="Ofertas_CRUD_Configuracion('I', 'U', null)" expand="block" fill="solid" shape="round">
+            Guardar cambios
+          </ion-button>
+        </div>
+      </div>
+    </div>
+    <div class="class-div_infoCard" title="Países">
+      <ion-item (click)="Ofertas_changesBox_Configuracion('P')">
+        <ion-icon slot="start" name="add" *ngIf="!C_boxPaises"></ion-icon>
+        <ion-icon slot="start" name="remove" *ngIf="C_boxPaises"></ion-icon>
+        <ion-label><h3><b>Países</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="C_boxPaises">
+        <ion-content style="height: 300px">
+          <div *ngFor="let pais of C_listRPaises; let i = index;">
+            <ion-item-sliding>
+              <ion-item>
+                <ion-label position="stacked"><h3></h3></ion-label>
+                <ion-input id="C_itemPais{{i}}" [(ngModel)]="C_listRPaises[i].descripcion" #C_itemPais{{i}}="ngModel" required></ion-input>
+              </ion-item>
+              <ion-item-options side="start">
+                <ion-item-option color="danger" button (click)="Ofertas_deleteItem_Configuracion(pais.id_pais, pais.descripcion, 'P', 'D')"><ion-icon slot="icon-only" name="trash-outline"></ion-icon></ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          </div>
+        </ion-content>
+        <br>
+        <div>
+          <ion-button (click)="Ofertas_CRUD_Configuracion('P', 'U', null)" expand="block" fill="solid" shape="round">
+            Guardar cambios
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--      MODAL       -->
+
+  <ion-modal #ModalNuevaConfiguracion [isOpen]="modalNuevaConfiguracion" width="auto">
+    <ng-template>
+      <ion-header translucent="true">
+        <ion-toolbar>
+          <ion-title>Nueva configuración</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeEdit()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #nuevaOfertaForm="ngForm">
+          <ion-label><h3>Datos de la oferta</h3></ion-label>
+          <div title="Datos de la oferta">
+            <ion-item>
+              <ion-label position="stacked"><h3>Tipo de configuración</h3></ion-label>
+              <ion-select id="C_config" name="C_config" [(ngModel)]="C_nuevaConfiguracion.tipo_C"
+                          #C_config="ngModel" interface="popover" placeholder="Seleccionar..." required>
+                  <ion-select-option value="A">Áreas</ion-select-option>
+                  <ion-select-option value="I">Idiomas</ion-select-option>
+                  <ion-select-option value="P">Países</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">Descripción:</ion-label>
+              <ion-input id="C_nombre" name="C_nombre" [(ngModel)]="C_nuevaConfiguracion.nombre"
+                          #C_nombre="ngModel" placeholder="Descripción..." required></ion-input>
+            </ion-item>
+            <br><br>
+            <div>
+              <ion-button (click)="this.modalNuevaConfiguracion = false; Ofertas_CRUD_Configuracion(C_nuevaConfiguracion.tipo_C, 'C', {descripcion: C_nuevaConfiguracion.nombre});" color="primary" expand="block" fill="solid" shape="round">
+                Guardar
+              </ion-button>
+            </div>
+          </div>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal> <!-- END -->
+
+</ion-content>

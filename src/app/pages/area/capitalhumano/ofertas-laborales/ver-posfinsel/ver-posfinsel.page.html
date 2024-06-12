@@ -1,0 +1,237 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title><p>{{title}}</p></ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+      <ion-segment [(ngModel)]="segment">
+          <ion-segment-button title="Postulados" value="Postulados" (click)="onChangeSegment(segment)">
+            <ion-icon name="people"></ion-icon>
+          </ion-segment-button>
+          <ion-segment-button title="Finalistas" value="Finalistas"  (click)="onChangeSegment(segment)">
+              <ion-icon name="reader"></ion-icon>
+          </ion-segment-button>
+          <ion-segment-button title="Seleccionados" value="Seleccionados"  (click)="onChangeSegment(segment)">
+              <ion-icon name="checkmark-circle"></ion-icon>
+          </ion-segment-button>
+      </ion-segment>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <br>
+  <div class="class-div_spaceList">
+    <div title="Titulo">
+      <p *ngIf="oferta.titulo !== null" color="medium">{{oferta.titulo}} #{{oferta.id_oferta}}</p>
+    </div>
+    <br>
+    <div title="Ubicación">
+      <ion-item title="País">
+        <ion-label position="stacked" *ngIf="selectedPais.id === null"><h3>País</h3></ion-label>
+
+        <ion-select *ngIf="selectPais !== null && selectedPais.id === null"
+                    id="select_Pais" name="select_Pais" [(ngModel)]="selectedPais.id"
+                    #select_Pais="ngModel" interface="popover" placeholder="Filtrar por país"
+                    (ionChange)="changeFiltro($event, null, null)">
+          <ion-select-option *ngFor="let pais of selectPais;" [value]="pais.id_pais"><p>{{pais.descripcion}} <span>({{pais.num}})</span></p></ion-select-option>
+        </ion-select>
+
+        <ion-label *ngIf="selectedPais.id !== null">
+          <h3>{{selectedPais.nombre}} <span style="color: brown;" (click)="cancelFiltro(0)">x</span></h3>
+        </ion-label>
+      </ion-item> <!-- END ITEM -->
+      <br>
+      <ion-item title="Estado">
+        <ion-label position="stacked" *ngIf="selectedEstado.id === null"><h3>Estado</h3></ion-label>
+
+        <ion-select *ngIf="selectEstado !== null && selectedEstado.id === null"
+                    id="select_Estado" name="select_Estado" [(ngModel)]="selectedEstado.id"
+                    #select_Estado="ngModel" interface="popover" placeholder="Filtrar por estado"
+                    (ionChange)="changeFiltro(selectedPais, $event, null)">
+          <ion-select-option *ngFor="let estado of selectChangeEstado;" [value]="estado.id_estado"><p>{{estado.descripcion}} <span>({{estado.num}})</span></p></ion-select-option>
+        </ion-select>
+
+        <ion-label *ngIf="selectedEstado.id !== null">
+          <h3>{{selectedEstado.nombre}} <span style="color: brown;" (click)="cancelFiltro(1)">x</span></h3>
+        </ion-label>
+      </ion-item> <!-- END ITEM -->
+      <br>
+      <ion-item title="Ciudad">
+        <ion-label position="stacked" *ngIf="selectedCiudad.id === null"><h3>Ciudad</h3></ion-label>
+
+        <ion-select *ngIf="selectCiudad !== null && selectedCiudad.id === null"
+                    id="select_Ciudad" name="select_Ciudad" [(ngModel)]="selectedCiudad.id"
+                    #select_Ciudad="ngModel" interface="popover" placeholder="Filtrar por ciudad"
+                    (ionChange)="changeFiltro(selectedPais, selectedEstado, $event)">
+          <ion-select-option *ngFor="let ciudad of selectChangeCiudad;" [value]="ciudad.id_ciudad"><p>{{ciudad.nom_loc}} <span>({{ciudad.num}})</span></p></ion-select-option>
+        </ion-select>
+
+        <ion-label *ngIf="selectedCiudad.id !== null">
+          <h3>{{selectedCiudad.nombre}} <span style="color: brown;" (click)="cancelFiltro(2)">x</span></h3>
+        </ion-label>
+      </ion-item> <!-- END ITEM -->
+    </div> <!-- END -->
+    <br>
+    <div class="class-div_spaceList" *ngIf="segment === 'Postulados'">
+      <div *ngIf="listadoPosFinSel.length !== 0">
+        <div *ngFor="let datos of listadoPosFinSel; let i = index;">
+          <div id="box_user"  [ngStyle]="{'border': datos.estado_usuario === 0 ? '1px solid red' : (datos.visto === 1 ? '1px solid green' : '') }">
+            <ion-item class="class-item_pointer" (click)="openModal(i)" >
+              <ion-label>
+                <h3>{{datos.nombres}} {{datos.apellido_p}} {{datos.apellido_m}}</h3>
+                <p>{{datos.correo}}</p>
+                <p>{{datos.titulo_curriculum}}</p>
+                <p class="ion-text-right">Estado: {{datos.estado_n}}</p>
+              </ion-label>
+            </ion-item>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="listadoPosFinSel.length === 0" class="ion-text-center">
+        <ion-label><h3>- No hay personal postulado -</h3></ion-label>
+      </div>
+    </div>
+    <div class="class-div_spaceList" *ngIf="segment === 'Finalistas'">
+      <div *ngIf="listadoPosFinSel.length !== 0">
+        <div *ngFor="let datos of listadoPosFinSel;  let i = index;">
+          <div id="box_user"  [ngStyle]="{'border': datos.estado_usuario === 0 ? '1px solid red' : (datos.visto === 1 ? '1px solid green' : '')}">
+            <ion-item class="class-item_pointer" (click)="openModal(i)">
+              <ion-label>
+                <h3>{{datos.nombres}} {{datos.apellido_p}} {{datos.apellido_m}}</h3>
+                <p>{{datos.correo}}</p>
+                <p>{{datos.titulo_curriculum}}</p>
+                <p class="ion-text-right">Estado: {{datos.estado_n}}</p>
+              </ion-label>
+            </ion-item>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="listadoPosFinSel.length === 0" class="ion-text-center">
+        <ion-label><h3>- No hay personal finalista -</h3></ion-label>
+      </div>
+    </div>
+    <div class="class-div_spaceList" *ngIf="segment === 'Seleccionados'">
+      <div *ngIf="listadoPosFinSel.length !== 0">
+        <div *ngFor="let datos of listadoPosFinSel; let i = index;">
+          <div id="box_user"  [ngStyle]="{'border': datos.estado_usuario === 0 ? '1px solid red' : '1px solid green'}">
+            <ion-item class="class-item_pointer" (click)="openModal(i)">
+              <ion-label>
+                <h3>{{datos.nombres}} {{datos.apellido_p}} {{datos.apellido_m}}</h3>
+                <p>{{datos.correo}}</p>
+                <p>{{datos.titulo_curriculum}}</p>
+                <p class="ion-text-right">Estado: {{datos.estado_n}}</p>
+              </ion-label>
+            </ion-item>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="listadoPosFinSel.length === 0" class="ion-text-center">
+        <ion-label><h3>- No hay personal seleccionado -</h3></ion-label>
+      </div>
+    </div>
+
+
+    <!-- DUPLICAR, EDITAR -->
+    <ion-modal #ModalPosFinSel [isOpen]="modalPosFinSel" width="auto">
+      <ng-template>
+        <ion-header translucent="true">
+          <ion-toolbar>
+            <ion-title>Información del {{title_modal}}</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal()">
+                <ion-icon slot="icon-only" name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <form #duplicareditarOfertaForm="ngForm">
+            <div>
+              <ion-item>
+                <ion-label position="stacked"><h3>Nombre</h3></ion-label>
+                <p>{{modalDatos.nombres}} {{modalDatos.apellido_p}} {{modalDatos.apellido_m}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked"><h3>Email</h3></ion-label>
+                <p>{{modalDatos.correo}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked"><h3>Titulo curriculum</h3></ion-label>
+                <p>{{modalDatos.titulo_curriculum}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked"><h3>Nacionalidad</h3></ion-label>
+                <p>{{modalDatos.nacionalidad}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked"><h3>Nacimiento</h3></ion-label>
+                <p>{{modalDatos.fecha_nacimiento_n}} <span style="color: gray;">({{modalDatos.edad}} años)</span></p>
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked"><h3>Telefono</h3></ion-label>
+                <p>{{modalDatos.prefijo}} {{modalDatos.telefono}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked"><h3>Estado usuario</h3></ion-label>
+                <p>{{modalDatos.estado_n}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label position="stacked"><h3>Ubicación</h3></ion-label>
+                <p>{{modalDatos.nom_loc}}<span *ngIf="modalDatos.nom_loc !== null && modalDatos.nom_loc !== ''">, </span>{{modalDatos.estado}}<span *ngIf="modalDatos.estado !== null && modalDatos.estado !== ''">, </span>{{modalDatos.pais}}</p>
+              </ion-item>
+            </div>
+            <br>
+            <div *ngIf="segment === 'Postulados'">
+
+              <ion-button title="Ver curriculum" expand="block" fill="solid" shape="round"
+                          (click)="ModalPosFinSel.dismiss(); verCurriculum(modalDatos.id_usuario, 1);">
+                <ion-label>Ver curriculum</ion-label>
+              </ion-button>
+              <ion-button title="Añadir de finalistas" expand="block" fill="solid" shape="round"
+                          (click)="setOpcionesPosFinSel(modalDatos.id_usuario, 1)">
+                <ion-label>Añadir de finalistas</ion-label>
+              </ion-button>
+              <ion-button title="Añadir a seleccionados" expand="block" fill="solid" shape="round"
+                          (click)="setOpcionesPosFinSel(modalDatos.id_usuario, 2)">
+                <ion-label>Añadir a seleccionados</ion-label>
+              </ion-button>
+            </div>
+            <div *ngIf="segment === 'Finalistas'">
+              <ion-button title="Ver curriculum" expand="block" fill="solid" shape="round"
+                          (click)="ModalPosFinSel.dismiss(); verCurriculum(modalDatos.id_usuario, 2);">
+                <ion-label>Ver curriculum</ion-label>
+              </ion-button>
+              <ion-button title="Quitar de finalistas" expand="block" fill="solid" shape="round"
+                          (click)="setOpcionesPosFinSel(modalDatos.id_usuario, 3)">
+                <ion-label>Quitar de finalistas</ion-label>
+              </ion-button>
+              <ion-button title="Añadir a seleccionados" expand="block" fill="solid" shape="round"
+                          (click)="setOpcionesPosFinSel(modalDatos.id_usuario, 2)">
+                <ion-label>Añadir a seleccionados</ion-label>
+              </ion-button>
+            </div>
+            <div *ngIf="segment === 'Seleccionados'">
+              <ion-button title="Ver curriculum" expand="block" fill="solid" shape="round"
+                          (click)="ModalPosFinSel.dismiss(); verCurriculum(modalDatos.id_usuario, 1);">
+                <ion-label>Ver curriculum</ion-label>
+              </ion-button>
+              <ion-button title="Añadir a finalistas" expand="block" fill="solid" shape="round"
+                          (click)="setOpcionesPosFinSel(modalDatos.id_usuario, 1)">
+                <ion-label>Añadir a finalistas</ion-label>
+              </ion-button>
+              <ion-button title="Quitar de seleccionados" expand="block" fill="solid" shape="round"
+                          (click)="setOpcionesPosFinSel(modalDatos.id_usuario, 4)">
+                <ion-label>Quitar de seleccionados</ion-label>
+              </ion-button>
+            </div>
+          </form>
+        </ion-content>
+      </ng-template>
+    </ion-modal> <!-- END -->
+  </div>
+  <br>
+</ion-content>

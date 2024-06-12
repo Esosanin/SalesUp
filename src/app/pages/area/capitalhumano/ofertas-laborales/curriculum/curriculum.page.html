@@ -1,0 +1,218 @@
+<router-outlet></router-outlet>
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title><h3>Curriculum</h3></ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="class-div_spaceList">
+    <div class="class-div_infoCard" title="Información general">
+      <ion-item (click)="openDiv({tipo: 'Informacion general'})">
+        <ion-icon class="class-icon_end10" *ngIf="InformacionGeneral" slot="start" name="remove"></ion-icon>
+        <ion-icon class="class-icon_end10" *ngIf="!InformacionGeneral" slot="start" name="add"></ion-icon>
+        <ion-label><h3><b>Información general</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="InformacionGeneral">
+        <ion-item>
+          <ion-label position="stacked"><strong>Nombre:</strong></ion-label>
+          <p>{{curriculum.nombres}} {{curriculum.apellido_p}} {{curriculum.apellido_m}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Nacionalidad:</strong></ion-label>
+          <p>{{curriculum.nacionalidad}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Situación actual:</strong></ion-label>
+          <p>{{curriculum.sit_actual}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Linkedin:</strong></ion-label>
+          <p>{{curriculum.linkedin}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Dispone de vehiculo:</strong></ion-label>
+          <p>{{curriculum.vehiculo_propio}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Discapacidad:</strong></ion-label>
+          <p>{{curriculum.discapacidad}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Fecha de registro:</strong></ion-label>
+          <p>{{curriculum.fecha_registro}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Correo electronico:</strong></ion-label>
+          <p>{{curriculum.correo}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Genero:</strong></ion-label>
+          <p>{{curriculum.genero}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Estado civil:</strong></ion-label>
+          <p>{{curriculum.estado_civil}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Skype:</strong></ion-label>
+          <p>{{curriculum.skype}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Licencia:</strong></ion-label>
+          <p>{{curriculum.licencia}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Estado:</strong></ion-label>
+          <p>{{curriculum.estado_oferta}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong></strong>Última edición:</ion-label>
+          <p>{{curriculum.fecha_ultima}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Dirección:</strong></ion-label>
+          <p>{{curriculum.direccion}}, {{curriculum.cp}}, <span *ngIf="curriculum.ciudad !== null || curriculum.ciudad !== ''">{{curriculum.ciudad}}, {{curriculum.estado_mex}}</span> {{curriculum.pais}}</p>
+        </ion-item>
+      </div>
+    </div>
+    <div class="class-div_infoCard" title="Preferencias de empleo">
+      <ion-item (click)="openDiv({tipo: 'Preferencias Empleo'})">
+        <ion-icon class="class-icon_end10" *ngIf="PreferenciasEmpleo" slot="start" name="remove"></ion-icon>
+        <ion-icon class="class-icon_end10" *ngIf="!PreferenciasEmpleo" slot="start" name="add"></ion-icon>
+        <ion-label><h3><b>Preferencias de empleo</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="PreferenciasEmpleo">
+        <ion-item>
+          <ion-label position="stacked"><strong>Area:</strong></ion-label>
+          <p>{{curriculum.area}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Salario aceptado:</strong></ion-label>
+          <p>{{curriculum.salario}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Disponibilidad para viajar:</strong></ion-label>
+          <p>{{curriculum.dis_viajar}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Disponibilidad cambio de residencia:</strong></ion-label>
+          <p>{{curriculum.dis_camb_res}}</p>
+        </ion-item>
+      </div>
+    </div>
+    <div class="class-div_infoCard" title="Perfil profesional">
+      <ion-item (click)="openDiv({tipo: 'Perfil Profesional'})">
+        <ion-icon class="class-icon_end10" *ngIf="PerfilProfesional" slot="start" name="remove"></ion-icon>
+        <ion-icon class="class-icon_end10" *ngIf="!PerfilProfesional" slot="start" name="add"></ion-icon>
+        <ion-label><h3><b>Perfíl profesional</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="PerfilProfesional">
+        <ion-item>
+          <ion-label position="stacked"><strong>título de curriculum:</strong></ion-label>
+          <p>{{curriculum.titulo_curriculum}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Sobre mí:</strong></ion-label>
+          <p>{{curriculum.sobremi}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked"><strong>Conocimientos y Habilidades:</strong></ion-label>
+          <p>{{curriculum.con_hab}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">
+            <a href="{{fileUrl}}ecnjobs/cv/{{curriculum.pdf}}" target="_blank" *ngIf="curriculum.pdf !== '' && curriculum !== null">Curriculum PDF</a>
+            <p *ngIf="curriculum.pdf === '' || curriculum === null">Curriculum PDF</p>
+          </ion-label>
+        </ion-item>
+      </div>
+    </div>
+    <div class="class-div_infoCard" title="Formación">
+      <ion-item (click)="openDiv({tipo: 'Formacion'})">
+        <ion-icon class="class-icon_end10" *ngIf="Formacion" slot="start" name="remove"></ion-icon>
+        <ion-icon class="class-icon_end10" *ngIf="!Formacion" slot="start" name="add"></ion-icon>
+        <ion-label><h3><b>Formación</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="Formacion && formacion.length !== 0">
+        <div *ngFor="let dato of formacion; let i = index;">
+          <hr *ngIf="i !== 0">
+          <ion-item>
+            <ion-label position="stacked"><strong>Centro ducativo:</strong></ion-label>
+            <p>{{dato.centro_educativo}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Estudios:</strong></ion-label>
+            <p>{{dato.estudios}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Desde:</strong></ion-label>
+            <p>{{dato.desde}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Estado del curso:</strong></ion-label>
+            <p>{{dato.estado_curso}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Hasta:</strong></ion-label>
+            <p>{{dato.hasta}}</p>
+          </ion-item>
+        </div>
+      </div>
+      <div *ngIf="Formacion && formacion.length === 0">
+        <ion-item class="ion-text-center">
+          <ion-label><h3> - No hay información - </h3></ion-label>
+        </ion-item>
+      </div>
+    </div>
+    <div class="class-div_infoCard" title="Experiencias profesionales">
+    <ion-item (click)="openDiv({tipo: 'Experiencias Profesionales'})">
+      <ion-icon class="class-icon_end10" *ngIf="ExperienciasProfesionales" slot="start" name="remove"></ion-icon>
+      <ion-icon class="class-icon_end10" *ngIf="!ExperienciasProfesionales" slot="start" name="add"></ion-icon>
+      <ion-label><h3><b>Experiencias profesionales</b></h3></ion-label>
+    </ion-item>
+      <div *ngIf="ExperienciasProfesionales && experiencia.length !== 0">
+        <div *ngFor="let dato of experiencia; let i = index;">
+          <hr *ngIf="i !== 0">
+          <ion-item>
+            <ion-label position="stacked"><strong>Empresa:</strong></ion-label>
+            <p>{{dato.empresa}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Cargo:</strong></ion-label>
+            <p>{{dato.cargo}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Desde:</strong></ion-label>
+            <p>{{dato.desde}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Giro de la empresa:</strong></ion-label>
+            <p>{{dato.giro}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Hasta:</strong></ion-label>
+            <p>{{dato.hasta}}</p>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked"><strong>Funciones y logros:</strong></ion-label>
+            <p>{{dato.funciones_logros}}</p>
+          </ion-item>
+        </div>
+      </div>
+      <div *ngIf="ExperienciasProfesionales && experiencia.length === 0">
+        <ion-item class="ion-text-center">
+          <ion-label><h3> - No hay información - </h3></ion-label>
+        </ion-item>
+      </div>
+
+    </div>
+    <br><br><br><br>
+  </div>
+</ion-content>

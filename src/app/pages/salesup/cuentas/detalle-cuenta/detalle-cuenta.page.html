@@ -1,0 +1,1019 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Detalle de la cuenta</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+      <ion-back-button defaultHref="tabs2/cuentas"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="!sap">
+      <ion-button (click)="editCuenta()">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <div *ngFor="let c of cuenta">
+    <ion-text color="primary">
+      <h1 class="ion-text-center">{{c.CardName}}</h1>
+      <h4 class="ion-text-center">
+        <ion-icon name="bar-chart-outline"></ion-icon> {{c.tipo}}
+      </h4>
+    </ion-text>
+    <ion-list lines="none">
+      <ion-row>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label>Razón social: {{c.CardName}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>Produce: {{c.produce}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>Municipio: {{c.municipio}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>Potencial: {{c.potencial}}</ion-label>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label>Zona: {{c.zona}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>Estado: {{c.estado}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>Líder de cuenta: {{c.vendedor}}</ion-label>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <!-- <ion-item-divider class="ion-margin-top">
+        <ion-label>Procesos clave: 0</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-buttons slot="end">
+          <ion-button color="primary">
+            <ion-icon slot="start" name="add"></ion-icon>
+            Agregar
+          </ion-button>
+        </ion-buttons>
+      </ion-item> -->
+      <ion-item-divider class="ion-margin-top">
+        <ion-label>Contactos: {{contactosCuenta.length}}</ion-label>
+      </ion-item-divider>
+      <ion-grid [fixed]="true" *ngIf="contactosCuenta.length > 0">
+        <ion-row>
+          <ion-col size="12" size-sm="6" *ngFor="let contacto of contactosCuenta; let i=index;">
+            <ion-item button (click)="addContacto(true,i)">
+              <ion-label class="items">
+                <h3>{{contacto.contacto}}</h3>
+                <p>{{contacto.CardName}}</p>
+                <p>{{contacto.vendedor}}</p>
+              </ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-item>
+        <ion-buttons slot="end">
+          <ion-button color="primary" (click)="addContacto(false,0)">
+            <ion-icon slot="start" name="add"></ion-icon>
+            Agregar
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+      <!-- <ion-item-divider>
+        <ion-label>Tamaño de mercado general (UEN)</ion-label>
+      </ion-item-divider>
+      <ion-row>
+        <ion-col size="12">
+          <canvas style="margin: 0 auto;" baseChart [data]="barChartData" [options]="barChartOptions" [type]="'doughnut'"></canvas>
+        </ion-col>
+      </ion-row>
+      <ion-item>
+        <ion-buttons slot="end">
+          <ion-button color="primary">
+            <ion-icon slot="start" name="add"></ion-icon>
+            Agregar
+          </ion-button>
+        </ion-buttons>
+      </ion-item> -->
+      <ion-item-divider>
+        <ion-label>Visitas semanales: {{visitas.length}}</ion-label>
+      </ion-item-divider>
+      <ion-grid [fixed]="true">
+      <ion-row *ngIf="visitas.length > 0">
+        <ion-col size="12" size-sm="6" *ngFor="let visita of visitas.slice(0,limiteVisitas); let i=index;">
+          <ion-item button (click)="detVisita(i)">
+            <ion-label
+              [ngClass]="{finalizada: visita.estatus==='Finalizada',enproceso: visita.estatus!=='Finalizada' && visita.estatus!=='Pendiente',pendiente: visita.estatus==='Pendiente'}">
+              <h3>{{visita.Vendedor}}</h3>
+              <p>{{visita.objetivo_gen}}</p>
+              <p>{{visita.fecha_comp | date: 'dd/MM/yyyy'}}</p>
+            </ion-label>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      </ion-grid>
+      <ion-item>
+        <ion-buttons slot="end">
+          <ion-button *ngIf="limiteVisitas < 3" color="primary" (click)="limiteVisitas = limiteVisitas + 3;">
+            <ion-icon slot="start" name="eye-outline"></ion-icon>
+            Ver más
+          </ion-button>
+          <ion-button color="primary" (click)="addVisita(false,0)">
+            <ion-icon slot="start" name="add"></ion-icon>
+            Agregar
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+      <ion-item-divider>
+        <ion-label>Oportunidades de negocio: {{oportunidades.length}}</ion-label>
+      </ion-item-divider>
+      <ion-grid [fixed]="true" *ngIf="oportunidades.length > 0">
+        <ion-row>
+          <ion-col size="12" size-sm="6" *ngFor="let oportunidad of oportunidades; let i = index;">
+            <ion-item button (click)="addOportunidad(true,i)">
+                <ion-label class="items">
+                  <h3>{{oportunidad.CardName}}</h3>
+                  <p>{{oportunidad.descripcion}}</p>
+                  <p>{{oportunidad.fecha | date: 'dd/MM/yyyy'}}</p>
+                </ion-label>
+                </ion-item>
+          </ion-col>
+        </ion-row>
+        </ion-grid>
+      <ion-item>
+        <ion-buttons slot="end">
+          <ion-button color="primary" (click)="addOportunidad(false,0)">
+            <ion-icon slot="start" name="add"></ion-icon>
+            Agregar
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+      <!-- <ion-item-divider>
+        <ion-label>Organigrama Cuenta</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-buttons slot="end">
+          <ion-button color="primary" (click)="addOrganigrama(false)">
+            <ion-icon slot="start" name="add"></ion-icon>
+            Agregar
+          </ion-button>
+        </ion-buttons>
+      </ion-item> -->
+    </ion-list>
+  </div>
+
+  <ion-modal #oportunidadModal [isOpen]="modalOrganigrama" class="modalChico"
+  (didDismiss)="modalOrganigrama = false">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Organigrama</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="modalOrganigrama = false">
+            <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <!-- <ion-item lines="inset">
+        <ion-icon slot="start" name="id-card-outline" color="primary"></ion-icon>
+        <ion-label position="stacked">Contacto</ion-label>
+        <ionic-selectable closeButtonText="Cerrar" modalCssClass="selectModal" placeholder="Seleccionar" [hasInfiniteScroll]="true"
+          (onInfiniteScroll)="getMoreContactos($event)" (onSearch)="searchContactos($event)"
+          [(ngModel)]="contactoSelected" [items]="contactosSelect.slice(0,limiteSelects)" itemValueField="CntctCode"
+          itemTextField="Name" [canSearch]="true" searchPlaceholder="Buscar"
+          searchFailText="No se encontraron elementos." name="CntctCode" #contactoSelect required> -->
+          <!-- <ng-template ionicSelectableHeaderTemplate>
+            <ion-toolbar>
+              <ion-header>
+                <ion-toolbar color="light">
+                  <ion-title>Seleccionar contacto</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button (click)="contactoSelect.close()">
+                      <ion-icon slot="icon-only" name="close"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+            </ion-toolbar>
+          </ng-template> -->
+        <!-- </ionic-selectable>
+      </ion-item> -->
+      <ion-item>
+        <ion-icon slot="start" name="hammer-outline" color="primary"></ion-icon>
+        <ion-input type="text" label="Posición" labelPlacement="floating"></ion-input>
+      </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="ribbon-outline" color="primary"></ion-icon>
+          <ion-toggle>¿Es contacto raiz?</ion-toggle>
+        </ion-item>
+    </ion-content>
+  </ng-template>
+  </ion-modal>
+
+  <ion-modal #oportunidadModal [isOpen]="showModalOportunidad" class="modalChico"
+    (didDismiss)="showModalOportunidad = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{oportunidadModalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button *ngIf="id_oportunidad !== 0" (click)="confirmDelete(id_oportunidad)">
+              <ion-icon slot="icon-only" name="trash-outline" color="danger"></ion-icon>
+            </ion-button>
+            <ion-button (click)="showModalOportunidad = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #oportunidadForm="ngForm">
+          <ion-item>
+            <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h5>Cuenta</h5>
+              <p>{{nombreCuenta}}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="pricetag-outline"></ion-icon>
+            <ion-label position="stacked">Descripción</ion-label>
+            <ion-textarea type="text" placeholder="Descripción general de la oportunidad detectada."
+              [(ngModel)]="oportunidad.descripcion" name="descripcion" required #descripcion="ngModel"></ion-textarea>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="business-outline"></ion-icon>
+            <ion-label position="stacked">Industria</ion-label>
+            <ion-select [(ngModel)]="oportunidad.id_industria" name="id_industria" #id_industria="ngModel"
+              cancelText="Cancelar" placeholder="Seleccionar">
+              <ion-select-option *ngFor="let industria of industrias"
+                [value]="industria.id">{{industria.industria}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="business-outline"></ion-icon>
+            <ion-label position="stacked">Spk 1</ion-label>
+            <ion-select [(ngModel)]="oportunidad.id_spk1" name="id_spk1" #id_spk1="ngModel"
+              cancelText="Cancelar" placeholder="Seleccionar">
+              <ion-select-option *ngFor="let spk1 of spk1s" [value]="spk1.id">{{spk1.spk1}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="cash-outline"></ion-icon>
+            <ion-input label="Monto estimado" labelPlacement="floating" type="number" [(ngModel)]="oportunidad.monto_estim" name="monto_estim"
+              #monto_estim="ngModel"></ion-input>
+          </ion-item>
+        </form>
+        <ion-row class="ion-justify-content-end ion-padding-top">
+          <ion-col size="12" size-sm="4">
+            <ion-button [disabled]="!oportunidadForm.valid" (click)="saveOportunidad()" expand="full" shape="round">
+              <ion-icon slot="start" name="save-outline"></ion-icon>
+              Guardar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal [isOpen]="showFormContacto" class="modalChico" (didDismiss)="showFormContacto = false;">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{modalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showFormContacto = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="contactoForm" (ngSubmit)="saveContacto()">
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="id-card-outline" color="primary"></ion-icon>
+                <ion-input label="Contacto" labelPlacement="floating" placeholder="Nombre del contacto..."
+                  formControlName="contacto" type="text"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="hammer-outline" color="primary"></ion-icon>
+                <ion-input label="Posición" labelPlacement="floating" placeholder="Cargo o posición..."
+                  formControlName="posicion" type="text"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="alert-circle-outline" color="primary"></ion-icon>
+                <ion-toggle [enableOnOffLabels]="true" formControlName="clave">¿El contacto es clave?</ion-toggle>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="happy-outline" color="primary"></ion-icon>
+                  <ion-select cancelText="Cancelar" okText="Confirmar" formControlName="relacion" label="Relación" placeholder="Seleccionar" labelPlacement="stacked">
+                    <ion-select-option value="excelente">Excelente</ion-select-option>
+                    <ion-select-option value="buena">Buena</ion-select-option>
+                    <ion-select-option value="mala">Mala</ion-select-option>
+                  </ion-select>
+                </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+                <ion-input label="Teléfono" labelPlacement="floating" placeholder="Número telefónico..."
+                  formControlName="telefono" type="tel"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="mail-outline" color="primary"></ion-icon>
+                <ion-input label="Email" labelPlacement="floating" placeholder="Correo electrónico..."
+                  formControlName="email" type="text"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+                <ion-label>
+                  <h5>Cuenta</h5>
+                  <p>{{nombreCuenta}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-justify-content-end ion-padding">
+            <ion-col size="6" size-sm="3">
+              <ion-button [disabled]="contactoForm.invalid" shape="round" type="submit" expand="full">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal [isOpen]="showCuenta" class="modalGrande" (didDismiss)="showCuenta = false;">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Editar cuenta</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showCuenta = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="leadsFormGroup" (ngSubmit)="saveCuenta()">
+          <ion-row>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+                <ion-input type="text" labelPlacement="floating" formControlName="cuenta" label="Cuenta"
+                  position="stacked"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="bookmark-outline" color="primary"></ion-icon>
+                <ion-input type="text" labelPlacement="floating" formControlName="raz_social"
+                  label="Razón social"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Tipo" cancelText="Cancelar"
+                  formControlName="tipo" placeholder="Seleccionar...">
+                  <ion-select-option value="General">General</ion-select-option>
+                  <ion-select-option value="Corporativo">Corporativo</ion-select-option>
+                  <ion-select-option value="Clave">Clave</ion-select-option>
+                  <ion-select-option value="Compras y contratos">Compras y contratos</ion-select-option>
+                  <ion-select-option value="Holding">Holding</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="receipt-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="rfc" label="RFC"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4" *ngIf="tipoVendedor !== 'Vendedor'">
+              <!-- <ion-item lines="inset">
+                <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Líder de cuenta</ion-label>
+                <ionic-selectable (onChange)="liderChange()" modalCssClass="selectModal" [hasInfiniteScroll]="true"
+                  (onInfiniteScroll)="getMoreVendedores($event)" (onSearch)="searchVendedores($event)"
+                  [(ngModel)]="vendedorSelected" [ngModelOptions]="{standalone: true}"
+                  [items]="vendedores2.slice(0,limiteSelects)" itemValueField="id_sap" itemTextField="nombre"
+                  [canSearch]="true" searchPlaceholder="Buscar" searchFailText="No se encontraron elementos."
+                  #vendedorSelect placeholder="Seleccionar...">
+                  <ng-template ionicSelectableHeaderTemplate>
+                    <ion-toolbar>
+                      <ion-header>
+                        <ion-toolbar color="light">
+                          <ion-title>Seleccionar vendedor</ion-title>
+                          <ion-buttons slot="end">
+                            <ion-button (click)="vendedorSelect.close()">
+                              <ion-icon slot="icon-only" name="close"></ion-icon>
+                            </ion-button>
+                          </ion-buttons>
+                        </ion-toolbar>
+                      </ion-header>
+                    </ion-toolbar>
+                  </ng-template>
+                </ionic-selectable>
+              </ion-item> -->
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="bookmarks-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Industria" cancelText="Cancelar"
+                  formControlName="id_industria" placeholder="Seleccionar...">
+                  <ion-select-option *ngFor="let industria of industrias"
+                    [value]="industria.id">{{industria.industria}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="build-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="produce" label="Produce"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="number" formControlName="telefono"
+                  label="Teléfono"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="direccion"
+                  label="Dirección"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="municipio"
+                  label="Municipio"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="text" formControlName="estado" label="Estado"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="link-outline" color="primary"></ion-icon>
+                <ion-checkbox #checkAsociada formControlName="asociada">Asociada</ion-checkbox>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4" *ngIf="checkAsociada.checked">
+              <!-- <ion-item lines="inset">
+                <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Cuenta asociada</ion-label>
+                <ionic-selectable modalCssClass="selectModal" [hasInfiniteScroll]="true"
+                  (onInfiniteScroll)="getMoreCuentas($event)" (onSearch)="searchCuentas($event)"
+                  [(ngModel)]="cuentaSelected" [ngModelOptions]="{standalone: true}"
+                  [items]="cuentasSelect.slice(0,limiteSelects)" itemValueField="CardCode" itemTextField="CardName"
+                  [canSearch]="true" searchPlaceholder="Buscar" searchFailText="No se encontraron elementos."
+                  #cuentaSelect placeholder="Seleccionar..."> -->
+                  <!-- <ng-template ionicSelectableHeaderTemplate>
+                    <ion-toolbar>
+                      <ion-header>
+                        <ion-toolbar color="light">
+                          <ion-title>Seleccionar cuenta asociada</ion-title>
+                          <ion-buttons slot="end">
+                            <ion-button (click)="cuentaSelect.close()">
+                              <ion-icon slot="icon-only" name="close"></ion-icon>
+                            </ion-button>
+                          </ion-buttons>
+                        </ion-toolbar>
+                      </ion-header>
+                    </ion-toolbar>
+                  </ng-template> -->
+                <!-- </ionic-selectable>
+              </ion-item> -->
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="bar-chart-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Potencial" cancelText="Cancelar"
+                  formControlName="potencial" placeholder="Seleccionar...">
+                  <ion-select-option value="Potencial bajo">Potencial bajo</ion-select-option>
+                  <ion-select-option value="Potencial medio no pertenece a corporativo de mayor potencial">Potencial
+                    medio no pertenece a corporativo de mayor potencial</ion-select-option>
+                  <ion-select-option value="Potencial medio y pertenece a corporativo de mayor potencial">Potencial
+                    medio y pertenece a corporativo de mayor potencial</ion-select-option>
+                  <ion-select-option value="Potencial importante">Potencial importante</ion-select-option>
+                  <ion-select-option value="Gran potencial">Gran potencial</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Preferencia en equipo"
+                  cancelText="Cancelar" formControlName="pref_equipo" placeholder="Seleccionar...">
+                  <ion-select-option value="No aplica">No aplica</ion-select-option>
+                  <ion-select-option value="Competencia (MS < 10%)">Competencia (MS < 10%)</ion-select-option>
+                      <ion-select-option value="Neutral (MS 10-25%)">Neutral (MS 10-25%)</ion-select-option>
+                      <ion-select-option value="Si (MS > 25%)">Si (MS > 25%)</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Preferencia en proyecto"
+                  cancelText="Cancelar" formControlName="pref_proyecto" placeholder="Seleccionar...">
+                  <ion-select-option value="No aplica">No aplica</ion-select-option>
+                  <ion-select-option value="Competencia (MS < 10%)">Competencia (MS < 10%)</ion-select-option>
+                      <ion-select-option value="Neutral (MS 10-25%)">Neutral (MS 10-25%)</ion-select-option>
+                      <ion-select-option value="Si (MS > 25%)">Si (MS > 25%)</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Preferencia en servicio"
+                  cancelText="Cancelar" formControlName="pref_servicio" placeholder="Seleccionar...">
+                  <ion-select-option value="No aplica">No aplica</ion-select-option>
+                  <ion-select-option value="Competencia (MS < 10%)">Competencia (MS < 10%)</ion-select-option>
+                      <ion-select-option value="Neutral (MS 10-25%)">Neutral (MS 10-25%)</ion-select-option>
+                      <ion-select-option value="Si (MS > 25%)">Si (MS > 25%)</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="number" formControlName="tam"
+                  label="Tamaño de mercado"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                <ion-input labelPlacement="floating" type="number" formControlName="market_share"
+                  label="Market share"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="4">
+              <ion-item>
+                <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                <ion-select okText="Seleccionar" labelPlacement="stacked" label="Tipo de cuenta" cancelText="Cancelar"
+                  formControlName="tipo_cuenta" placeholder="Seleccionar...">
+                  <ion-select-option value="AA">AA</ion-select-option>
+                  <ion-select-option value="A">A</ion-select-option>
+                  <ion-select-option value="B+">B+</ion-select-option>
+                  <ion-select-option value="B-">B-</ion-select-option>
+                  <ion-select-option value="C">C</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-justify-content-end ion-padding-top">
+            <ion-col size="6" size-sm="2">
+              <ion-button [disabled]="!contactoForm.valid" type="submit" shape="round" expand="full">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal #actividadModal [isOpen]="showModalActividad" class="modalChico" (didDismiss)="showModalActividad = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{actividadModalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showModalActividad = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #actividadForm="ngForm">
+          <!-- <ion-item lines="inset">
+            <ion-icon slot="start" name="id-card-outline" color="primary"></ion-icon>
+            <ion-label position="stacked">Contacto</ion-label>
+            <ionic-selectable modalCssClass="selectModal" placeholder="Seleccionar" [hasInfiniteScroll]="true"
+              (onInfiniteScroll)="getMoreContactos($event)" (onSearch)="searchContactos($event)"
+              [(ngModel)]="contactoSelected" [items]="contactosSelect.slice(0,limiteSelects)" itemValueField="CntctCode"
+              itemTextField="Name" [canSearch]="true" searchPlaceholder="Buscar"
+              searchFailText="No se encontraron elementos." name="CntctCode" #contactoSelect required> -->
+              <!-- <ng-template ionicSelectableHeaderTemplate>
+                <ion-toolbar>
+                  <ion-header>
+                    <ion-toolbar color="light">
+                      <ion-title>Seleccionar contacto</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button (click)="contactoSelect.close()">
+                          <ion-icon slot="icon-only" name="close"></ion-icon>
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ion-toolbar>
+              </ng-template> -->
+            <!-- </ionic-selectable>
+          </ion-item> -->
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="flag-outline" color="primary"></ion-icon>
+            <ion-select okText="Seleccionar" label="Objetivo general" labelPlacement="stacked" required
+              [(ngModel)]="actividad.objetivo" #objetivo="ngModel" name="objetivo" placeholder="Seleccionar..."
+              cancelText="Cancelar">
+              <ion-select-option value="Atencion a queja">Atención a queja</ion-select-option>
+              <ion-select-option value="Capacitación">Capacitación</ion-select-option>
+              <ion-select-option value="Cierre">Cierre</ion-select-option>
+              <ion-select-option value="Levantamiento">Levantamiento</ion-select-option>
+              <ion-select-option value="Negociacion">Negociación</ion-select-option>
+              <ion-select-option value="Presentacion">Presentación</ion-select-option>
+              <ion-select-option value="Seguimiento">Seguimiento</ion-select-option>
+              <ion-select-option value="Otro">Otro</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item lines="inset"
+            *ngIf="actividad.objetivo === 'Cierre' || actividad.objetivo === 'Seguimiento' || actividad.objetivo === 'Negociacion'">
+            <ion-icon slot="start" name="reader-outline" color="primary"></ion-icon>
+            <ion-label position="stacked">Cotización</ion-label>
+            <ion-input type="text" placeholder="Cotización ID..." [(ngModel)]="actividad.id_cot"
+              name="id_cot"></ion-input>
+            <!-- <ionic-selectable modalCssClass="selectModal" placeholder="Seleccionar" [hasInfiniteScroll]="true"
+              (onInfiniteScroll)="getMoreCotizaciones($event)" (onSearch)="searchCotizaciones($event)"
+              [(ngModel)]="cotizacionSelected" [canAddItem]="true" [items]="cotizaciones.slice(0,limiteSelects)"
+              itemValueField="id" itemTextField="cotizacion" [canSearch]="true" searchPlaceholder="Buscar"
+              searchFailText="No se encontraron elementos." name="CntctCode" #cotizacionSelect required>
+              <ng-template ionicSelectableHeaderTemplate>
+                <ion-toolbar>
+                  <ion-header>
+                    <ion-toolbar color="light">
+                      <ion-title>Seleccionar cotización</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button (click)="cotizacionSelect.close()">
+                          <ion-icon slot="icon-only" name="close"></ion-icon>
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ion-toolbar>
+              </ng-template>
+            </ionic-selectable> -->
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="clipboard-outline" color="primary"></ion-icon>
+            <ion-input label="Detalles de la actividad" labelPlacement="stacked"
+              placeholder="Breve explicación de la actividad" type="text" name="detalles" #detalles="ngModel"
+              [(ngModel)]="actividad.detalles" required>
+            </ion-input>
+          </ion-item>
+        </form>
+        <ion-row class="ion-justify-content-end ion-padding-top">
+          <ion-col size="12" size-sm="4">
+            <ion-button [disabled]="!actividadForm.valid" (click)="saveActividad()" expand="full" fill="solid"
+              shape="round" style="margin-top:12px;">
+              <ion-icon slot="start" name="save-outline"></ion-icon>
+              Guardar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal #visitaModal [isOpen]="showModalVisita" class="modalChico" (didDismiss)="showModalVisita = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{visitaModalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showModalVisita = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #visitaForm="ngForm">
+          <ion-item>
+            <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+            <ion-label>{{nombreCuenta}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="location-outline" color="primary"></ion-icon>
+            <ion-label>{{nombreSucursal}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+            <ion-input labelPlacement="floating" label="Fecha de visita"
+              value="{{ visita.fecha_comp | date: 'dd/MM/yyyy' }}" id="date" required></ion-input>
+            <ion-popover trigger="date" show-backdrop="false" class="dateTimePopover" alignment="center">
+              <ng-template>
+                <ion-datetime [showDefaultButtons]="true" doneText="Listo" cancelText="Cancelar" presentation="date"
+                  name="fecha_comp" [(ngModel)]="visita.fecha_comp"></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="clipboard-outline"></ion-icon>
+            <ion-input labelPlacement="floating" label="Objetivo general" #objetivo_gen="ngModel"
+              [(ngModel)]="visita.objetivo_gen" name="objetivo_gen" type="text"
+              placeholder="Objetivo general de la visita" required></ion-input>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+            <ion-label position="fixed">Hora inicio</ion-label>
+            <ion-datetime-button datetime="datetime"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime [(ngModel)]="visita.hora_inicio" name="hora_inicio" id="datetime"
+                  presentation="time"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+            <ion-label position="fixed">Hora fin</ion-label>
+            <ion-datetime-button datetime="datetime2"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime [(ngModel)]="visita.hora_fin" name="hora_fin" id="datetime2"
+                  presentation="time"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+          <ion-row class="ion-justify-content-end ion-padding-top">
+            <ion-col size="12" size-sm="4">
+              <ion-button [disabled]="!visitaForm.valid" size="medium" (click)="saveVisita()" expand="full"
+                shape="round">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal #detalleVisitaModal [isOpen]="showModalDetalleVisita" class="modalNormal"
+    (didDismiss)="showModalDetalleVisita = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Detalles de la visita</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="addVisita(true,visitaIndex)"
+              *ngIf="visitas[visitaIndex].estatus!=='Finalizada' && visitas[visitaIndex].estatus!=='En ejecución'">
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="confirmEliminarVisita()"
+              *ngIf="visitas[visitaIndex].estatus!=='Finalizada' && visitas[visitaIndex].estatus!=='En ejecución'">
+              <ion-icon color="danger" slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="showModalDetalleVisita = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item lines="none">
+          <ion-label>
+            <h2 class="ion-text-center" style="text-wrap: wrap;">{{visitaTitle}}</h2>
+            <h2 class="ion-text-center">({{visitaSubtitle}})</h2>
+            <p class="ion-text-center ion-margin-top">{{visitaEstatus}}</p>
+          </ion-label>
+        </ion-item>
+        <!-- <ion-button (click)="enviarReporte()" fill="clear" shape="round">
+              <ion-icon slot="start" name="mail"></ion-icon>
+              Enviar
+            </ion-button>
+            <ion-button (click)="enviarReporte()" fill="clear" shape="round">
+              <ion-icon slot="start" name="document-text"></ion-icon>
+              Plan estratégico
+            </ion-button> -->
+        <ion-row class="ion-justify-content-center">
+          <ion-col size="12" size-sm="4">
+            <ion-button
+              *ngIf="actividades.length > 0 && !checkIn2 && !visitaCompleta && today === visitas[visitaIndex].fecha_comp"
+              (click)="checkIn(false)" shape="round" expand="full">
+              <ion-icon slot="start" name="time-outline"></ion-icon>
+              Check in
+            </ion-button>
+            <ion-button *ngIf="actividades.length > 0 && checkIn2 && !visitaCompleta && actividadesCompletas"
+              (click)="checkIn(true)" shape="round" expand="full">
+              <ion-icon slot="start" name="time-outline"></ion-icon>
+              Check out
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-list class="ion-padding-top">
+          <ion-item *ngFor="let det of detVisitas" lines="none">
+            <ion-icon slot="start" name="{{det.icon}}-outline" color="primary"></ion-icon>
+            <ion-label>{{det.detalle}}</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+            <iframe width="100%" height="100px" [src]="mapUrl" frameborder="0" scrolling="no" marginheight="0"
+              marginwidth="0"></iframe>
+          </ion-item>
+        </ion-list>
+        <ion-item-divider style="margin-top:24px">
+          <ion-label>Actividades: {{actividades.length}}</ion-label>
+        </ion-item-divider>
+        <ion-list>
+          <ion-item button (click)="detalleActividad(i)" *ngFor="let actividad of actividades; let i = index;">
+            <ion-label
+              [ngClass]="{enproceso: actividad.estatus==='Programada',finalizada: actividad.estatus==='Finalizada',pendiente: actividad.estatus==='Cancelada'}">
+              <h3>{{actividad.Name}}</h3>
+              <p>{{actividad.objetivoTitulo}}</p>
+              <p>{{actividad.detalles}}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <ion-row class="ion-justify-content-end" *ngIf="visitaEstatus!=='Finalizada'">
+          <ion-col size="5" size-sm="3">
+            <ion-button (click)="addActividad(false,0)" shape="round" fill="clear">
+              <ion-icon slot="start" name="add"></ion-icon>
+              Agregar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-item-divider>
+          <ion-label>Acompañamientos: {{acompanamientos.length}}</ion-label>
+        </ion-item-divider>
+        <ion-list *ngIf="acompanamientos.length > 0">
+          <ion-item-sliding *ngFor="let acompanamiento of acompanamientos; let i = index;">
+            <ion-item>
+              <ion-label class="items">
+                <h3>{{acompanamiento.nombre}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item-options side="start">
+              <ion-item-option *ngIf="visitaEstatus!=='Finalizada'" color="transparent"
+                (click)="addAcompanamiento(true, i)">
+                <ion-icon slot="icon-only" name="create"></ion-icon>
+              </ion-item-option>
+              <ion-item-option *ngIf="visitaEstatus!=='Finalizada'" color="transparent"
+                (click)="confirmEliminarAcompanamiento(i)">
+                <ion-icon color="danger" slot="icon-only" name="trash"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+        <ion-row class="ion-justify-content-end" *ngIf="visitaEstatus!=='Finalizada'">
+          <ion-col size="5" size-sm="3">
+            <ion-button (click)="addAcompanamiento(false,0)" shape="round" fill="clear">
+              <ion-icon slot="start" name="add"></ion-icon>
+              Agregar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal [isOpen]="showModalDetalleActividad" class="modalNormal" (didDismiss)="showModalDetalleActividad = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Detalles de la actividad</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="addActividad(true,actividadIndex)">
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="confirmEliminarActividad(actividadIndex)">
+              <ion-icon slot="icon-only" name="trash-outline" color="danger"></ion-icon>
+            </ion-button>
+            <ion-button (click)="showModalDetalleActividad = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-text>
+          <h5 class="ion-text-center">{{actividades[actividadIndex].Name}}</h5>
+          <p class="ion-text-center">{{actividades[actividadIndex].estatus}}</p>
+        </ion-text>
+        <ion-item lines="none" *ngIf="actividades[actividadIndex].estatus!=='Finalizada'">
+          <ion-button size="medium" slot="end" color="success" shape="round" (click)="execActividad(actividadIndex)">
+            <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+            Ejecutar
+          </ion-button>
+        </ion-item>
+        <ion-list>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+            <ion-label>{{actividades[actividadIndex].CardName}}</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="clipboard-outline" color="primary"></ion-icon>
+            <ion-label>{{actividades[actividadIndex].objetivo}}</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="information-outline" color="primary"></ion-icon>
+            <ion-label>{{actividades[actividadIndex].detalles}}</ion-label>
+          </ion-item>
+        </ion-list>
+        <ion-item-divider class="ion-padding-top">
+          <ion-label>Compromisos: {{compromisos.length}}</ion-label>
+        </ion-item-divider>
+        <ion-list *ngIf="compromisos.length > 0">
+          <ion-item-sliding *ngFor="let compromiso of compromisos; let i = index;">
+            <ion-item>
+              <ion-label
+                [ngClass]="{enproceso: compromiso.estatus==='Pendiente',finalizada: compromiso.estatus==='Finalizado'}">
+                <h3>{{compromiso.Name}}</h3>
+                <p>{{compromiso.detalles}}</p>
+                <p>{{compromiso.fecha | date: 'dd/MM/yyyy'}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item-options side="start">
+              <ion-item-option *ngIf="compromiso.estatus!=='Finalizado'" color="transparent"
+                (click)="execCompromiso(i)">
+                <ion-icon color="success" slot="icon-only" name="checkmark-circle-outline"></ion-icon>
+              </ion-item-option>
+              <ion-item-option *ngIf="compromiso.estatus!=='Finalizado'" color="transparent"
+                (click)="addCompromiso(true,i,true)">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-item-option>
+              <ion-item-option color="transparent" (click)="confirmEliminarCompromiso(i)">
+                <ion-icon color="danger" slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+        <ion-row class="ion-justify-content-end">
+          <ion-col size="5" size-sm="3">
+            <ion-button (click)="addCompromiso(false,0,true)" expand="block" fill="clear" shape="round">
+              <ion-icon slot="start" name="add"></ion-icon>
+              Agregar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-item-divider>
+          <ion-label>Levantamientos: {{levantamientos.length}}</ion-label>
+        </ion-item-divider>
+        <ion-list *ngIf="levantamientos.length > 0">
+          <ion-item-sliding *ngFor="let levantamiento of levantamientos; let i=index;">
+            <ion-item>
+              <ion-label
+                [ngClass]="{finalizada: levantamiento.estatus==='Finalizado',enproceso: levantamiento.estatus!=='Finalizado' && levantamiento.estatus!=='Pendiente',pendiente: levantamiento.estatus==='Pendiente'}">
+                <h3>{{levantamiento.Name}} - {{levantamiento.nombre_apli}}</h3>
+                <p>{{levantamiento.comentarios}}</p>
+                <p>Fecha de entrega: {{levantamiento.fecha_entrega | date: 'dd/MM/yyyy'}}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item-options side="start">
+              <ion-item-option color="transparent" (click)="execLevantamiento(i)">
+                <ion-icon color="success" slot="icon-only" name="checkmark-circle-outline"></ion-icon>
+              </ion-item-option>
+              <ion-item-option color="transparent" (click)="addLevantamiento(true,i,true)">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-item-option>
+              <ion-item-option color="transparent" (click)="confirmEliminarLevantamiento(i)">
+                <ion-icon color="danger" slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+        <ion-row class="ion-justify-content-end">
+          <ion-col size="5" size-sm="3">
+            <ion-button (click)="addLevantamiento(false,0,true)" expand="block" fill="clear" shape="round">
+              <ion-icon slot="start" name="add"></ion-icon>
+              Agregar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

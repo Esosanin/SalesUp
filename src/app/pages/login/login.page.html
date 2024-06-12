@@ -1,0 +1,78 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="segment='acceso'; recover=false" *ngIf="segment==='recover'">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding" color="light" *ngIf="segment==='acceso'">
+  <ion-grid fixed class="animarElemento">
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-sm="8" size-md="6" size-lg="5" size-xl="4">
+        <img class="logo" src="./assets/icon/favicon.png" alt="logo">
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <ion-input class="ion-margin-bottom" label="Usuario" fill="outline" labelPlacement="stacked"
+            formControlName="email">
+            <ion-icon color="primary" slot="start" name="person-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+          <ion-input [type]="shwpwd?'text':'password'" class="ion-margin-bottom" label="Contraseña" fill="outline"
+            labelPlacement="stacked" formControlName="password">
+            <ion-icon color="primary" slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>
+            <ion-button (click)="showPwd()" slot="end" fill="clear" size="small" color="primary">
+              <ion-icon slot="icon-only" [name]="shwpwd?'eye-off-outline':'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-input>
+          <ion-button expand="full" (click)="segment='recover'" fill="clear" shape="round">
+            <ion-icon slot="start" name="help-circle-outline"></ion-icon>
+            Olvidé mi contraseña
+          </ion-button>
+          <ion-button expand="full" type="submit" fill="solid" shape="round">
+            <ion-icon slot="start" name="log-in-outline"></ion-icon>
+            Ingresar
+          </ion-button>
+        </form>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-content class="ion-padding" color="light" *ngIf="segment==='recover'">
+  <ion-grid fixed class="animarElemento">
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-sm="8" size-md="6" size-lg="5" size-xl="4">
+        <img class="logo" src="./assets/icon/favicon.png" alt="logo">
+        <form [formGroup]="tokenForm" (ngSubmit)="recoverPass()" class="form" *ngIf="recover">
+          <ion-input [type]="shwpwd2?'text':'password'" class="ion-margin-bottom"
+            label="Nueva contraseña (min 8 caracteres)" fill="outline" labelPlacement="stacked"
+            formControlName="newPass">
+            <ion-icon color="primary" slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>
+            <ion-button (click)="showPwd2()" slot="end" fill="clear" size="small" color="primary">
+              <ion-icon slot="icon-only" [name]="shwpwd2?'eye-off-outline':'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-input>
+          <ion-input [type]="shwpwd2?'text':'password'" class="ion-margin-bottom" label="Confirmar contraseña"
+            fill="outline" labelPlacement="stacked" formControlName="newPass2">
+            <ion-icon color="primary" slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+
+          <ion-button [disabled]="tokenForm.invalid" type="submit" expand="full" fill="solid" shape="round">
+            <ion-icon slot="start" name="save-outline"></ion-icon>
+            Guardar
+          </ion-button>
+        </form>
+        <form [formGroup]="recoverForm" (ngSubmit)="recoverPassRequest()" *ngIf="!recover">
+          <ion-input errorText="Ingrese su correo ECN para recuperar la contraseña de su cuenta."
+            helperText="Ingrese su correo ECN para recuperar la contraseña de su cuenta." type="email"
+            class="ion-margin-bottom" label="Correo" fill="outline" labelPlacement="stacked" formControlName="email">
+            <ion-icon color="primary" slot="start" name="mail-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+          <ion-button [disabled]="recoverForm.invalid" type="submit" expand="full" fill="solid" shape="round">
+            <ion-icon slot="start" name="lock-open-outline"></ion-icon>
+            Recuperar
+          </ion-button>
+        </form>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,270 @@
+.class-content_spaces {
+    padding: 10px;
+    margin: 10px;
+}
+
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px;
+
+    cursor: pointer;
+}
+
+.class-div_box-border {
+    border: 1px solid rgb(230, 230, 230);
+    padding: 10px;
+    margin: 10px;
+}
+
+.class-margin { margin: 10px; }
+
+.class-padding { padding: 10px; }
+
+.class-cursor_notactive{
+    cursor: default !important;
+}
+
+.class-box_size-sx{
+    max-height: 300px;
+    overflow: auto;
+}
+
+.class-p_primary{
+    color: #3880ff;
+}
+
+.class-text_gray {
+    color: #666666;
+}
+.class-text_success {
+    color: #1c84c6;
+}
+
+.class-div_line {
+    margin: 5px 0px;
+}
+.class-card_white {
+    background: white; 
+    border-radius: 5px; 
+    padding: 5px;
+}
+.class-div_historial{
+    font-size: 12px;
+    max-height: 400px;
+    overflow: auto;
+}
+
+.class-textarea {
+    height: 100px !important;
+    resize: none;
+    overflow: visible !important;
+    border: 0px;
+    width: 100%;
+    margin: 10px 0px;
+}
+
+a, .class-item_pointer {
+    cursor: pointer;
+}
+
+hr {
+    height: 1px;
+    width: 100%;
+    background-color: #d5d5d5;
+}
+
+h3.class-h3_modal {
+    width: auto;
+    max-width: 150px;
+    min-width: 150px;
+    padding-right: 10px;
+}
+
+p {
+    white-space: pre-line;
+}
+
+ion-label.class-label_modal{
+    //align-self: baseline;
+    flex: 1 1 0% !important;
+    white-space: initial !important;
+    width: auto;
+    max-width: none;
+    min-width: 150px;
+}
+
+ion-label.class-label_radioButton {
+    white-space: initial !important;
+}
+
+ion-select {
+    width: 100%;
+}
+
+ion-input, ion-select, p, span{
+    color: #666666;
+}
+
+ion-icon {
+    font-size: 24px;
+    pointer-events: none;
+}
+
+ion-textarea{
+    div.textarea-wrapper.sc-ion-textarea-md{
+        textarea.native-textarea.sc-ion-textarea-md {
+            overflow-y: auto !important;
+        }
+    }
+}
+
+textarea {
+    width: 100%; 
+    resize: none;
+
+    margin-top: 10px;
+    padding: 10px;
+
+    overflow: auto !important;
+    border: none;
+    border-bottom: 1px solid #d5d5d5;
+}
+
+ion-item textarea {
+    border: hidden;
+}
+
+
+ion-button input#vuelo_fileInfo, ion-button input#hosp_fileInfo {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+ion-button input#vuelo_fileInfo, ion-button input#hosp_fileInfo ~ label {
+    cursor: pointer;
+}
+
+ion-button::part(native){
+    white-space: normal;
+}
+
+/* <ion-select multiple="false" ... */
+.alert-radio-label.sc-ion-alert-md,
+.alert-radio-label.sc-ion-alert-ios {
+  white-space: normal !important;
+}
+
+/////////////////////////////////////
+
+@media (min-width: 576px) {
+    .class-div_desvanecer_sm ion-label,
+    .class-div_aparecer_sm ion-label{
+        display: block;
+        white-space: pre-line;
+    }
+    .class-div_desvanecer_sm ion-icon{
+        display: none;
+    }
+
+    .class-div_aparecer_sm ion-icon{
+        font-size: 24px;
+        margin-right: 10px;
+        display: block;
+    }
+}
+
+@media (max-width: 576px) {
+    .class-div_desvanecer_sm ion-label,
+    .class-div_aparecer_sm ion-icon{
+        display: none;
+    }
+    .class-div_desvanecer_sm ion-icon{
+        font-size: 24px;
+        margin-right: 10px;
+        display: block;
+    }
+
+    .class-div_aparecer_sm ion-label{
+        display: block;
+    }
+}
+
+
+@media (min-width: 768px) {
+    .class-div_desvanecer_md ion-label,
+    .class-div_aparecer_md ion-label{
+        display: block;
+        margin-bottom: 0px;
+        white-space: pre-line;
+    }
+    .class-div_desvanecer_md ion-icon{
+        display: none;
+    }
+
+    .class-div_aparecer_md ion-icon{
+        font-size: 24px;
+        margin-right: 10px;
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .class-div_desvanecer_md ion-label,
+    .class-div_aparecer_md ion-icon{
+        display: none;
+    }
+    .class-div_desvanecer_md ion-icon{
+        font-size: 24px;
+        margin-right: 10px;
+        display: block;
+    }
+
+    .class-div_aparecer_md ion-label{
+        display: block;
+    }
+}
+
+////////////////////////////
+/// ENCUESTA
+
+fieldset.class-rating, label {
+    margin: 0;
+    padding: 0;
+}
+
+.class-rating {
+    border: none;
+    float: left;
+}
+
+.class-rating > input[type = radio][name = estrellas] { display: none;}
+.class-rating > label[id = encuesta_label]::before {
+    margin: 5px;
+    font-size: 1.25em;
+    font-family: FontAwesome;
+    display: inline-block;
+    height: 0;
+    width: 0;
+}
+.class-rating > label[id = encuesta_label] {
+    color: #ddd;
+    float: right;
+}
+.class-rating > input[type = radio][name = estrellas]:checked ~ label[id = encuesta_label],
+.class-rating:not(:checked) > label[id = encuesta_label]:hover,
+.class-rating:not(:checked) > label[id = encuesta_label]:hover ~ label[id = encuesta_label] {
+    color: #FFD700;
+}
+.class-rating > input[type = radio][name = estrellas]:checked + label[id = encuesta_label]:hover,
+.class-rating > input[type = radio][name = estrellas]:checked ~ label[id = encuesta_label]:hover,
+.class-rating > label[id = encuesta_label]:hover ~ input[type = radio][name = estrellas]:checked ~ label[id = encuesta_label],
+.class-rating > input[type = radio][name = estrellas]:checked ~ label[id = encuesta_label]:hover ~ label[id = encuesta_label] {
+    color: #FFED85;
+}
+

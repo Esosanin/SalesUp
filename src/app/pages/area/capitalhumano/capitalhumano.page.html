@@ -1,0 +1,1082 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+      <ion-back-button defaultHref="tabs/area"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true; focus();">
+        <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">Capital humano</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always"
+      (ionInput)="searchColaboradores($event)" (ionCancel)="showSearchbar=false; searchColaboradores($event)"
+      placeholder="Buscar" (ionClear)="searchColaboradores($event)">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="fadeInOut" [ngClass]="{'hidden':limite < 60}" size="small" color="light"
+      (click)="ScrollToTop()">
+      <ion-icon name="arrow-up"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="editColaborador(0,false)">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <!-- <p><ion-router-link [routerLink]="['/tabs/area']">Mi área</ion-router-link> > Capital humano</p> -->
+  <ion-button (click)="presentPopover($event)" class="ion-padding">
+    <ion-icon slot="start" name="menu"></ion-icon>
+    Menú
+  </ion-button>
+  <div class="ion-padding">
+      <ion-popover #popover [isOpen]="isOpen" (didDismiss)="isOpen = false">
+        <ng-template>
+          <ion-content class="ion-padding">
+            <ion-list>
+            <ion-item (click)="openCarreras()" lines="none" button>
+              <ion-icon size="small" slot="start" name="school-outline" color="primary"></ion-icon>
+              <ion-label>Carreras</ion-label>
+            </ion-item>
+            <ion-item (click)="openEspecialidades()" lines="none" button>
+              <ion-icon size="small" slot="start" name="layers-outline" color="primary"></ion-icon>
+              <ion-label>Especialidades</ion-label>
+            </ion-item>
+            <ion-item (click)="openNacionalidades()" lines="none" button>
+              <ion-icon size="small" slot="start" name="flag-outline" color="primary"></ion-icon>
+              <ion-label>Nacionalidades</ion-label>
+            </ion-item>
+            <ion-item (click)="openPuestos()" lines="none" button>
+              <ion-icon size="small" slot="start" name="layers-outline" color="primary"></ion-icon>
+              <ion-label>Puestos</ion-label>
+            </ion-item>
+            <ion-item (click)="openRegiones()" lines="none" button>
+              <ion-icon size="small" slot="start" name="map-outline" color="primary"></ion-icon>
+              <ion-label>Regiones</ion-label>
+            </ion-item>
+            <ion-item (click)="openSucursales()" lines="none" button>
+              <ion-icon size="small" slot="start" name="business-outline" color="primary"></ion-icon>
+              <ion-label>Sucursales</ion-label>
+            </ion-item>
+            <ion-item-divider></ion-item-divider>
+            <ion-item (click)="openOfertas()" lines="none" button>
+              <ion-icon size="small" slot="start" name="briefcase-outline" color="primary"></ion-icon>
+              <ion-label>Ofertas laborales</ion-label>
+            </ion-item>
+            <ion-item (click)="openPropuestas()" lines="none" button>
+              <ion-icon size="small" slot="start" name="cash-outline" color="primary"></ion-icon>
+              <ion-label class="ion-text-small">Propuestas salariales</ion-label>
+            </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
+  <ion-row class="ion-justify-content-center">
+    <ion-col size="6" size-sm="2">
+      <ion-item lines="none">
+        <ion-label>Activos</ion-label>
+        <ion-toggle aria-label="activos" slot="end" enableOnOffLabels="true" [checked]="true" (ionChange)="activosChange($event)">
+        </ion-toggle>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-list *ngIf="colaboradores.length > 0">
+    <ion-row>
+      <ion-col size="12" size-sm="6" *ngFor="let colaborador of colaboradores.slice(0,limite); let i = index;">
+        <ion-item button (click)="openMenu(colaborador.id_colaborador)">
+          <ion-avatar slot="start">
+            <img [src]="service2.fotosUrl + colaborador.foto">
+          </ion-avatar>
+          <ion-label>
+            <h3>{{colaborador.apellido_p + ' ' + colaborador.apellido_m + ' ' + colaborador.nombres}}</h3>
+            <p>{{colaborador.n_colaborador}} | {{colaborador.area}} | {{colaborador.nombre_region}}</p>
+          </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-infinite-scroll position="bottom" [disabled]="colaboradores.length <= limite" (ionInfinite)="addItems($event)">
+      <ion-infinite-scroll-content loadingSpinner="circles" loadingText="Cargando...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ion-list>
+
+  <!-- Modal editar/agregar -->
+  <ion-modal (didDismiss)="showModalForm = false" [isOpen]="showModalForm" class="modalGrande">
+    <ng-template>
+      <ion-header translucent="true">
+        <ion-toolbar>
+          <ion-title>{{modalFormTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showModalForm = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <img *ngIf="editar" [src]="service2.fotosUrl + colaboradorData.foto" class="foto">
+        <form #cuentaForm="ngForm">
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Datos personales</ion-label>
+            </ion-list-header>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Nombre</ion-label>
+                  <ion-input type="text" id="nombres" name="nombres" [(ngModel)]="colaboradorData.nombres"
+                    #nombres="ngModel" required></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Apellido paterno</ion-label>
+                  <ion-input required type="text" id="apellido_p" name="apellido_p"
+                    [(ngModel)]="colaboradorData.apellido_p" #apellido_p="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Apellido materno</ion-label>
+                  <ion-input required type="text" id="apellido_m" name="apellido_m"
+                    [(ngModel)]="colaboradorData.apellido_m" #apellido_m="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Fecha de nacimiento</ion-label>
+                  <ion-input type="date" id="fecha_nacimiento" name="fecha_nacimiento"
+                    [(ngModel)]="colaboradorData.fecha_nacimiento" #fecha_nacimiento="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="male-female-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Género</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.sexo" id="sexo" name="sexo" #sexo="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option [value]="0">Femenino</ion-select-option>
+                    <ion-select-option [value]="1">Masculino</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="flag-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Nacionalidad</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.id_nacionalidad" id="id_nacionalidad" name="id_nacionalidad"
+                    #id_nacionalidad="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let nacionalidad of nacionalidades"
+                      [value]="nacionalidad.id_nacionalidad">{{nacionalidad.nacionalidad}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="document-text-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">CURP</ion-label>
+                  <ion-input type="text" id="CURP" name="CURP" [(ngModel)]="colaboradorData.CURP" #CURP="ngModel">
+                  </ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="document-text-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">RFC</ion-label>
+                  <ion-input type="text" id="RFC" name="RFC" [(ngModel)]="colaboradorData.RFC" #RFC="ngModel">
+                  </ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="document-text-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">NSS</ion-label>
+                  <ion-input type="text" id="NIMSS" name="NIMSS" [(ngModel)]="colaboradorData.NIMSS"
+                    #NIMSS="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="image-outline" color="primary"></ion-icon>
+                  <ion-label>Fotografía</ion-label>
+                  <ion-input (ionChange)="fotoChange()" name="foto" #foto type="file"
+                    accept="image/png, image/jpg, image/jpeg"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Teléfono personal</ion-label>
+                  <ion-input type="text" id="tel_personal" name="tel_personal" [(ngModel)]="colaboradorData.celular"
+                    #tel_personal="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="mail-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Email personal</ion-label>
+                  <ion-input type="text" id="txt_mailPersonal" name="txt_mailPersonal"
+                    [(ngModel)]="colaboradorData.txt_mailPersonal" #txt_mailPersonal="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="heart-half-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Estado civil</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.edo_civil" id="edo_civil" name="edo_civil"
+                    #edo_civil="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option [value]="0">Sin especificar</ion-select-option>
+                    <ion-select-option [value]="1">Casado</ion-select-option>
+                    <ion-select-option [value]="2">Divorciado</ion-select-option>
+                    <ion-select-option [value]="3">Unión libre</ion-select-option>
+                    <ion-select-option [value]="4">Soltero</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="bonfire-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Tipo de sangre</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.tipoSangre" id="tipoSangre" name="tipoSangre"
+                    #tipoSangre="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let sangre of tipoSangres" value="{{sangre.id_sangre}}">
+                      {{sangre.desc_sangre}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="bonfire-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Donante</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.donante" id="donante" name="donante" #donante="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option [value]="0">No especifíca</ion-select-option>
+                    <ion-select-option [value]="1">Si</ion-select-option>
+                    <ion-select-option [value]="2">No</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="medkit-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Alergias</ion-label>
+                  <ion-input type="text" id="alergias" name="alergias" [(ngModel)]="colaboradorData.alergias"
+                    #alergias="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="medkit-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Enfermedades persistentes</ion-label>
+                  <ion-input type="text" id="enfermedades" name="enfermedades"
+                    [(ngModel)]="colaboradorData.enfermedades" #enfermedades="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="body-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Limitaciones físicas</ion-label>
+                  <ion-input type="text" id="limitaciones" name="limitaciones"
+                    [(ngModel)]="colaboradorData.limitaciones" #limitaciones="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="shirt-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Talla de camisa</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.camisa" id="camisa" name="camisa" #camisa="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option value="No especifica">No especifica</ion-select-option>
+                    <ion-select-option value="XXS">XXS</ion-select-option>
+                    <ion-select-option value="XS">XS</ion-select-option>
+                    <ion-select-option value="S">S</ion-select-option>
+                    <ion-select-option value="M">M</ion-select-option>
+                    <ion-select-option value="L">L</ion-select-option>
+                    <ion-select-option value="XL">XL</ion-select-option>
+                    <ion-select-option value="XXL">XXL</ion-select-option>
+                    <ion-select-option value="XXXL">XXXL</ion-select-option>
+                    <ion-select-option value="XXXXL">XXXXL</ion-select-option>
+                    <ion-select-option value="XXXXXL">XXXXXL</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="school-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Estudios</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.nivel_estudio" id="nivel_estudio" name="nivel_estudio"
+                    #nivel_estudio="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let estudio of estudios" [value]="estudio.nivelEstudio_id">
+                      {{estudio.nivelEstudio_detalle}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="school-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Carrera</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.id_carrera" id="id_carrera" name="id_carrera"
+                    #id_carrera="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let carrera of carreras" [value]="carrera.id_carrera">
+                      {{carrera.carerra}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="document-attach-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Certificado</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.certificado" id="certificado" name="certificado"
+                    #certificado="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option [value]="1">Si</ion-select-option>
+                    <ion-select-option [value]="0">No</ion-select-option>
+                    <ion-select-option [value]="2">En proceso</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="language-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Inglés</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.ingles" id="ingles" name="ingles" #ingles="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option [value]="1">Si</ion-select-option>
+                    <ion-select-option [value]="0">No</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Infonavit</ion-label>
+                  <ion-input type="number" [(ngModel)]="colaboradorData.infonavit" name="infonavit"
+                    #infonavit="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Fonacot</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.fonacot" name="fonacot" #fonacot="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option [value]="0">No</ion-select-option>
+                    <ion-select-option [value]="1">Si</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-list>
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Domicilio</ion-label>
+            </ion-list-header>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Calle y número</ion-label>
+                  <ion-input type="text" id="calleNumero" name="calleNumero" [(ngModel)]="colaboradorData.calleNumero"
+                    #calleNumero="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Colonia</ion-label>
+                  <ion-input type="text" id="colonia" name="colonia" [(ngModel)]="colaboradorData.colonia"
+                    #colonia="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Código postal</ion-label>
+                  <ion-input type="text" id="codigoPostal" name="codigoPostal"
+                    [(ngModel)]="colaboradorData.codigoPostal" #codigoPostal="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Estado</ion-label>
+                  <ion-input type="text" id="dom_estado" name="dom_estado" [(ngModel)]="colaboradorData.dom_estado"
+                    #dom_estado="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Municipio</ion-label>
+                  <ion-input type="text" id="municipio" name="municipio" [(ngModel)]="colaboradorData.municipio"
+                    #municipio="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">País</ion-label>
+                  <ion-input type="text" id="pais" name="pais" [(ngModel)]="colaboradorData.pais" #pais="ngModel">
+                  </ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Lugar de nacimiento</ion-label>
+                  <ion-input type="text" id="lugarNacimiento" name="lugarNacimiento"
+                    [(ngModel)]="colaboradorData.lugarNacimiento" #lugarNacimiento="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-list>
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Contacto de emergencia</ion-label>
+            </ion-list-header>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="id-card-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Nombre</ion-label>
+                  <ion-input type="text" id="emergencia_nombre" name="emergencia_nombre"
+                    [(ngModel)]="colaboradorData.emergencia_nombre" #emergencia_nombre="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="people-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Parentesco</ion-label>
+                  <ion-input type="text" id="emergencia_parent" name="emergencia_parent"
+                    [(ngModel)]="colaboradorData.emergencia_parent" #emergencia_parent="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="home-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Domicilio</ion-label>
+                  <ion-input type="text" id="emergencia_dom" name="emergencia_dom"
+                    [(ngModel)]="colaboradorData.emergencia_dom" #emergencia_dom="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Teléfono</ion-label>
+                  <ion-input type="text" id="emergencia_num" name="emergencia_num"
+                    [(ngModel)]="colaboradorData.emergencia_num" #emergencia_num="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-list>
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Datos ECN</ion-label>
+            </ion-list-header>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="document-text-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">VISA</ion-label>
+                  <ion-input type="text" id="visa_num" name="visa_num" [(ngModel)]="colaboradorData.visa_num"
+                    #visa_num="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="document-text-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Pasaporte</ion-label>
+                  <ion-input type="text" id="pasaporte" name="pasaporte" [(ngModel)]="colaboradorData.pasaporte"
+                    #pasaporte="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="document-text-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">SGMM #Póliza</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.poliza" id="poliza" name="poliza" #poliza="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option value="Ninguna">Ninguna</ion-select-option>
+                    <ion-select-option value="FW39843K">FW39843K</ion-select-option>
+                    <ion-select-option value="FW39837I">FW39837I</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-input type="number" [(ngModel)]="colaboradorData.monto_sgmm2"></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="document-text-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Registro patronal</ion-label>
+                  <ion-select (ionChange)="registroChange()" [(ngModel)]="colaboradorData.registro_patronal"
+                    id="registro_patronal" name="registro_patronal" #registro_patronal="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option value="Ninguna">Ninguno</ion-select-option>
+                    <ion-select-option value="E6480647107">E6480647107</ion-select-option>
+                    <ion-select-option value="A4069165108">A4069165108</ion-select-option>
+                    <ion-select-option value="A8080701106">A8080701106</ion-select-option>
+                    <ion-select-option value="Y3749200105">Y3749200105</ion-select-option>
+                    <ion-select-option value="H6823912108">H6823912108</ion-select-option>
+                  </ion-select>
+                  <ion-text slot="end">
+                    <ion-button size="small" [color]="copyText?'success':'tertiary'" shape="round" fill="solid"
+                      (click)="copiar(registro_patronal)">
+                      <ion-icon slot="start" name="copy-outline"></ion-icon>
+                      {{copyText?'Copiado':'Copiar'}}
+                    </ion-button>
+                  </ion-text>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="information-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">No. Colaborador</ion-label>
+                  <ion-input type="text" id="n_colaborador" name="n_colaborador"
+                    [(ngModel)]="colaboradorData.n_colaborador" #n_colaborador="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="information-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Usuario</ion-label>
+                  <ion-input type="text" id="nombreUsuario" name="nombreUsuario"
+                    [(ngModel)]="colaboradorData.nombreUsuario" #nombreUsuario="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="shield-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Contraseña</ion-label>
+                  <ion-input [type]="eyeClicked?'text':'password'" id="pass" name="pass"
+                    [(ngModel)]="colaboradorData.pass" #pass="ngModel">
+                  </ion-input>
+                  <ion-buttons slot="end">
+                    <ion-button (click)="eyeClick()">
+                      <ion-icon slot="icon-only" name="eye" [color]="eyeClicked?'primary':'medium'"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="mail-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Email institucional</ion-label>
+                  <ion-input type="text" id="email" name="email" [(ngModel)]="colaboradorData.email"
+                    #email="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Teléfono empresa</ion-label>
+                  <ion-input type="text" id="telefonoempresa" name="telefonoempresa"
+                    [(ngModel)]="colaboradorData.telefonoempresa" #telefonoempresa="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Tipo de empleado</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.tipo_empleado" id="tipo_empleado" name="tipo_empleado"
+                    #tipo_empleado="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let tipo of tipoEmpleado" [value]="tipo.tipoEmpleado_id">
+                      {{tipo.tipoEmpleado_desc}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Unidad</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.unidad" id="unidad" name="unidad" #unidad="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option value="Dirección">Dirección</ion-select-option>
+                    <ion-select-option value="UAN">UAN</ion-select-option>
+                    <ion-select-option value="UEN">UEN</ion-select-option>
+                    <ion-select-option value="UEO">UEO</ion-select-option>
+                    <ion-select-option value="UON">UON</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Fecha de ingreso</ion-label>
+                  <ion-input type="date" id="fecha_ingreso" name="fecha_ingreso"
+                    [(ngModel)]="colaboradorData.fecha_ingreso" #fecha_ingreso="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="people-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Jefe inmediato</ion-label>
+                  <ionic-selectable modalCssClass="selectModal" placeholder="Seleccionar" [hasInfiniteScroll]="true"
+                    (onInfiniteScroll)="getMoreJefeInmediato($event)" searchPlaceholder="Buscar" name="jefe_inmediato"
+                    #jefe_inmediato [(ngModel)]="jefeInmediatoSelected"
+                    [items]="jefeInmediatoSelect.slice(0,limiteSelects)" itemValueField="id_colaborador"
+                    itemTextField="nombreC" [canSearch]="true" searchFailText="No se encontraron elementos."
+                    (onSearch)="searchJefeInmediato($event)">
+                    <ng-template ionicSelectableHeaderTemplate>
+                      <ion-toolbar>
+                        <ion-header>
+                          <ion-toolbar>
+                            <ion-title>Seleccionar jefe inmediato</ion-title>
+                            <ion-buttons slot="end">
+                              <ion-button (click)="jefe_inmediato.close()">
+                                <ion-icon slot="icon-only" name="close"></ion-icon>
+                              </ion-button>
+                            </ion-buttons>
+                          </ion-toolbar>
+                        </ion-header>
+                      </ion-toolbar>
+                    </ng-template>
+                  </ionic-selectable>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="people-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Aprobador</ion-label>
+                  <ionic-selectable modalCssClass="selectModal" placeholder="Seleccionar" [hasInfiniteScroll]="true"
+                    (onInfiniteScroll)="getMoreJefeInmediato($event)" searchPlaceholder="Buscar" name="aprobador"
+                    #aprobador [(ngModel)]="aprobadorSelected" [items]="jefeInmediatoSelect.slice(0,limiteSelects)"
+                    itemValueField="id_colaborador" itemTextField="nombreC" [canSearch]="true"
+                    searchFailText="No se encontraron elementos." (onSearch)="searchJefeInmediato($event)">
+                    <ng-template ionicSelectableHeaderTemplate>
+                      <ion-toolbar>
+                        <ion-header>
+                          <ion-toolbar>
+                            <ion-title>Seleccionar aprobador</ion-title>
+                            <ion-buttons slot="end">
+                              <ion-button (click)="aprobador.close()">
+                                <ion-icon slot="icon-only" name="close"></ion-icon>
+                              </ion-button>
+                            </ion-buttons>
+                          </ion-toolbar>
+                        </ion-header>
+                      </ion-toolbar>
+                    </ng-template>
+                  </ionic-selectable>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Sucursal</ion-label>
+                  <ion-select (ionChange)="sucursalChange($event)" [(ngModel)]="colaboradorData.id_sucursal"
+                    id="id_sucursal" name="id_sucursal" #id_sucursal="ngModel" interface="action-sheet"
+                    cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let sucursal of sucursales" [value]="sucursal.id_sucursal">
+                      {{sucursal.sucursal}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Región</ion-label>
+                  <ion-select disabled [(ngModel)]="colaboradorData.id_region" name="id_region" #id_region="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option [value]="colaboradorData.id_region">{{nombreRegion}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Departamento / Norma de reparto</ion-label>
+                  <ion-select (ionChange)="departamentoChange($event)" [(ngModel)]="colaboradorData.id_departamentos"
+                    id="id_departamentos" name="id_departamentos" #id_departamentos="ngModel" interface="action-sheet"
+                    cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let departamento of departamentos"
+                      [value]="departamento.departamentos_id">{{departamento.departamento}}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Área</ion-label>
+                  <ion-select disabled [(ngModel)]="colaboradorData.id_area" id="id_area" name="id_area"
+                    #id_area="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let area of areas" [value]="area.id_area">{{area.area}}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Geografía SAP</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.id_geo" id="id_geo" name="id_geo" #id_geo="ngModel"
+                    interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option *ngFor="let geografia of geografias"
+                      [value]="geografia.zonaGeografica_id">{{geografia.nombre}}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Puesto</ion-label>
+                  <ionic-selectable modalCssClass="selectModal" [hasInfiniteScroll]="true"
+                    (onInfiniteScroll)="getMorePuestos($event)" placeholder="Seleccionar" closeButtonText="Cancelar"
+                    searchPlaceholder="Buscar" name="id_puesto" #puesto [(ngModel)]="puestoSelected"
+                    [items]="puestos.slice(0,limiteSelects)" itemValueField="id_puesto" itemTextField="puesto"
+                    searchFailText="No se encontraron elementos." [canSearch]="true" (onSearch)="searchPuesto($event)">
+                    <ng-template ionicSelectableHeaderTemplate>
+                      <ion-toolbar>
+                        <ion-header>
+                          <ion-toolbar>
+                            <ion-title>Seleccionar puesto</ion-title>
+                            <ion-buttons slot="end">
+                              <ion-button (click)="puesto.close()">
+                                <ion-icon slot="icon-only" name="close"></ion-icon>
+                              </ion-button>
+                            </ion-buttons>
+                          </ion-toolbar>
+                        </ion-header>
+                      </ion-toolbar>
+                    </ng-template>
+                  </ionic-selectable>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Especialidad</ion-label>
+                  <ionic-selectable modalCssClass="selectModal" [hasInfiniteScroll]="true"
+                    (onInfiniteScroll)="getMoreEspecialidades($event)" placeholder="Seleccionar"
+                    closeButtonText="Cancelar" searchPlaceholder="Buscar" name="especialidad" #especialidad
+                    [(ngModel)]="especialidadSelected" [items]="especialidades.slice(0,limiteSelects)"
+                    itemValueField="id_especialidad" itemTextField="especialidad"
+                    searchFailText="No se encontraron elementos." [canSearch]="true"
+                    (onSearch)="searchEspecialidades($event)">
+                    <ng-template ionicSelectableHeaderTemplate>
+                      <ion-toolbar>
+                        <ion-header>
+                          <ion-toolbar>
+                            <ion-title>Seleccionar especialidad</ion-title>
+                            <ion-buttons slot="end">
+                              <ion-button (click)="especialidad.close()">
+                                <ion-icon slot="icon-only" name="close"></ion-icon>
+                              </ion-button>
+                            </ion-buttons>
+                          </ion-toolbar>
+                        </ion-header>
+                      </ion-toolbar>
+                    </ng-template>
+                  </ionic-selectable>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="checkmark-circle-outline" color="primary"></ion-icon>
+                  <ion-label position="stacked">Desempeño</ion-label>
+                  <ion-select [(ngModel)]="colaboradorData.desempeno" id="desempeno" name="desempeno"
+                    #desempeno="ngModel" interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                    <ion-select-option value="0">Pendiente especificar</ion-select-option>
+                    <ion-select-option value="10">Nuevo ingreso</ion-select-option>
+                    <ion-select-option value="9">9. SÚPER ESTRELLA Alto Potencial – Alto Desempeño
+                    </ion-select-option>
+                    <ion-select-option value="8">8. FUTURA SÚPER ESTRELLA Alto Potencial – Medio Desempeño
+                    </ion-select-option>
+                    <ion-select-option value="7">7. ESTRELLA EN SU ÁREA Alto Desempeño-Medio Potencial
+                    </ion-select-option>
+                    <ion-select-option value="6">6. COLABORADOR CLAVE Medio Potencial – Medio Desempeño
+                    </ion-select-option>
+                    <ion-select-option value="5">5. PROFESIONAL CONFIABLE Bajo Potencial – Alto Desempeño
+                    </ion-select-option>
+                    <ion-select-option value="4">3. PROFESIONAL DE BUEN DESEMPEÑO Bajo Potencial – Medio
+                      Desempeño</ion-select-option>
+                    <ion-select-option value="3">3. PROFESIONAL DE BUEN DESEMPEÑO Bajo Potencial – Medio
+                      Desempeño</ion-select-option>
+                    <ion-select-option value="2">2. DILEMA Medio Potencial – Bajo Desempeño</ion-select-option>
+                    <ion-select-option value="1">1. ALERTA Bajo Potencial – Bajo Desempeño</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="information-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">Número de cuenta</ion-label>
+                  <ion-input type="text" id="tarjeta" name="tarjeta" [(ngModel)]="colaboradorData.tarjeta"
+                    #tarjeta="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="information-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">CLABE interbancaria</ion-label>
+                  <ion-input type="text" id="clabe" name="clabe" [(ngModel)]="colaboradorData.clabe"
+                    #clabe="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-sm="4">
+                <ion-item lines="inset">
+                  <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                  <ion-label position="floating">NR reporte CH</ion-label>
+                  <ion-input type="text" name="nr_reporte" [(ngModel)]="colaboradorData.nr_reporte"
+                    #nr_reporte="ngModel"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-list>
+          <ion-list>
+            <ion-list-header>
+              <ion-label>Tabulador</ion-label>
+            </ion-list-header>
+            <div *ngIf="tipo_empleado.model !== 1">
+              <ion-row>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="inset">
+                    <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                    <ion-label position="stacked">Hoja / Especialidad</ion-label>
+                    <ion-select required (ionChange)="hojaChange()" #tabulador_id="ngModel" name="tabulador_id"
+                      [(ngModel)]="tabuladorData.hoja" interface="action-sheet" cancelText="Cancelar"
+                      placeholder="Seleccionar">
+                      <ion-select-option *ngFor="let hoja of hojas"
+                        [value]="hoja.hoja">{{hoja.hoja}}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="inset">
+                    <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                    <ion-label position="stacked">Pocisión de apoyo</ion-label>
+                    <ion-select [disabled]="!tabulador_id.model" required (ionChange)="posApoyoChange()"
+                      #posicion_apoyo="ngModel" name="posicion_apoyo" [(ngModel)]="tabuladorData.posicion_apoyo"
+                      interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                      <ion-select-option *ngFor="let pos of posApoyo"
+                        [value]="pos.posicion_apoyo">{{pos.posicion_apoyo}}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="inset">
+                    <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                    <ion-label position="stacked">Categoría</ion-label>
+                    <ion-select [disabled]="!posicion_apoyo.model" (ionChange)="categoriaChange()" required
+                      #categoria="ngModel" name="categoria" [(ngModel)]="tabuladorData.categoria"
+                      interface="action-sheet" cancelText="Cancelar" placeholder="Seleccionar">
+                      <ion-select-option *ngFor="let cat of categorias"
+                        [value]="cat.categoria">{{cat.categoria}}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="inset">
+                    <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+                    <ion-label position="stacked">Nivel</ion-label>
+                    <ion-select [disabled]="!categoria.model" required (ionChange)="nivelChange()" #tab_nivel="ngModel"
+                      name="tab_nivel" [(ngModel)]="colaboradorData.tab_nivel" interface="action-sheet"
+                      cancelText="Cancelar" placeholder="Seleccionar">
+                      <ion-select-option *ngFor="let nivel of niveles" [value]="nivel">{{nivel}}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="inset">
+                    <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+                    <ion-label position="stacked">Modificación salarial</ion-label>
+                    <ion-input required type="date" #modif_salarial="ngModel" name="modif_salarial"
+                      [(ngModel)]="colaboradorData.modif_salarial"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="inset">
+                    <ion-icon slot="start" name="calculator-outline" color="primary"></ion-icon>
+                    <ion-label position="floating">Porcentaje</ion-label>
+                    <ion-input required max="100" min="1" type="number" name="porcentaje" #porcentaje="ngModel"
+                      [(ngModel)]="colaboradorData.porcentaje"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="none">
+                    <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                    <ion-label>
+                      <h5>Punto guia</h5>
+                      <p>{{colaboradorData.ingreso_bruto_men}}</p>
+                    </ion-label>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="none">
+                    <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                    <ion-label>
+                      <h3>Sueldo bruto mensual</h3>
+                      <p #sueldoBruto>{{colaboradorData.ingreso_bruto_men * (porcentaje.model / 100)}}</p>
+                    </ion-label>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="none">
+                    <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                    <ion-label>
+                      <h3>Premios de puntualidad 10.55%</h3>
+                      <p #puntualidad>{{(colaboradorData.ingreso_bruto_men * (porcentaje.model / 100)) * 0.1055}}</p>
+                    </ion-label>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="none">
+                    <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                    <ion-label>
+                      <h3>Premios de asistencia 10.55%</h3>
+                      <p #asistencia>{{(colaboradorData.ingreso_bruto_men * (porcentaje.model / 100)) * 0.1055}}</p>
+                    </ion-label>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="none">
+                    <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                    <ion-label>
+                      <h3>Vales de despensa</h3>
+                      <p #despensa>{{(colaboradorData.ingreso_bruto_men * (porcentaje.model / 100))!==0?1154.64:0}}</p>
+                    </ion-label>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="none">
+                    <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                    <ion-label>
+                      <h3>Fondo de ahorro 4%</h3>
+                      <p #ahorro>{{(colaboradorData.ingreso_bruto_men * (porcentaje.model / 100)) * 0.04}}</p>
+                    </ion-label>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12" size-sm="4">
+                  <ion-item lines="none">
+                    <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                    <ion-label>
+                      <h3>Salario bruto mensual</h3>
+                      <p>{{(colaboradorData.ingreso_bruto_men * (porcentaje.model / 100)) +
+                        (colaboradorData.ingreso_bruto_men * (porcentaje.model / 100)) * 0.105 +
+                        (colaboradorData.ingreso_bruto_men * (porcentaje.model / 100)) * 0.1055 +
+                        (colaboradorData.ingreso_bruto_men * (porcentaje.model / 100))!==0?1154.64:0 +
+                        (colaboradorData.ingreso_bruto_men * (porcentaje.model / 100)) * 0.04}}</p>
+                    </ion-label>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </div>
+            <div *ngIf="tipo_empleado.model === 1">
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Modificación salarial</ion-label>
+                <ion-input required type="date" #modif_salarial="ngModel" name="modif_salarial"
+                  [(ngModel)]="colaboradorData.modif_salarial" required></ion-input>
+              </ion-item>
+              <ion-item lines="inset">
+                <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+                <ion-label position="floating">Sueldo bruto semanal</ion-label>
+                <ion-input type="number" name="ingreso_bruto_men" [(ngModel)]="colaboradorData.ingreso_bruto_men"
+                  required></ion-input>
+              </ion-item>
+            </div>
+          </ion-list>
+          <ion-row class="ion-justify-content-end">
+            <ion-col size="12" size-sm="4">
+              <ion-item lines="none">
+                <ion-label>
+                  <ion-button (click)="saveColaborador()" [disabled]="!cuentaForm.valid" expand="block" shape="round"
+                    size="medium">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                    Guardar
+                  </ion-button>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Sheet Modal -->
+  <ion-modal (didDismiss)="menu = false" [isOpen]="menu" [breakpoints]="[0.3]" [initialBreakpoint]="0.3">
+    <ng-template>
+      <ion-content>
+        <ion-list lines="none">
+          <ion-item button (click)="generatePDF(id_colaborador_menu)">
+            <ion-icon slot="start" src="./assets/icon/pdf.svg"></ion-icon>
+            <ion-label>Ver expediente</ion-label>
+          </ion-item>
+          <ion-item button (click)="editColaborador(id_colaborador_menu, true)">
+            <ion-icon slot="start" name="create-outline"></ion-icon>
+            <ion-label>Editar</ion-label>
+          </ion-item>
+          <ion-item button>
+            <ion-icon slot="start" name="close" color="danger"></ion-icon>
+            <ion-label>Dar de baja</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+    <ion-text *ngIf="colaboradores.length <= 0">
+      <p class="ion-padding">No se encontraron registros.</p>
+    </ion-text>
+</ion-content>

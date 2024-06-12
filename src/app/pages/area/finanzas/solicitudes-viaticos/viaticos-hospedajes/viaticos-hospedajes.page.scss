@@ -1,0 +1,63 @@
+.class-content_spaces {
+    padding: 10px;
+    margin: 10px;
+}
+
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px;
+
+    cursor: pointer;
+}
+
+.class-cursor_notactive{
+    cursor: default !important;
+}
+
+.class-box_size-sx{
+    max-height: 300px;
+    overflow: auto;
+}
+
+a, ion-item.class-item_pointer {
+    cursor: pointer;
+}
+
+hr {
+    height: 1px;
+    width: 100%;
+    background-color: #d5d5d5;
+}
+
+p {
+    white-space: pre-line;
+}
+
+ion-label.class-label_modal{
+    //align-self: baseline;
+    flex: 1 1 0% !important;
+    white-space: initial !important;
+    width: auto;
+    max-width: none;
+    min-width: 150px;
+}
+
+h3.class-h3_modal {
+    width: auto;
+    max-width: 150px;
+    min-width: 150px;
+    padding-right: 10px;
+}
+
+ion-input, p, span{
+    color: #666666;
+}
+
+.class-text_gray {
+    color: #666666;
+}
+.class-text_success {
+    color: #1c84c6;
+}

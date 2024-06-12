@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="!showSearchbar">
+      <ion-button (click)="showSearchbar = true; focus();">
+        <ion-icon color="primary" slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">Metas</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always"
+      (ionInput)="searchMeta($event); content.scrollToTop();"
+      (ionCancel)="showSearchbar=false; searchMeta($event); content.scrollToTop();" placeholder="Buscar">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding animarElemento">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)" pullFactor="0.8" pullMin="60" pullMax="120">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+    <ion-row *ngIf="tipo==='Corporativo'">
+      <ion-col size="12" size-sm="4">
+        <ion-item lines="none">
+          <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+          <ion-select label="Zona" placeholder="Seleccionar..." labelPlacement="stacked" (ionChange)="zonaChange($event)" cancelText="Cancelar" okText="Seleccionar">
+            <ion-select-option *ngFor="let zona of zonas" [value]="zona.id">{{zona.zona}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  <div *ngIf="vendedores.length > 0" class="ion-margin-top">
+    <form #metasForm="ngForm" *ngFor="let vendedor of vendedores.slice(0,limite); let i = index;">
+      <ion-label color="primary">{{vendedor.nombre}}</ion-label>
+      <ion-grid [fixed]="true">
+      <ion-row>
+        <ion-col size="12" size-md="3">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="flag-outline" color="primary"></ion-icon>
+            <ion-input label="Meta oportunidades" labelPlacement="stacked" [(ngModel)]="vendedor.metas.meta_leads" type="number" name="meta_leads"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-md="3">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="flag-outline" color="primary"></ion-icon>
+            <ion-input label="Meta TVFC" labelPlacement="stacked" [(ngModel)]="vendedor.metas.meta_tvfc" type="number" name="meta_tvfc"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-md="3">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+            <ion-input label="Meta E+H" labelPlacement="stacked" [(ngModel)]="vendedor.metas.meta_eh" type="number" name="meta_eh"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-md="3">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+            <ion-input label="Meta UEP" labelPlacement="stacked" [(ngModel)]="vendedor.metas.meta_uep" type="number" name="meta_uep"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12" size-md="3">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+            <ion-input label="Meta SVA" labelPlacement="stacked" [(ngModel)]="vendedor.metas.meta_sva" type="number" name="meta_sva"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-md="3">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+            <ion-input label="Meta SCI" labelPlacement="stacked" [(ngModel)]="vendedor.metas.meta_sci" type="number" name="meta_sci"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-md="3">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+            <ion-input label="Meta SPF" labelPlacement="stacked" [(ngModel)]="vendedor.metas.meta_spf" type="number" name="meta_spf"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-md="3">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="cash-outline" color="primary"></ion-icon>
+            <ion-input label="Meta STM" labelPlacement="stacked" [(ngModel)]="vendedor.metas.meta_stm" type="number" name="meta_stm"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-justify-content-end ion-margin">
+        <ion-col size="12" size-md="3" size-lg="2">
+          <ion-button (click)="saveMeta(vendedores[i].metas)" expand="full" shape="round">
+            <ion-icon slot="start" name="save-outline"></ion-icon>
+            Guardar
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      </ion-grid>
+    </form>
+  </div>
+  <ion-infinite-scroll [disabled]="vendedores.length <= limite" position="bottom" (ionInfinite)="getMoreMetas($event)">
+    <ion-infinite-scroll-content loadingSpinner="circles" loadingText="Cargando...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

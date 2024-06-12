@@ -1,0 +1,92 @@
+<ion-header translucent="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+            <ion-back-button defaultHref="{{back()}}"></ion-back-button>
+            <ion-title>Órdenes de trabajo</ion-title>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar>
+        <ion-segment [(ngModel)]="segment">
+            <ion-segment-button value="WOabierto" ><!--*ngIf="miInfo.esjefe >= 1"-->
+                Abiertos
+            </ion-segment-button>
+            <ion-segment-button value="WOcerrado"><!--*ngIf="miInfo.esch >= 1"-->
+                Cerrados
+            </ion-segment-button>
+        </ion-segment>
+    </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content *ngIf="segment==='WOabierto'">
+    <br>
+    <ion-searchbar [debounce]="1000" (ionChange)="handleChangeBuscarAbiertos($event)"></ion-searchbar>
+    <br>
+    <ion-grid>
+        <div *ngFor="let result of dataem">
+            <ion-row style="font-size: 14px; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2); ">
+                <ion-col size-sm="6" size-md="6" size-lg="4"><b>Tipo</b>: {{ result.spk }}</ion-col>
+                <ion-col size-sm="6" size-md="6" size-lg="3"><b>No. Servicio</b>: {{ result.PrjCode }}</ion-col>
+                <ion-col size-sm="12" size-md="12" size-lg="5"><b>Nombre</b>: {{ result.PrjName }}</ion-col>
+
+                <ion-col size-sm="12" size-md="12" size-lg="6"><b>Cliente</b>: {{ result.U_Cliente }}</ion-col>
+                <ion-col size-sm="6" size-md="6" size-lg="3"><b>Fecha confirmada</b>: {{ result.fecha_confirmada }}</ion-col>
+                <ion-col size-sm="6" size-md="6" size-lg="3"><b>Fecha entrega</b>: {{ result.fecha_compromiso }}</ion-col>
+
+                <ion-col size-sm="6" size-md="6" size-lg="3"><b>Backlog</b>: {{ result.BackLog }}</ion-col>
+                <ion-col size-sm="6" size-md="6" size-lg="2"><b>Moneda</b>: {{ result.U_Moneda }}</ion-col>
+                <ion-col size-sm="12" size-md="6" size-lg="4"><b>Project Manager</b>: {{ result.pm }}</ion-col>
+                <ion-col size-sm="12" size-md="6" size-lg="3"><b>Estado</b>: {{ result.estado }}</ion-col>
+
+                <ion-col size-sm="12" size-md="12" size-lg="8"><b>Recursos</b>: {{result.nombrescolas}}</ion-col>
+                <ion-col size-sm="12" size-md="12" size-lg="4">
+                    <br>
+                    <a [routerLink]="['./detalle', result.id_ot]" style="padding: 7px 30px; background-color: #50c8ff; text-decoration: none; color: #ffffff; border-radius: 25px;"> Ver detalle</a>
+                    <br><br>
+                </ion-col>
+            </ion-row>
+            <br>
+            <br>
+            <br>
+        </div>
+    </ion-grid>
+    <br><br><br>
+    <br><br><br>
+</ion-content>
+<ion-content *ngIf="segment==='WOcerrado'">
+    <br>
+    <ion-searchbar [debounce]="1000" (ionChange)="handleChangeBuscarCerrados($event)"></ion-searchbar>
+    <br>
+    <ion-grid>
+        <div *ngFor="let resultC of dataemC">
+            <ion-row style="font-size: 14px; box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2); ">
+                <ion-col size-sm="6" size-md="6" size-lg="4"><b>Tipo</b>: {{ resultC.spk }}</ion-col>
+                <ion-col size-sm="6" size-md="6" size-lg="3"><b>No. Servicio</b>: {{ resultC.PrjCode }}</ion-col>
+                <ion-col size-sm="12" size-md="12" size-lg="5"><b>Nombre</b>: {{ resultC.PrjName }}</ion-col>
+
+                <ion-col size-sm="12" size-md="12" size-lg="6"><b>Cliente</b>: {{ resultC.U_Cliente }}</ion-col>
+                <ion-col size-sm="6" size-md="6" size-lg="3"><b>Fecha confirmada</b>: {{ resultC.fecha_confirmada }}</ion-col>
+                <ion-col size-sm="6" size-md="6" size-lg="3"><b>Fecha entrega</b>: {{ resultC.fecha_compromiso }}</ion-col>
+
+                <ion-col size-sm="6" size-md="6" size-lg="3"><b>Backlog</b>: {{ resultC.BackLog }}</ion-col>
+                <ion-col size-sm="6" size-md="6" size-lg="2"><b>Moneda</b>: {{ resultC.U_Moneda }}</ion-col>
+                <ion-col size-sm="12" size-md="6" size-lg="4"><b>Project Manager</b>: {{ resultC.pm }}</ion-col>
+                <ion-col size-sm="12" size-md="6" size-lg="3"><b>Estado</b>: {{ resultC.estado }}</ion-col>
+
+                <ion-col size-sm="12" size-md="12" size-lg="8"><b>Recursos</b>: {{resultC.nombrescolas}}</ion-col>
+                <ion-col size-sm="12" size-md="12" size-lg="4">
+                    <br>
+                    <a [routerLink]="['./detalle', resultC.id_ot]" style="padding: 7px 30px; background-color: #50c8ff; text-decoration: none; color: #ffffff; border-radius: 25px;"> Ver detalle</a>
+                    <br><br>
+                </ion-col>
+            </ion-row>
+            <br>
+            <br>
+            <br>
+        </div>
+    </ion-grid>
+    <br><br><br>
+    <br><br><br>
+</ion-content>

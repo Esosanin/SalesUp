@@ -1,0 +1,1011 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalles de la solicitud</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div style="padding: 10px 20px;">
+    <div class="class-div_infoCard" (click)="btn_tabs = 0;">
+      <ion-item class="class-cursorpointer">
+        <ion-icon slot="start" name="add" *ngIf="btn_tabs !== 0"></ion-icon>
+        <ion-icon slot="start" name="remove" *ngIf="btn_tabs === 0"></ion-icon>
+        <ion-label><h3><b>Información general</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="btn_tabs === 0">
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Nombre de la solicitud: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_nombre_solicitud}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Nombre del solicitante: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.nombre_solicitante}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Fecha de inicio: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_fechaSalida_n}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Hora de salida: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_horaSalida_n}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Fecha de terminación: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_fechallegada_n}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Hora de llegada: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_horaLlegada_n}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Origen: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_origen}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Destino: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_destino}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Duración del viaje (días): </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_duracion}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Acompañantes: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_cantidadAcompanyantes}}</p>
+        </ion-item>
+        <br><br><br>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Proyecto o Servicio: </h3></ion-label>
+          <p class="class-textcolor_gray" *ngIf=" SR_solicitudDetalles.sol_proyectoServicioOpcion !== 0 &&
+                                                  SR_solicitudDetalles.sol_proyectoServicioOpcion !== '' &&
+                                                  SR_solicitudDetalles.sol_proyectoServicioOpcion !== ''">
+            {{SR_solicitudDetalles.sol_proyectoServicioOpcion}}
+          </p>
+        </ion-item>
+        <ion-item *ngIf="SR_solicitudDetalles.sol_proyectoServicioOpcion !== '' && SR_solicitudDetalles.sol_proyectoServicioOpcion !== 0">
+          <ion-label class="class-label class-h3"><h3>Líder de proyecto o servicio: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.nombre_lider}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Departamento: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_departamentos_id}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Geografía: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_geografica_id}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Cliente: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_cliente}}</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Forma de pago: </h3></ion-label>
+          <p class="class-textcolor_gray" *ngIf="SR_solicitudDetalles.sol_cuentaDePago === 1">Personal</p>
+          <p class="class-textcolor_gray" *ngIf="SR_solicitudDetalles.sol_cuentaDePago === 2">Empresarial</p>
+        </ion-item>
+        <ion-item *ngIf="SR_solicitudDetalles.sol_cuentaDePago !== 1 && SR_solicitudDetalles.sol_cuentaDePago !== 2">
+          <ion-label class="class-label class-h3"><h3>Número de tarjeta: </h3></ion-label>
+          <p class="class-textcolor_gray" *ngIf="SR_solicitudDetalles.sol_cuentaPersonal !== 0 && SR_solicitudDetalles.sol_cuentaPersonal !== ''">{{SR_solicitudDetalles.sol_cuentaPersonal}}</p>
+        </ion-item>
+        <ion-item *ngIf="SR_solicitudDetalles.sol_cuentaDePago !== 1 && SR_solicitudDetalles.sol_cuentaDePago !== 2">
+          <ion-label class="class-label class-h3"><h3>Banco: </h3></ion-label>
+          <p class="class-textcolor_gray" *ngIf="SR_solicitudDetalles.sol_cuentaEmpresarial === 1">Santander</p>
+          <p class="class-textcolor_gray" *ngIf="SR_solicitudDetalles.sol_cuentaEmpresarial === 2">Bancomer</p>
+        </ion-item>
+        <ion-item>
+          <ion-label class="class-label class-h3"><h3>Propósito: </h3></ion-label>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_motivo}}</p>
+        </ion-item>
+        <br><br><br>
+        <div style="margin-left: 16px;"><ion-label><h3>Comentarios generales: </h3></ion-label></div>
+        <ion-item>
+          <p class="class-textcolor_gray">{{SR_solicitudDetalles.sol_comentarioGeneral}}</p>
+        </ion-item>
+      </div>
+    </div>
+    <div class="class-div_infoCard" (click)="btn_tabs = 1;">
+      <ion-item class="class-cursorpointer">
+        <ion-icon slot="start" name="add" *ngIf="btn_tabs !== 1"></ion-icon>
+        <ion-icon slot="start" name="remove" *ngIf="btn_tabs === 1"></ion-icon>
+        <ion-label><h3><b>Conceptos solicitados</b></h3></ion-label>
+      </ion-item>
+      <div *ngIf="btn_tabs === 1">
+        <div title="Servicios solicitados">
+          <ion-item>
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(1)" [disabled]="RS_getSR_ChecksRevision_Find(1)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(1)">¡solicitada!</ion-badge>
+            <ion-label><h3>Comida</h3></ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(2)" [disabled]="RS_getSR_ChecksRevision_Find(2)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(2)">¡solicitada!</ion-badge>
+            <ion-label><h3>Transporte</h3></ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(3)" [disabled]="RS_getSR_ChecksRevision_Find(3)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(3)">¡solicitada!</ion-badge>
+            <ion-label><h3>Hospedaje</h3></ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(4)" [disabled]="RS_getSR_ChecksRevision_Find(4)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(4)">¡solicitada!</ion-badge>
+            <ion-label><h3>Casetas</h3></ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(5)" [disabled]="RS_getSR_ChecksRevision_Find(5)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(5)">¡solicitada!</ion-badge>
+            <ion-label><h3>Combustibles</h3></ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(6)" [disabled]="RS_getSR_ChecksRevision_Find(6)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(6)">¡solicitada!</ion-badge>
+            <ion-label><h3>Celular/Tel</h3></ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(7)" [disabled]="RS_getSR_ChecksRevision_Find(7)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(7)">¡solicitada!</ion-badge>
+            <ion-label><h3>Lavanderia</h3></ion-label>
+          </ion-item>
+          <!-- <COMENTADO EN INTRANET> -->
+          <ion-item *ngIf="false">
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(8)" [disabled]="RS_getSR_ChecksRevision_Find(8)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(8)">¡solicitada!</ion-badge>
+            <ion-label><h3>Taxi</h3></ion-label>
+          </ion-item>
+          <!-- <COMENTADO EN INTRANET> -->
+          <ion-item *ngIf="false">
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(9)" [disabled]="RS_getSR_ChecksRevision_Find(9)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(9)">¡solicitada!</ion-badge>
+            <ion-label><h3>Estacionamiento</h3></ion-label>
+          </ion-item>
+          <!-- <COMENTADO EN INTRANET> -->
+          <ion-item *ngIf="false">
+            <ion-checkbox [checked]="RS_getSR_ChecksRevision_Find(10)" [disabled]="RS_getSR_ChecksRevision_Find(10)"></ion-checkbox>
+            <ion-badge slot="end" class="class-badge class-bg_info" *ngIf="RS_getSR_Checks_Find(10)">¡solicitada!</ion-badge>
+            <ion-label><h3>Varios</h3></ion-label>
+          </ion-item>
+        </div>
+        <br><br>
+        <div title="Costos">
+          <ul id="display-content">
+            <li title="Comidas">
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoComidas.icon && SR_solicitudDetalles.sol_comidas >= 1}" (click)="SR_displayConceptos.disp_comidas = SR_displayConceptos.disp_comidas ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_comidas && SR_conceptoComidas.icon && SR_solicitudDetalles.sol_comidas >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_comidas && SR_conceptoComidas.icon && SR_solicitudDetalles.sol_comidas >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Comidas</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoComidas.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_comidas >= 1 && SR_displayConceptos.disp_comidas">
+                <ion-item>
+                  <ion-label position="stacked"><h3>Tipo de comida:</h3></ion-label>
+                  <ion-select id="comidas_tipoComida" name="comidas_tipoComida" [(ngModel)]="SR_conceptoComidas.con_tipoComidas"
+                              #comidas_tipoComida="ngModel" interface="popover" placeholder="Seleccionar tipo" [disabled]="SR_displayConceptos.disb_comidas"
+                              (ionChange)="SR_change_Conceptos(1);">
+                    <ion-select-option [value]="1">Frontera y excepciones (GDL, MTY, CDMX)</ion-select-option>
+                    <ion-select-option [value]="2">No frontera</ion-select-option>
+                  </ion-select>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_comidas}" type="number" id="comidas_cantidad" name="comidas_cantidad"
+                              [(ngModel)]="SR_conceptoComidas.con_cantidad" #comidas_cantidad="ngModel" [readonly]="SR_displayConceptos.disb_comidas"
+                              (ionChange)="SR_change_Conceptos(1);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="comidas_precioUnitario" name="comidas_precioUnitario"
+                              [(ngModel)]="SR_conceptoComidas.con_precioUnitario" #comidas_precioUnitario="ngModel" readonly min="0"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="comidas_TOTAL" name="comidas_TOTAL"
+                              [(ngModel)]="SR_conceptoComidas.con_TOTAL" #comidas_TOTAL="ngModel" readonly min="0"></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_comidas}" id="comidas_comentarios" name="comidas_comentarios"
+                                [(ngModel)]="SR_conceptoComidas.con_comentario" #comidas_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_comidas" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_comidas}" id="comidas_comentariosModificados" name="comidas_comentariosModificados"
+                                [(ngModel)]="SR_conceptoComidas.con_modificadoComentarios" #comidas_comentariosModificados="ngModel"
+                                [readonly]="SR_displayConceptos.disb_comidas" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Comidas acciones" class="ion-text-right" *ngIf="(SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                            ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                             (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_comidas = false;" title="Editar" fill="clear" shape="round"
+                              [hidden]="!SR_displayConceptos.disb_comidas" [disabled]="!SR_displayConceptos.disb_comidas || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 1}); SR_displayConceptos.btn_accionProcessing = true;"
+                              fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_comidas"
+                              [disabled]="SR_displayConceptos.disb_comidas || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_comidas = true; SR_btn_cancelar(1);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_comidas" [disabled]="SR_displayConceptos.disb_comidas || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Comidas -->
+            <li title="Transporte">
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoAutobus.icon && SR_solicitudDetalles.sol_autobus >= 1}" (click)="SR_displayConceptos.disp_autobus = SR_displayConceptos.disp_autobus ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_autobus && SR_conceptoAutobus.icon && SR_solicitudDetalles.sol_autobus >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_autobus && SR_conceptoAutobus.icon && SR_solicitudDetalles.sol_autobus >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Transporte</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoAutobus.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_autobus >= 1 && SR_displayConceptos.disp_autobus">
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Descripción:</h3></ion-label>
+                  <ion-textarea id="autobus_descripcion" name="autobus_descripcion"
+                                [(ngModel)]="SR_conceptoAutobus.con_descripcion" #autobus_descripcion="ngModel" [readonly]="SR_displayConceptos.disb_autobus" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" type="number" id="autobus_cantidad" name="autobus_cantidad"
+                              [(ngModel)]="SR_conceptoAutobus.con_cantidad" #autobus_cantidad="ngModel" [readonly]="SR_displayConceptos.disb_autobus"
+                              (ionChange)="SR_change_Conceptos(2);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" type="number" id="autobus_precioUnitario" name="autobus_precioUnitario"
+                              [(ngModel)]="SR_conceptoAutobus.con_precioUnitario" #autobus_precioUnitario="ngModel" [readonly]="SR_displayConceptos.disb_autobus"
+                              (ionChange)="SR_change_Conceptos(2);" min="0"></ion-input>
+                </ion-item>
+                <br> <!-- END DESCRIPCION 1 -->
+                <div>
+                  <ion-label position="stacked"><h3>Descripción:</h3></ion-label>
+                  <ion-textarea   [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" id="autobus_descripcion2" name="autobus_descripcion2"
+                                  [(ngModel)]="SR_conceptoAutobus.con_descripcion2" #autobus_descripcion2="ngModel" [readonly]="SR_displayConceptos.disb_autobus" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" type="number" id="autobus_cantidad2" name="autobus_cantidad2"
+                              [(ngModel)]="SR_conceptoAutobus.con_cantidad2" #autobus_cantidad2="ngModel" [readonly]="SR_displayConceptos.disb_autobus"
+                              (ionChange)="SR_change_Conceptos(2);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" type="number" id="autobus_precioUnitario2" name="autobus_precioUnitario2"
+                              [(ngModel)]="SR_conceptoAutobus.con_precioUnitario2" #autobus_precioUnitario2="ngModel" [readonly]="SR_displayConceptos.disb_autobus"
+                              (ionChange)="SR_change_Conceptos(2);" min="0"></ion-input>
+                </ion-item>
+                <br> <!-- END DESCRIPCION 2 -->
+                <div>
+                  <ion-label position="stacked"><h3>Descripción:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" id="autobus_descripcion3" name="autobus_descripcion3"
+                                [(ngModel)]="SR_conceptoAutobus.con_descripcion3" #autobus_descripcion3="ngModel" [readonly]="SR_displayConceptos.disb_autobus" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" type="number" id="autobus_cantidad3" name="autobus_cantidad3"
+                              [(ngModel)]="SR_conceptoAutobus.con_cantidad3" #autobus_cantidad3="ngModel" [readonly]="SR_displayConceptos.disb_autobus"
+                              (ionChange)="SR_change_Conceptos(2);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" type="number" id="autobus_precioUnitario3" name="autobus_precioUnitario3"
+                              [(ngModel)]="SR_conceptoAutobus.con_precioUnitario3" #autobus_precioUnitario3="ngModel" [readonly]="SR_displayConceptos.disb_autobus"
+                              (ionChange)="SR_change_Conceptos(2);" min="0"></ion-input>
+                </ion-item>
+                <!-- END DESCRIPCION 3 -->
+                <br>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" type="number" id="autobus_TOTAL" name="autobus_TOTAL"
+                              [(ngModel)]="SR_conceptoAutobus.con_TOTAL" #autobus_TOTAL="ngModel" readonly min="0"></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" id="autobus_comentarios" name="autobus_comentarios"
+                                [(ngModel)]="SR_conceptoAutobus.con_comentario" #autobus_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_autobus" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_autobus}" id="autobus_comentariosModificados" name="autobus_comentariosModificados"
+                                [(ngModel)]="SR_conceptoAutobus.con_modificadoComentarios" #autobus_comentariosModificados="ngModel"
+                                [readonly]="SR_displayConceptos.disb_autobus" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Autobus acciones" class="ion-text-right" *ngIf="(SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                            ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                             (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_autobus = false;" title="Editar" fill="clear" shape="round"
+                              [hidden]="!SR_displayConceptos.disb_autobus" [disabled]="!SR_displayConceptos.disb_autobus || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 2}); SR_displayConceptos.btn_accionProcessing = true; "
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_autobus"
+                              [disabled]="SR_displayConceptos.disb_autobus || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_autobus = true; SR_btn_cancelar(2);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_autobus" [disabled]="SR_displayConceptos.disb_autobus || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content -->
+            </li> <!-- END Transporte -->
+            <li title="Hospedaje">
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoHospedaje.icon && SR_solicitudDetalles.sol_hospedaje >= 1}" (click)="SR_displayConceptos.disp_hospedaje = SR_displayConceptos.disp_hospedaje ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_hospedaje && SR_conceptoHospedaje.icon && SR_solicitudDetalles.sol_hospedaje >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_hospedaje && SR_conceptoHospedaje.icon && SR_solicitudDetalles.sol_hospedaje >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Hospedaje</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoHospedaje.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_hospedaje >= 1 && SR_displayConceptos.disp_hospedaje">
+                <ion-item>
+                  <ion-label><h3>Noches:</h3></ion-label>
+                  <ion-input [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_hospedaje}" type="number" id="hospedaje_noches" name="hospedaje_noches"
+                             [(ngModel)]="SR_conceptoHospedaje.con_cantidadNoches" #hospedaje_noches="ngModel" [readonly]="SR_displayConceptos.disb_hospedaje" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_hospedaje}" type="number" id="hospedaje_precioUnitario" name="hospedaje_precioUnitario"
+                              [(ngModel)]="SR_conceptoHospedaje.con_precioUnitario" #hospedaje_precioUnitario="ngModel" [readonly]="SR_displayConceptos.disb_hospedaje" min="0"
+                              (ionChange)="SR_change_Conceptos(3);"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_hospedaje}" type="number" id="hospedaje_TOTAL" name="hospedaje_TOTAL"
+                              [(ngModel)]="SR_conceptoHospedaje.con_TOTAL" #hospedaje_TOTAL="ngModel" [readonly]="SR_displayConceptos.disb_hospedaje" min="0"
+                              (ionChange)="SR_change_Conceptos(3);"></ion-input>
+                </ion-item>
+                <br>
+                <div class="item-native">
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_hospedaje}" id="hospedaje_comentarios" name="hospedaje_comentarios"
+                                [(ngModel)]="SR_conceptoHospedaje.con_comentario" #hospedaje_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_hospedaje" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_hospedaje}" id="hospedaje_comentariosModificados" name="hospedaje_comentariosModificados"
+                                [(ngModel)]="SR_conceptoHospedaje.con_modificadoComentarios" #hospedaje_comentariosModificados="ngModel"
+                                [readonly]="SR_displayConceptos.disb_hospedaje" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Hospedaje acciones" class="ion-text-right" *ngIf="(SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                              ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                               (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_hospedaje = false;" title="Editar" fill="clear" shape="round"
+                              [hidden]="!SR_displayConceptos.disb_hospedaje" [disabled]="!SR_displayConceptos.disb_hospedaje || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 3}); SR_displayConceptos.btn_accionProcessing = true;"
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_hospedaje" [disabled]="SR_displayConceptos.disb_hospedaje || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_hospedaje = true; SR_btn_cancelar(3);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_hospedaje" [disabled]="SR_displayConceptos.disb_hospedaje || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Hospedaje -->
+            <li title="Casetas">
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoCasetas.icon && SR_solicitudDetalles.sol_casetas >= 1}" (click)="SR_displayConceptos.disp_casetas = SR_displayConceptos.disp_casetas ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_casetas && SR_conceptoCasetas.icon && SR_solicitudDetalles.sol_casetas >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_casetas && SR_conceptoCasetas.icon && SR_solicitudDetalles.sol_casetas >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Casetas</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoCasetas.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_casetas >= 1 && SR_displayConceptos.disp_casetas">
+                <ion-item>
+                  <ion-label><h3># económico:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_casetas}" type="text" id="casetas_numEconomico" name="casetas_numEconomico"
+                              [(ngModel)]="SR_conceptoCasetas.con_numEconomico" #casetas_numEconomico="ngModel" [readonly]="SR_displayConceptos.disb_casetas"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_casetas}" type="number" id="casetas_cantidad" name="casetas_cantidad"
+                              [(ngModel)]="SR_conceptoCasetas.con_cantidad" #casetas_cantidad="ngModel" [readonly]="SR_displayConceptos.disb_casetas"
+                              (ionChange)="SR_change_Conceptos(4);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_casetas}" type="number" id="casetas_precioUnitario" name="casetas_precioUnitario"
+                              [(ngModel)]="SR_conceptoCasetas.con_precioUnitario" #casetas_precioUnitario="ngModel" [readonly]="SR_displayConceptos.disb_casetas"
+                              (ionChange)="SR_change_Conceptos(4);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="casetas_TOTAL" name="casetas_TOTAL"
+                              [(ngModel)]="SR_conceptoCasetas.con_TOTAL" #casetas_TOTAL="ngModel" readonly></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_casetas}" id="casetas_comentarios" name="casetas_comentarios"
+                                [(ngModel)]="SR_conceptoCasetas.con_comentario" #casetas_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_casetas" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_casetas}" id="casetas_comentariosModificados" name="casetas_comentariosModificados"
+                                [(ngModel)]="SR_conceptoCasetas.con_modificadoComentarios" #casetas_comentariosModificados="ngModel" [readonly]="SR_displayConceptos.disb_casetas" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Casetas acciones" class="ion-text-right" *ngIf="(SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                            ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                              (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_casetas = false;" title="Editar" fill="clear" shape="round" [hidden]="!SR_displayConceptos.disb_casetas"
+                              [disabled]="!SR_displayConceptos.disb_casetas || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 4}); SR_displayConceptos.btn_accionProcessing = true;"
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_casetas"
+                              [disabled]="SR_displayConceptos.disb_casetas || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_casetas = true; SR_btn_cancelar(4);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_casetas" [disabled]="SR_displayConceptos.disb_casetas || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline" ></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Casetas -->
+            <li title="Combustibles">
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoCombustibles.icon && SR_solicitudDetalles.sol_combustibles >= 1}" (click)="SR_displayConceptos.disp_combustibles = SR_displayConceptos.disp_combustibles ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_combustibles && SR_conceptoCombustibles.icon && SR_solicitudDetalles.sol_combustibles >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_combustibles && SR_conceptoCombustibles.icon && SR_solicitudDetalles.sol_combustibles >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Combustibles</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoCombustibles.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_combustibles >= 1 && SR_displayConceptos.disp_combustibles">
+                <ion-item>
+                  <ion-label><h3># económico:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_combustibles}" type="text" id="combustibles_numEconomico" name="combustibles_numEconomico"
+                              [(ngModel)]="SR_conceptoCombustibles.con_numEconomico" #combustibles_numEconomico="ngModel" [readonly]="SR_displayConceptos.disb_combustibles"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Rendimiento:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_combustibles}" type="number" id="combustibles_rendimiento" name="combustibles_rendimiento"
+                              [(ngModel)]="SR_conceptoCombustibles.con_rendimiento" #combustibles_rendimiento="ngModel" [readonly]="SR_displayConceptos.disb_combustibles"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>KM/Viajes:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_combustibles}" type="number" id="combustibles_kmViaje" name="combustibles_kmViaje"
+                              [(ngModel)]="SR_conceptoCombustibles.con_kmViaje" #combustibles_kmViaje="ngModel" [readonly]="SR_displayConceptos.disb_combustibles"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_combustibles}" type="number" id="combustibles_precioUnitario" name="combustibles_precioUnitario"
+                              [(ngModel)]="SR_conceptoCombustibles.con_precioUnitario" #combustibles_precioUnitario="ngModel" [readonly]="SR_displayConceptos.disb_combustibles"
+                              (ionChange)="SR_change_Conceptos(5);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_combustibles}" type="number" id="combustibles_TOTAL" name="combustibles_TOTAL"
+                              [(ngModel)]="SR_conceptoCombustibles.con_TOTAL" #combustibles_TOTAL="ngModel" [readonly]="SR_displayConceptos.disb_combustibles"
+                              (ionChange)="SR_change_Conceptos(5);" min="1"></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_combustibles}" id="combustibles_comentarios" name="combustibles_comentarios"
+                                [(ngModel)]="SR_conceptoCombustibles.con_comentario" #combustibles_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_combustibles" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_combustibles}" id="combustibles_comentariosModificados" name="combustibles_comentariosModificados"
+                                [(ngModel)]="SR_conceptoCombustibles.con_modificadoComentarios" #combustibles_comentariosModificados="ngModel" [readonly]="SR_displayConceptos.disb_combustibles" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Combustibles acciones" class="ion-text-right" *ngIf=" (SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                                  ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                                   (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_combustibles = false;" title="Editar" fill="clear" shape="round"
+                              [hidden]="!SR_displayConceptos.disb_combustibles" [disabled]="!SR_displayConceptos.disb_combustibles || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 5}); SR_displayConceptos.btn_accionProcessing = true;"
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_combustibles"
+                              [disabled]="SR_displayConceptos.disb_combustibles || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_combustibles = true; SR_btn_cancelar(5);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_combustibles" [disabled]="SR_displayConceptos.disb_combustibles || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Combustibles -->
+            <li title="Telefonia">
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoTelefonia.icon && SR_solicitudDetalles.sol_telCel >= 1}"(click)="SR_displayConceptos.disp_telefonia = SR_displayConceptos.disp_telefonia ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_telefonia && SR_conceptoTelefonia.icon && SR_solicitudDetalles.sol_telCel >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_telefonia && SR_conceptoTelefonia.icon && SR_solicitudDetalles.sol_telCel >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Celular/Tel</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoTelefonia.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_telCel >= 1 && SR_displayConceptos.disp_telefonia">
+                <ion-item>
+                  <ion-label><h3>Celular:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_telefonia}" type="number" id="telefonia_celular" name="telefonia_celular"
+                              [(ngModel)]="SR_conceptoTelefonia.con_celular" #telefonia_celular="ngModel" [readonly]="SR_displayConceptos.disb_telefonia"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_telefonia}" type="number" id="telefonia_cantidad" name="telefonia_cantidad"
+                              [(ngModel)]="SR_conceptoTelefonia.con_cantidad" #telefonia_cantidad="ngModel" [readonly]="SR_displayConceptos.disb_telefonia"
+                              (ionChange)="SR_change_Conceptos(6);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_telefonia}" type="number" id="telefonia_precioUnitario" name="telefonia_precioUnitario"
+                              [(ngModel)]="SR_conceptoTelefonia.con_precioUnitario" #telefonia_precioUnitario="ngModel" [readonly]="SR_displayConceptos.disb_telefonia"
+                              (ionChange)="SR_change_Conceptos(6);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="telefonia_TOTAL" name="telefonia_TOTAL"
+                              [(ngModel)]="SR_conceptoTelefonia.con_TOTAL" #telefonia_TOTAL="ngModel" readonly></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_telefonia}" id="telefonia_comentarios" name="telefonia_comentarios"
+                                [(ngModel)]="SR_conceptoTelefonia.con_comentario" #telefonia_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_telefonia" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_telefonia}" id="telefonia_comentariosModificados" name="telefonia_comentariosModificados"
+                                [(ngModel)]="SR_conceptoTelefonia.con_modificadoComentarios" #telefonia_comentariosModificados="ngModel" [readonly]="SR_displayConceptos.disb_telefonia" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Telefonia acciones" class="ion-text-right" *ngIf="(SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                              ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                               (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_telefonia = false;" title="Editar" fill="clear" shape="round" [hidden]="!SR_displayConceptos.disb_telefonia"
+                              [disabled]="!SR_displayConceptos.disb_telefonia || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 6}); SR_displayConceptos.btn_accionProcessing = true;"
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_telefonia"
+                              [disabled]="SR_displayConceptos.disb_telefonia || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_telefonia = true; SR_btn_cancelar(6);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_telefonia" [disabled]="SR_displayConceptos.disb_telefonia || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Telefonia -->
+            <li title="Lavanderia">
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoLavanderia.icon && SR_solicitudDetalles.sol_lavanderia >= 1}" (click)="SR_displayConceptos.disp_lavanderia = SR_displayConceptos.disp_lavanderia ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_lavanderia && SR_conceptoLavanderia.icon && SR_solicitudDetalles.sol_lavanderia >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_lavanderia && SR_conceptoLavanderia.icon && SR_solicitudDetalles.sol_lavanderia >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Lavanderia</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoLavanderia.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_lavanderia >= 1 && SR_displayConceptos.disp_lavanderia">
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_lavanderia}" type="number" id="lavanderia_cantidad" name="lavanderia_cantidad"
+                              [(ngModel)]="SR_conceptoLavanderia.con_cantidad" #lavanderia_cantidad="ngModel" [readonly]="SR_displayConceptos.disb_lavanderia"
+                              (ionChange)="SR_change_Conceptos(7);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_lavanderia}" type="number" id="lavanderia_precioUnitario" name="lavanderia_precioUnitario"
+                              [(ngModel)]="SR_conceptoLavanderia.con_precioUnitario" #lavanderia_precioUnitario="ngModel" [readonly]="SR_displayConceptos.disb_lavanderia"
+                              (ionChange)="SR_change_Conceptos(7);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="lavanderia_TOTAL" name="lavanderia_TOTAL"
+                              [(ngModel)]="SR_conceptoLavanderia.con_TOTAL" #lavanderia_TOTAL="ngModel" readonly></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_lavanderia}" id="lavanderia_comentarios" name="lavanderia_comentarios"
+                                [(ngModel)]="SR_conceptoLavanderia.con_comentario" #lavanderia_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_lavanderia" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_lavanderia}" id="lavanderia_comentariosModificados" name="lavanderia_comentariosModificados"
+                                [(ngModel)]="SR_conceptoLavanderia.con_modificadoComentarios" #lavanderia_comentariosModificados="ngModel" [readonly]="SR_displayConceptos.disb_lavanderia" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Lavanderia acciones" class="ion-text-right" *ngIf=" (SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                                ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                                 (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_lavanderia = false;" title="Editar" fill="clear" shape="round"
+                              [hidden]="!SR_displayConceptos.disb_lavanderia" [disabled]="!SR_displayConceptos.disb_lavanderia || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 7}); SR_displayConceptos.btn_accionProcessing = true;"
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_lavanderia"
+                              [disabled]="SR_displayConceptos.disb_lavanderia || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_lavanderia = true; SR_btn_cancelar(7);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_lavanderia" [disabled]="SR_displayConceptos.disb_lavanderia || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Lavanderia -->
+            <li title="Taxi" *ngIf="false"> <!-- <COMENTADO EN INTRANET> -->
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoTaxi.icon && SR_solicitudDetalles.sol_taxi >= 1}" (click)="SR_displayConceptos.disp_taxi = SR_displayConceptos.disp_taxi ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_taxi && SR_conceptoTaxi.icon && SR_solicitudDetalles.sol_taxi >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_taxi && SR_conceptoTaxi.icon && SR_solicitudDetalles.sol_taxi >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Taxi</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoTaxi.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_taxi >= 1 && SR_displayConceptos.disp_taxi">
+                <ion-item>
+                  <ion-label><h3>Origen:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="taxi_origen" name="taxi_origen"
+                              [(ngModel)]="SR_conceptoTaxi.con_origen" #taxi_origen="ngModel" readonly></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Destino:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="taxi_destino" name="taxi_destino"
+                              [(ngModel)]="SR_conceptoTaxi.con_destino" #taxi_destino="ngModel" readonly></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_taxi}" type="number" id="taxi_cantidad" name="taxi_cantidad"
+                              [(ngModel)]="SR_conceptoTaxi.con_cantidad" #taxi_cantidad="ngModel" [readonly]="SR_displayConceptos.disb_taxi"
+                              (ionChange)="SR_change_Conceptos(8);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_taxi}" type="number" id="taxi_precioUnitario" name="taxi_precioUnitario"
+                              [(ngModel)]="SR_conceptoTaxi.con_precioUnitario" #taxi_precioUnitario="ngModel" [readonly]="SR_displayConceptos.disb_taxi"
+                              (ionChange)="SR_change_Conceptos(8);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="taxi_TOTAL" name="taxi_TOTAL"
+                              [(ngModel)]="SR_conceptoTaxi.con_TOTAL" #taxi_TOTAL="ngModel" readonly></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_taxi}" id="taxi_comentarios" name="taxi_comentarios"
+                                [(ngModel)]="SR_conceptoTaxi.con_comentario" #taxi_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_taxi" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_taxi}" id="taxi_comentariosModificados" name="taxi_comentariosModificados"
+                                [(ngModel)]="SR_conceptoTaxi.con_modificadoComentarios" #taxi_comentariosModificados="ngModel" [readonly]="SR_displayConceptos.disb_taxi" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Taxi acciones" class="ion-text-right" *ngIf=" (SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                          ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                           (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_taxi = false;" title="Editar" fill="clear" shape="round" [hidden]="!SR_displayConceptos.disb_taxi"
+                              [disabled]="!SR_displayConceptos.disb_taxi || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 8}); SR_displayConceptos.btn_accionProcessing = true;"
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_taxi"
+                              [disabled]="SR_displayConceptos.disb_taxi || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_taxi = true; SR_btn_cancelar(8);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_taxi" [disabled]="SR_displayConceptos.disb_taxi || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Taxi -->
+            <li title="Estacionamiento" *ngIf="false"> <!-- <COMENTADO EN INTRANET> -->
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoEstacionamiento.icon && SR_solicitudDetalles.sol_estacionamiento >= 1}" (click)="SR_displayConceptos.disp_estacionamiento = SR_displayConceptos.disp_estacionamiento ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_estacionamiento && SR_conceptoEstacionamiento.icon && SR_solicitudDetalles.sol_estacionamiento >= 1"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_estacionamiento && SR_conceptoEstacionamiento.icon && SR_solicitudDetalles.sol_estacionamiento >= 1"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Estacionamiento</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoEstacionamiento.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_solicitudDetalles.sol_estacionamiento >= 1 && SR_displayConceptos.disp_estacionamiento">
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_estacionamiento}" type="number" id="estacionamiento_cantidad" name="estacionamiento_cantidad"
+                              [(ngModel)]="SR_conceptoEstacionamiento.con_cantidad" #estacionamiento_cantidad="ngModel"
+                              [readonly]="SR_displayConceptos.disb_estacionamiento"
+                              (ionChange)="SR_change_Conceptos(9);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_estacionamiento}" type="number" id="estacionamiento_precioUnitario" name="estacionamiento_precioUnitario"
+                              [(ngModel)]="SR_conceptoEstacionamiento.con_precioUnitario" #estacionamiento_precioUnitario="ngModel"
+                              [readonly]="SR_displayConceptos.disb_estacionamiento"
+                              (ionChange)="SR_change_Conceptos(9);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="estacionamiento_TOTAL" name="estacionamiento_TOTAL"
+                              [(ngModel)]="SR_conceptoEstacionamiento.con_TOTAL" #estacionamiento_TOTAL="ngModel" readonly></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_estacionamiento}" id="estacionamiento_comentarios" name="estacionamiento_comentarios"
+                                [(ngModel)]="SR_conceptoEstacionamiento.con_comentario" #estacionamiento_comentarios="ngModel"
+                                [readonly]="SR_displayConceptos.disb_estacionamiento" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_estacionamiento}" id="estacionamiento_comentariosModificados" name="estacionamiento_comentariosModificados"
+                                [(ngModel)]="SR_conceptoEstacionamiento.con_modificadoComentarios" #estacionamiento_comentariosModificados="ngModel"
+                                [readonly]="SR_displayConceptos.disb_estacionamiento" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Estacionamiento acciones" class="ion-text-right" *ngIf="(SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                                    ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                                     (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_estacionamiento = false;" title="Editar" fill="clear" shape="round"
+                              [hidden]="!SR_displayConceptos.disb_estacionamiento"
+                              [disabled]="!SR_displayConceptos.disb_estacionamiento || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 9}); SR_displayConceptos.btn_accionProcessing = true;"
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_estacionamiento"
+                              [disabled]="SR_displayConceptos.disb_estacionamiento || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_estacionamiento = true; SR_btn_cancelar(9);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_estacionamiento"
+                              [disabled]="SR_displayConceptos.disb_estacionamiento || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Estacionamiento -->
+            <li title="Varios" *ngIf="false"> <!-- <COMENTADO EN INTRANET> -->
+              <ion-item [ngClass]="{'class-cursorpointer':SR_conceptoVarios.icon && SR_conceptoVarios.con_TOTAL !== 0}" (click)="SR_displayConceptos.disp_varios = SR_displayConceptos.disp_varios ? false : true;">
+                <ion-icon slot="start" name="add" *ngIf="!SR_displayConceptos.disp_varios && SR_conceptoVarios.icon && SR_conceptoVarios.con_TOTAL !== 0"></ion-icon>
+                <ion-icon slot="start" name="remove" *ngIf="SR_displayConceptos.disp_varios && SR_conceptoVarios.icon && SR_conceptoVarios.con_TOTAL !== 0"></ion-icon>
+                <ion-label class="class-label class-h3"><h3>Varios</h3></ion-label>
+                <p class="class-textcolor_gray">{{SR_conceptoVarios.con_TOTAL_n}}</p>
+              </ion-item>
+              <ul id="displayed-content" class="class-div_box_under" *ngIf="SR_conceptoVarios.con_TOTAL !== 0 && SR_displayConceptos.disp_varios">
+                <div>
+                  <ion-label position="stacked"><h3>Descripción:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" id="varios_descripcion" name="varios_descripcion"
+                                [(ngModel)]="SR_conceptoVarios.con_descripcion" #varios_descripcion="ngModel" [readonly]="SR_displayConceptos.disb_varios" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" type="number" id="varios_cantidad" name="varios_cantidad"
+                              [(ngModel)]="SR_conceptoVarios.con_cantidad" #varios_cantidad="ngModel" [readonly]="SR_displayConceptos.disb_varios"
+                              (ionChange)="SR_change_Conceptos(10);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" type="number" id="varios_precioUnitario" name="varios_precioUnitario"
+                              [(ngModel)]="SR_conceptoVarios.con_precioUnitario" #varios_precioUnitario="ngModel" [readonly]="SR_displayConceptos.disb_varios"
+                              (ionChange)="SR_change_Conceptos(10);" min="1"></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Descripción:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" id="varios_descripcion2" name="varios_descripcion2"
+                                [(ngModel)]="SR_conceptoVarios.con_descripcion2" #varios_descripcion2="ngModel" [readonly]="SR_displayConceptos.disb_varios" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" type="number" id="varios_cantidad2" name="varios_cantidad2"
+                              [(ngModel)]="SR_conceptoVarios.con_cantidad2" #varios_cantidad2="ngModel" [readonly]="SR_displayConceptos.disb_varios"
+                              (ionChange)="SR_change_Conceptos(10);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" type="number" id="varios_precioUnitario2" name="varios_precioUnitario2"
+                              [(ngModel)]="SR_conceptoVarios.con_precioUnitario2" #varios_precioUnitario2="ngModel" [readonly]="SR_displayConceptos.disb_varios"
+                              (ionChange)="SR_change_Conceptos(10);" min="1"></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Descripción:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" id="varios_descripcion3" name="varios_descripcion3"
+                                [(ngModel)]="SR_conceptoVarios.con_descripcion3" #varios_descripcion3="ngModel" [readonly]="SR_displayConceptos.disb_varios" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <ion-item>
+                  <ion-label><h3>Cantidad:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" type="number" id="varios_cantidad3" name="varios_cantidad3"
+                              [(ngModel)]="SR_conceptoVarios.con_cantidad3" #varios_cantidad3="ngModel" [readonly]="SR_displayConceptos.disb_varios"
+                              (ionChange)="SR_change_Conceptos(10);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Precio unitario:</h3></ion-label>
+                  <ion-input  [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" type="number" id="varios_precioUnitario3" name="varios_precioUnitario3"
+                              [(ngModel)]="SR_conceptoVarios.con_precioUnitario3" #varios_precioUnitario3="ngModel" [readonly]="SR_displayConceptos.disb_varios"
+                              (ionChange)="SR_change_Conceptos(10);" min="1"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-label><h3>Total:</h3></ion-label>
+                  <ion-input  Class="class-disabled_text" type="number" id="varios_TOTAL" name="varios_TOTAL"
+                              [(ngModel)]="SR_conceptoVarios.con_TOTAL" #varios_TOTAL="ngModel" readonly></ion-input>
+                </ion-item>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" id="varios_comentarios" name="varios_comentarios"
+                                [(ngModel)]="SR_conceptoVarios.con_comentario" #varios_comentarios="ngModel" [readonly]="SR_displayConceptos.disb_varios" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios de modificación:</h3></ion-label>
+                  <ion-textarea [ngClass]="{'class-disabled_text' : SR_displayConceptos.disb_varios}" id="varios_comentariosModificados" name="varios_comentariosModificados"
+                                [(ngModel)]="SR_conceptoVarios.con_modificadoComentarios" #varios_comentariosModificados="ngModel" [readonly]="SR_displayConceptos.disb_varios" rows="3"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+                <div title="Varios acciones" class="ion-text-right" *ngIf=" (SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                                                                            ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                                                                             (SR_solicitudDetalles.sol_jefeDirecto === user_id)) ">
+                  <ion-button (click)="SR_displayConceptos.disb_varios = false;" title="Editar" fill="clear" shape="round" [hidden]="!SR_displayConceptos.disb_varios"
+                              [disabled]="!SR_displayConceptos.disb_varios || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="confirmAlert('¿Está seguro que los datos son correctos?', 'medium', {tipo: 10}); SR_displayConceptos.btn_accionProcessing = true;"
+                              title="Guardar" fill="clear" shape="round" [hidden]="SR_displayConceptos.disb_varios"
+                              [disabled]="SR_displayConceptos.disb_varios || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="save-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button (click)="SR_displayConceptos.disb_varios = true; SR_btn_cancelar(10);" title="Cancelar" fill="clear" shape="round"
+                              [hidden]="SR_displayConceptos.disb_varios" [disabled]="SR_displayConceptos.disb_varios || SR_displayConceptos.btn_accionProcessing">
+                    <ion-icon slot="start" name="close-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ul> <!-- END displayed-content-->
+            </li> <!-- END Varios -->
+          </ul> <!-- END display-content -->
+        </div>
+        <br><br>
+        <div title="Total Costos">
+          <ion-item>
+            <ion-label><h3>Total solicitado</h3></ion-label>
+            <p class="class-disabled_text">{{SR_conceptoTOTAL}}</p>
+          </ion-item>
+        </div>
+        <br><br>
+        <div class="class-div_box" *ngIf="SR_solicitudDetalles.sol_estado === 3" style="border: 1px solid green;">
+          <ion-item>
+            <ion-label class="ion-text-center"><h3><b>¡Solicitud Aprobada!</b></h3></ion-label>
+          </ion-item>
+          <br>
+          <ion-button (click)="RS_openPDF();" expand="full" fill="solid" shape="round">
+            Generar PDF
+          </ion-button>
+          <br><br>
+          <div *ngIf="RS_permisos() || true">
+            <div *ngIf="SR_solicitudDetalles.sol_retenida === 0">
+              <ion-button (click)="RS_modal_comentario(1); SR_displayConceptos.btn_accionProcessing = true;" expand="full" fill="solid" shape="round" [disabled]="SR_displayConceptos.btn_accionProcessing">
+                <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                Depositar
+              </ion-button>
+              <ion-button (click)="RS_modal_comentario(2); SR_displayConceptos.btn_accionProcessing = true;" expand="full" fill="solid" shape="round" color="danger" [disabled]="SR_displayConceptos.btn_accionProcessing">
+                <ion-icon slot="start" name="remove-outline"></ion-icon>
+                Retener
+              </ion-button>
+            </div>
+            <div *ngIf="SR_solicitudDetalles.sol_retenida === 1">
+              <ion-button (click)="RS_modal_comentario(1); SR_displayConceptos.btn_accionProcessing = true;" expand="full" fill="solid" shape="round" [disabled]="SR_displayConceptos.btn_accionProcessing">
+                <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                Depositar
+              </ion-button>
+            </div>
+          </div>
+        </div>
+        <div class="class-div_box" *ngIf="SR_solicitudDetalles.sol_estado === 4" style="border: 1px solid red;">
+          <ion-item>
+            <ion-label class="ion-text-center"><h3><b>¡Solicitud Rechazada!</b></h3></ion-label>
+          </ion-item>
+        </div>
+        <br>
+        <div *ngIf="(SR_solicitudDetalles.sol_estado !== 3 && SR_solicitudDetalles.sol_estado !== 4) &&
+                    ((SR_solicitudDetalles.sol_jefeDirecto === user_id && SR_solicitudDetalles.sol_solicitante_colaborador_id === user_id) ||
+                     (SR_solicitudDetalles.sol_jefeDirecto === user_id))">
+          <ion-button (click)="this.confirmAlert('Una vez aprobada la solicitud no podrá hacer mas cambios, ¿Desea continuar?', 'medium', {tipo: 103}); SR_displayConceptos.btn_accionProcessing = true;" expand="full" fill="solid" shape="round" [disabled]="SR_displayConceptos.btn_accionProcessing">
+            <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+            Aprobar
+          </ion-button>
+          <ion-button (click)="this.confirmAlert('Una vez rechazada la solicitud no podrá hacer mas cambios, ¿Desea continuar?', 'medium', {tipo: 104}); SR_displayConceptos.btn_accionProcessing = true;" color="danger" expand="full" fill="solid" shape="round" [disabled]="SR_displayConceptos.btn_accionProcessing">
+            <ion-icon slot="start" name="remove-outline"></ion-icon>
+            Rechazar
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MODALES -->
+
+  <ion-modal #ModalComentario [isOpen]="modalComentario" width="auto">
+    <ng-template>
+        <ion-header translucent="true">
+            <ion-toolbar>
+                <ion-title>{{modal_data.title}}</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button (click)="modalComentario = false; SR_displayConceptos.btn_accionProcessing = false;">
+                        <ion-icon slot="icon-only" name="close"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+            <form #propuestaForm="ngForm">
+                <br>
+                <div>
+                  <ion-label position="stacked"><h3>Comentarios:</h3></ion-label>
+                  <ion-textarea id="Modal_comentario" name="Modal_comentario" [(ngModel)]="modal_data.comentario" #Modal_comentario="ngModel" rows="5"></ion-textarea>
+                  <hr class="class-hr_style">
+                </div>
+                <br>
+            </form>
+        </ion-content>
+        <ion-footer>
+          <ion-grid fixed>
+              <ion-row>
+                  <ion-col size="6">
+                      <ion-button (click)="modalComentario = false;" color="warning" expand="block" fill="solid" shape="round">
+                          Regresar
+                      </ion-button>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-button [disabled]="!propuestaForm.valid" (click)="modalComentario = false; SR_updateSolicitudesFinanzas_acciones();" color="primary" expand="block" fill="solid" shape="round">
+                        <p>Confirmar</p>
+                    </ion-button>
+                  </ion-col>
+              </ion-row>
+          </ion-grid>
+          <br>
+        </ion-footer>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>
+

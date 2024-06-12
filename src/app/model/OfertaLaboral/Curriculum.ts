@@ -1,0 +1,33 @@
+export class Curriculum {
+    correo: string = '';
+    nombres: string = '';
+    apellido_p: string = '';
+    apellido_m: string = '';
+    nacimiento: string = '';
+    genero: number = 0;
+    estado_civil: number = 0;
+    linkedin: string = '';
+    skype: string = '';
+    pais: string = '';
+    estado_mex: string = '';
+    ciudad: string = '';
+    cp: number = 0;
+    direccion: string = '';
+    nacionalidad: string = '';
+    licencia: string = '';
+    vehiculo_propio: number = 0;
+    discapacidad: number = 0;
+    con_hab: string = '';
+    sit_actual: number = 0;
+    area: string = '';
+    salario: string = '';
+    dis_viajar: number = 0;
+    dis_camb_res: number = 0;
+    titulo_curriculum: string = '';
+    sobremi: string = '';
+    fecha_registro: string = '';
+    fecha_edicion: string = '';
+    fecha_ultima: string = '';
+    estado_oferta: number = 0;
+    pdf: string = '';
+}

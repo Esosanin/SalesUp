@@ -1,0 +1,39 @@
+.rendimientobajo {
+  color: var(--ion-color-danger);
+  font-weight: bold;
+}
+
+.rendimientopromedio {
+  color: var(--ion-color-warning);
+}
+
+
+.contenidoText {
+  color: var(--ion-color-medium);
+}
+
+.loading {
+  background-color: red !important;
+}
+
+.vendedorClass {
+  border: 1px solid #bcbcbc;
+  border-radius: 4px;
+}
+
+.rendimientooptimo {
+  color: var(--ion-color-success);
+  font-weight: bold;
+}
+
+.finalizada {
+  border-left: 2px solid var(--ion-color-success);
+}
+
+ion-card-title {
+  color: var(--ion-color-primary) !important;
+}
+
+ion-card-subtitle {
+  color: var(--ion-color-medium) !important;
+}

@@ -1,0 +1,26 @@
+capacitor-google-map {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+}
+
+.list{
+  background-color: var(--ion-color-light);
+}
+
+.btnCheck{
+  margin: 24px 0 12px 0;
+}
+
+ion-item{
+    --background: var(--ion-color-light);
+}
+
+.bigFont{
+  font-size: 40px;
+}
+
+.cardCenter{
+  //width:50%;
+  margin: 5% auto;
+}

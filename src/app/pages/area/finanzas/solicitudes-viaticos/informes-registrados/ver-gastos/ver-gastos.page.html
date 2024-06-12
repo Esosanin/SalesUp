@@ -1,0 +1,287 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ver gastos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-lg="6">
+        <div title="div_buttons_documentos">
+          <ion-button expand="block" fill="solid" shape="round"
+             *ngIf="IR_permisosOpciones > 0" [disabled]="btn_refrescadorAcciones">
+            <ion-icon slot="start" name="print-outline"></ion-icon>
+            Imprimir
+          </ion-button>
+          <ion-button expand="block" fill="solid" shape="round"
+            (click)="IR_openPDF(); btn_refrescadorAcciones = true;"
+            *ngIf=" IR_permisosOpciones === 1 || IR_permisosOpciones >= 4 ||
+                    IR_permisosOpciones <= 7" [disabled]="btn_refrescadorAcciones">
+            <ion-icon slot="start" name="document-outline"></ion-icon>
+            PDF
+          </ion-button>
+          <div *ngIf="IR_permisosOpciones === 1 || IR_permisosOpciones === 4 ||
+                      IR_permisosOpciones === 2 || IR_permisosOpciones === 5">
+            <div class="class-div_box"
+                [ngStyle]="{'border': IR_permisosOpciones === 1 || IR_permisosOpciones === 4 ? '1px solid green' :
+                                      IR_permisosOpciones === 2 || IR_permisosOpciones === 5 ? '1px solid red' :
+                                      '1px solid #eee'}">
+              <h3 *ngIf="IR_permisosOpciones === 1 || IR_permisosOpciones === 4" class="ion-text-center">GASTO APROBADO</h3>
+              <h3 *ngIf="IR_permisosOpciones === 2 || IR_permisosOpciones === 5" class="ion-text-center">GASTO RECHAZADO</h3>
+              <p style="height:auto; max-height:100px; overflow: auto;">{{IR_informGastos_comentarios.comentario_rechazo}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="class-div_gastos class-div_box class-div_space" id="div_listado_gastos"> <!-- div_listado_gastos -->
+          <ion-label>Listado de gastos:</ion-label>
+          <hr class="class-hr_style">
+          <ion-list>
+            <ion-radio-group name="auto" [(ngModel)]="IR_btnRadio" #IR_radioGroup="ngModel" (ionChange)="IR_vistaInforme_gastos()">
+              <ion-item class="class-item_pointer" *ngFor="let data of IR_tableGastos; let i = index;">
+                <ion-label>
+                  <h3>Tipo:</h3>
+                  <p class="class-textcolor_gray">{{data.gasd_tipoGasto_n}}</p>
+                  <h3>Monto: <span class="class-textcolor_gray">{{data.gasd_monto_n}}</span></h3>
+                  <h3>Fecha: <span class="class-textcolor_gray">{{data.gasd_fechaTransaccion_n}}</span></h3>
+                </ion-label>
+                <ion-radio slot="end" value="{{data.gasd_id}}"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+          </ion-list>
+          <hr class="class-hr_style">
+        </div> <!-- END div_listado_gastos -->
+        <div class="class-div_box class-div_space"> <!-- div_gastos_totales-->
+          <ion-label>Gastos totales:</ion-label>
+          <hr class="class-hr_style">
+          <ion-list>
+            <ion-item *ngFor="let data of IR_gastosTotales; let i = index;">
+              <ion-label>
+                <h3>Tipo:</h3>
+                <p class="class-textcolor_gray">{{data.TIPO_GASTO}}</p>
+                <h3>Monto: <span class="class-textcolor_gray">{{data.MONTO_n}}</span></h3>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+          <hr class="class-hr_style">
+        </div> <!-- END div_gastos_totales -->
+        <div class="class-div_box class-div_space"> <!-- div_type_gastos -->
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12" size-lg="6">
+                <ion-item>
+                  <ion-label position="stacked">Monto total:</ion-label>
+                  <p class="class-textcolor_gray">{{IR_montoTotal}}</p>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-lg="6">
+                <ion-item>
+                  <ion-label position="stacked">Total solicitado:</ion-label>
+                  <p class="class-textcolor_gray">{{IR_totalSolicitado}}</p>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <div *ngIf="IR_informGastos_comentarios.excedido_comentario">
+              <ion-row>
+                <ion-col size="12">
+                  <ion-label>Comentario lider:</ion-label>
+                  <ion-text>
+                    <p class="class-textcolor_gray">{{IR_informGastos_comentarios.excedido_comentario}}</p>
+                    <hr class="class-hr_style">
+                  </ion-text>
+                </ion-col>
+              </ion-row>
+            </div>
+          </ion-grid>
+        </div> <!-- END div_type_gastos -->
+        <div *ngIf=" IR_permisosOpciones === 3 || IR_permisosOpciones >= 6"> <!-- div_buttons_aprobación -->
+          <ion-grid>
+            <!-- APROBADO O RECHAZADO POR JEFE DIRECTO DEL SOLICITANTE -->
+            <ion-row *ngIf="IR_permisosOpciones === 6">
+              <ion-col size="12" size-sm="6">
+                <ion-button expand="block" fill="solid" shape="round" color="danger"
+                            (click)="open_comment(4); btn_refrescadorAcciones = true;" [disabled]="btn_refrescadorAcciones">
+                  <ion-icon slot="start" name="close-outline"></ion-icon>
+                  Rechazar
+                </ion-button>
+              </ion-col>
+              <ion-col size="12" size-sm="6">
+                <ion-button expand="block" fill="solid" shape="round"
+                            (click)="open_comment(3); btn_refrescadorAcciones = true;" [disabled]="btn_refrescadorAcciones">
+                  <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                  Aprobar
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <!-- APROBADO O RECHAZADO DIFERENTE DEL SOLICITANTE Y JEFE DIRECTO DEL SOLICITANTE -->
+            <ion-row *ngIf="IR_permisosOpciones === 7">
+              <ion-col size="12" size-sm="6">
+                <ion-button expand="block" fill="solid" shape="round" color="danger"
+                            (click)="open_comment(2); btn_refrescadorAcciones = true;" [disabled]="btn_refrescadorAcciones">
+                  <ion-icon slot="start" name="close-outline"></ion-icon>
+                  Rechazar
+                </ion-button>
+              </ion-col>
+              <ion-col size="12" size-sm="6">
+                <ion-button expand="block" fill="solid" shape="round"
+                            (click)="open_comment(1); btn_refrescadorAcciones = true;" [disabled]="btn_refrescadorAcciones">
+                  <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                  Aprobar
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div> <!-- END div_buttons_aprobación -->
+      </ion-col>
+      <br><br>
+      <ion-col size="12" size-lg="6" *ngIf="IR_btnRadio">
+        <div class="class-div_box class-div_space">
+          <ion-item class="class-item_pointer" (click)="IR_displayInformacion_gasto = IR_displayInformacion_gasto ? false : true;">
+            <ion-icon slot="start" name="add" *ngIf="!IR_displayInformacion_gasto"></ion-icon>
+            <ion-icon slot="start" name="remove" *ngIf="IR_displayInformacion_gasto"></ion-icon>
+            <ion-label>Detalles</ion-label>
+          </ion-item>
+          <div *ngIf="IR_displayInformacion_gasto">
+            <div> <!-- Gastos detalles -->
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>Tipo de gasto:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_tipoGasto_n}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>Fecha de transacción:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_fechaTransaccion_n}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>Establecimiento:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_establecimiento}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>Ciudad de compra:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_cdCompra}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>RFC:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_RFC}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>Tipo de comprobante:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_tipoComprobante_n}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>Monto:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_monto_n}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>Moneda:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_moneda_n}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>IVA:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto.gasd_mxIVAMontoMXN_n}}</p>
+              </ion-item>
+              <ion-item>
+                <ion-label class="class-label class-h3"><h3><b>Comentarios:</b></h3></ion-label>
+                <p class="class-textcolor_gray">{{IR_informacion_gastos.aprobar_gasto?.gasd_comentarios}}</p>
+              </ion-item>
+            </div>
+            <div class="class-div_space"> <!-- Excepciones gastos -->
+              <ion-label><h3><b>Excepciones</b></h3></ion-label>
+              <div class="class-div_tableText" *ngIf="IR_informacion_gastos.excepciones_gasto.length !== 0">
+                <ion-text *ngFor="let data of IR_informacion_gastos.excepciones_gasto; let i = index;">
+                  <p>{{data.exgas_excepcion}}</p>
+                </ion-text>
+              </div>
+              <div *ngIf="IR_informacion_gastos.excepciones_gasto.length === 0">
+                  <p class="ion-text-center">- No hay información sobre Excepciones -</p>
+              </div>
+              <hr class="class-hr_style">
+            </div> <!-- END Excepciones -->
+            <div class="class-div_space"> <!-- Asistentes gastos -->
+              <ion-label><h3><b>Asistentes</b></h3></ion-label>
+              <div class="class-div_tableText" *ngIf="IR_informacion_gastos.asistentes_gasto.length !== 0">
+                <ion-text *ngFor="let data of IR_informacion_gastos.asistentes_gasto; let i = index;">
+                  <p>{{data.ASISTENTE}}</p>
+                </ion-text>
+              </div>
+              <div *ngIf="IR_informacion_gastos.asistentes_gasto.length === 0">
+                  <p class="ion-text-center">- No hay información sobre Asistentes -</p>
+              </div>
+              <hr class="class-hr_style">
+            </div>  <!-- END Asistentes -->
+            <div class="class-div_space"> <!-- Anexos gastos -->
+              <ion-label><h3><b>Anexos</b></h3></ion-label>
+              <div *ngIf="IR_informacion_gastos.anexos_gasto.length !== 0">
+                <ion-text *ngFor="let data of IR_informacion_gastos.anexos_gasto; let i = index;">
+                  <div class="ion-text-center" *ngIf="data.tipo === 1">
+                    <img src="http://intranet.ecn.com.mx:8060/intranet/modulos/ecntur/aprobaciones/Anexos/{{data.file}}" style="height:100%; width:100%;  overflow:scroll;">
+                  </div>
+                  <div class="class-view_PDF" *ngIf="data.tipo === 2">
+                    <iframe [src]="IR_viewPDF(data.file)" height="400px" width="100%" alt="pdf"></iframe>
+                  </div>
+                  <div class="ion-text-center" *ngIf="data.tipo === 3">
+                    <a href="http://intranet.ecn.com.mx:8060/intranet/modulos/ecntur/aprobaciones/Anexos/{{data.file}}" target="_blank"><img height="50px" width="auto" src="http://intranet.ecn.com.mx:8060/intranet/modulos/ecntur/aprobaciones/logo_xml.png"></a>
+                  </div>
+                </ion-text>
+              </div>
+              <div *ngIf="IR_informacion_gastos.anexos_gasto.length === 0">
+                  <p class="ion-text-center">- No hay información sobre Anexos -</p>
+              </div>
+              <hr class="class-hr_style">
+            </div> <!-- END Anexos -->
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+
+<!-- MODALES -->
+
+<ion-modal #ModalComentario [isOpen]="modal_open" width="auto">
+  <ng-template>
+      <ion-header translucent="true">
+          <ion-toolbar>
+              <ion-title>Comentarios</ion-title>
+              <ion-buttons slot="end">
+                  <ion-button (click)="modal_open = false;">
+                      <ion-icon slot="icon-only" name="close"></ion-icon>
+                  </ion-button>
+              </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <form #gastoForm="ngForm">
+              <br>
+              <div>
+                <ion-textarea id="Modal_comentario" name="Modal_comentario" [(ngModel)]="modal_comment" #Modal_comentario="ngModel" rows="5"></ion-textarea>
+                <hr class="class-hr_style">
+              </div>
+              <br>
+          </form>
+      </ion-content>
+      <ion-footer>
+        <ion-grid fixed>
+            <ion-row>
+                <ion-col size="6">
+                    <ion-button (click)="modal_open = false;" color="warning" expand="block" fill="solid" shape="round">
+                        Regresar
+                    </ion-button>
+                </ion-col>
+                <ion-col size="6">
+                  <ion-button [disabled]="!gastoForm.valid" (click)="modal_open = false; IR_btnAcciones();" color="primary" expand="block" fill="solid" shape="round">
+                      <p>Confirmar</p>
+                  </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+        <br>
+      </ion-footer>
+  </ng-template>
+</ion-modal>

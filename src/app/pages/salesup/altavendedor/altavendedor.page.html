@@ -1,0 +1,101 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Alta vendedores</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding animarElemento">
+  <form class="ion-padding-top" [formGroup]="altaVendedorForm" (ngSubmit)="altaVendedor()">
+    <ion-grid [fixed]="true">
+      <ion-row class="ion-justify-content-center">
+        <ion-col size="12" size-md="4">
+          <!-- <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="person-outline"></ion-icon>
+            <ion-label position="stacked">Colaborador</ion-label>
+            <ionic-selectable closeButtonText="Cerrar" modalCssClass="selectModal" [hasInfiniteScroll]="true"
+              (onInfiniteScroll)="getMoreVendedores($event)" (onSearch)="searchVendedores($event)"
+              [items]="vendedores.slice(0,limiteSelects)" itemValueField="id_vendedorSap" itemTextField="nombreC"
+              [canSearch]="true" searchPlaceholder="Buscar" searchFailText="No se encontraron elementos."
+              formControlName="id_sap" name="id_vendedorSap" #vendedorSelect placeholder="Seleccionar..."> -->
+          <!-- <ng-template ionicSelectableHeaderTemplate>
+                <ion-toolbar>
+                  <ion-header>
+                    <ion-toolbar color="light">
+                      <ion-title>Seleccionar colaborador</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button (click)="vendedorSelect.close()">
+                          <ion-icon slot="icon-only" name="close"></ion-icon>
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ion-toolbar>
+              </ng-template> -->
+          <!-- </ionic-selectable>
+          </ion-item> -->
+        </ion-col>
+        <ion-col size="12" size-md="4">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+            <ion-select label="Zona" placeholder="Seleccionar..." labelPlacement="stacked" okText="Seleccionar"
+              cancelText="Cancelar" formControlName="id_zona">
+              <ion-select-option *ngFor="let zona of zonas" [value]="zona.id">{{zona.zona}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-justify-content-center">
+        <ion-col size="12" size-md="4">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+            <ion-select label="Tipo" placeholder="Seleccionar..." labelPlacement="stacked" okText="Seleccionar"
+              (ionChange)="tipoChange()" #tipo cancelText="Cancelar" formControlName="tipo">
+              <ion-select-option value="Corporativo">Corporativo</ion-select-option>
+              <ion-select-option value="Gerente">Gerente</ion-select-option>
+              <ion-select-option value="Vendedor">Vendedor</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-md="4">
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="layers-outline" color="primary"></ion-icon>
+            <ion-select label="Especialidad" placeholder="Seleccionar..." labelPlacement="stacked" okText="Seleccionar"
+              formControlName="especialidad" cancelText="Cancelar">
+              <ion-select-option [value]="1" *ngIf="tipo.value === 'Corporativo'">Asesor de
+                soluciones</ion-select-option>
+              <ion-select-option [value]="2" *ngIf="tipo.value === 'Corporativo'">Auxiliar
+                administrativo</ion-select-option>
+              <ion-select-option [value]="3" *ngIf="tipo.value === 'Corporativo'">Capturista</ion-select-option>
+              <ion-select-option [value]="4" *ngIf="tipo.value === 'Gerente'">Gerente regional</ion-select-option>
+              <ion-select-option [value]="5" *ngIf="tipo.value === 'Vendedor'">Ingeniero de ventas</ion-select-option>
+              <ion-select-option [value]="6" *ngIf="tipo.value === 'Corporativo'">KAM</ion-select-option>
+              <ion-select-option [value]="7" *ngIf="tipo.value === 'Corporativo'">Lider de cuenta</ion-select-option>
+              <ion-select-option [value]="8" *ngIf="tipo.value === 'Corporativo'">Lider de ecommerce</ion-select-option>
+              <ion-select-option [value]="9" *ngIf="tipo.value === 'Vendedor'">Proyectos</ion-select-option>
+              <ion-select-option [value]="10" *ngIf="tipo.value === 'Gerente'">Team leader</ion-select-option>
+              <ion-select-option [value]="11" *ngIf="tipo.value === 'Vendedor'">Ventas en linea</ion-select-option>
+              <ion-select-option [value]="12" *ngIf="tipo.value === 'Vendedor'">Ventas externas</ion-select-option>
+              <ion-select-option [value]="13" *ngIf="tipo.value === 'Vendedor'">Ventas internas</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="ion-justify-content-end ion-margin">
+        <ion-col size="12" size-md="3">
+          <ion-button [disabled]="!altaVendedorForm.valid" type="submit" expand="full" shape="round">
+            <ion-icon slot="start" name="save-outline"></ion-icon>
+            Guardar
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-item lines="none">
+        <ion-icon size="small" color="medium" slot="start" name="information-circle-outline"></ion-icon>
+        <ion-label>
+          <p>El campo tipo, define también los permisos que tendrá el usuario en Sales Up.</p>
+        </ion-label>
+      </ion-item>
+    </ion-grid>
+  </form>
+</ion-content>

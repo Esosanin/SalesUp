@@ -1,0 +1,49 @@
+.class-content_spaces {
+    padding: 10px;
+    margin: 10px;
+}
+
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+
+    cursor: pointer;
+}
+
+hr.class-hr_style{
+    height: 1px;
+    width: 100%;
+    background-color: gray;
+}
+
+.class-textcolor_gray{
+    font-size: 14px;
+    color: gray;
+}
+
+
+ion-slides {
+    height: 100%;
+}
+
+ion-icon {
+    pointer-events: none;
+}
+
+ion-infinite-scroll-content{
+    min-height: 1px;
+}
+
+ion-label.class-label{
+    //align-self: baseline;
+    flex: 1 1 0% !important;
+    white-space: initial !important;
+    width: auto;
+    max-width: none;
+    min-width: 150px;
+    padding-right: 10px;
+}
+
+.class-btns_center{ align-self: center; }

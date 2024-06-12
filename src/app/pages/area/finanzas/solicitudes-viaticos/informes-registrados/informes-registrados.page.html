@@ -1,0 +1,494 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start" *ngIf="!showSearchbar">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-buttons slot="start" *ngIf="!showSearchbar">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-buttons slot="end" *ngIf="!showSearchbar">
+            <ion-button (click)="showSearchbar = true; focus();">
+                <ion-icon slot="icon-only" name="search"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title *ngIf="!showSearchbar">Informes registrados</ion-title>
+        <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always" (ionChange)="search = searchInput?.value; IR_changeSegment(segment); content.scrollToTop();" (ionCancel)="showSearchbar=false; search = ''; IR_changeSegment(segment); content.scrollToTop();" placeholder="Buscar"></ion-searchbar>
+    </ion-toolbar>
+    <ion-progress-bar type="indeterminate" *ngIf="IR_showLoader"></ion-progress-bar>
+</ion-header>
+
+<ion-content>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" >
+        <ion-fab-button [disabled]="btn_changeSegment">
+            <ion-icon name="menu"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="top">
+            <ion-fab-button title="Pendientes" (click)="IR_changeSegment('Pendientes')" [disabled]="btn_changeSegment">
+                <ion-icon name="alert-outline"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button title="Aprobadas" (click)="IR_changeSegment('Aprobadas')" [disabled]="btn_changeSegment">
+                <ion-icon name="checkmark-outline"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button title="Rechazadas" (click)="IR_changeSegment('Rechazadas')" [disabled]="btn_changeSegment">
+                <ion-icon name="close-outline"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button title="Adeudos recibidos" (click)="IR_changeSegment('Adeudos recibidos')" [disabled]="btn_changeSegment">
+                <ion-icon name="mail-unread-outline"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button title="Adeudos sin enviar" (click)="IR_changeSegment('Adeudos sin enviar')" [disabled]="btn_changeSegment">
+                <ion-icon name="mail-outline"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button title="Adeudos pagados" (click)="IR_changeSegment('Adeudos pagados')" [disabled]="btn_changeSegment">
+                <ion-icon name="card-outline"></ion-icon>
+            </ion-fab-button>
+        </ion-fab-list>
+    </ion-fab>
+    <div class="class-content_spaces ion-text-center">
+        <ion-label><b>{{segment}}</b></ion-label>
+    </div>
+    <div *ngIf="segment === 'Pendientes'" class="class-content_spaces">
+        <div *ngFor="let data of IR_pendientes; let i = index;">
+            <ion-grid class="class-div_box" *ngIf="i<limite">
+                <ion-row>
+                    <ion-col size="9" (click)="IR_openModal_detalles(i);">
+                        <ion-label>
+                            <h3>Informe:</h3>
+                            <p>{{data.gas_nombreInforme}}</p>
+                            <h3>Solicitante:</h3>
+                            <p>{{data.solicitante}}</p>
+                            <h3>Clave:</h3>
+                            <p>{{data.gas_claveInforme}}</p>
+                        </ion-label>
+                        <hr class="class-hr_style">
+                        <ion-label>
+                            <h3>Fecha de recepción:</h3>
+                            <p>{{data.gas_fechaElaboracion_n}}</p>
+                        </ion-label>
+                    </ion-col>
+                    <ion-col class="class-icon_center" size="3">
+                        <ion-label class="class-icon_fontSize">
+                            <ion-button title="Ver gastos" (click)="IR_btn_acciones('gastos', data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="calculator-outline"></ion-icon>
+                            </ion-button>
+                        </ion-label>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+    </div>
+    <div *ngIf="segment === 'Aprobadas'" class="class-content_spaces">
+        <div *ngFor="let data of IR_aprobadas; let i = index;">
+            <ion-grid class="class-div_box" *ngIf="i<limite">
+                <ion-row>
+                    <ion-col size="9" (click)="IR_openModal_detalles(i);">
+                        <ion-label>
+                            <h3>Informe:</h3>
+                            <p>{{data.gas_nombreInforme}}</p>
+                            <h3>Solicitante:</h3>
+                            <p>{{data.solicitante}}</p>
+                            <h3>Clave:</h3>
+                            <p>{{data.gas_claveInforme}}</p>
+                        </ion-label>
+                        <hr class="class-hr_style">
+                        <ion-label>
+                            <h3>Fecha de recepción:</h3>
+                            <p>{{data.gas_fechaElaboracion_n}}</p>
+                        </ion-label>
+                    </ion-col>
+                    <ion-col class="class-icon_center" size="3">
+                        <ion-label class="class-icon_fontSize">
+                            <ion-button title="Ver gastos" (click)="IR_btn_acciones('gastos', data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="calculator-outline"></ion-icon>
+                            </ion-button>
+                            <ion-button title="Regresar" (click)="IR_openModal_comentario('regresar', data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="arrow-undo-outline"></ion-icon>
+                            </ion-button>
+                        </ion-label>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+    </div>
+    <div *ngIf="segment === 'Rechazadas'" class="class-content_spaces">
+        <div *ngFor="let data of IR_rechazadas; let i = index;">
+            <ion-grid class="class-div_box" *ngIf="i<limite">
+                <ion-row>
+                    <ion-col size="9" (click)="IR_openModal_detalles(i);">
+                        <ion-label>
+                            <h3>Informe:</h3>
+                            <p>{{data.gas_nombreInforme}}</p>
+                            <h3>Solicitante:</h3>
+                            <p>{{data.solicitante}}</p>
+                            <h3>Clave:</h3>
+                            <p>{{data.gas_claveInforme}}</p>
+                        </ion-label>
+                        <hr class="class-hr_style">
+                        <ion-label>
+                            <h3>Fecha de recepción:</h3>
+                            <p>{{data.gas_fechaElaboracion_n}}</p>
+                        </ion-label>
+                    </ion-col>
+                    <ion-col class="class-icon_center" size="3">
+                        <ion-label class="class-icon_fontSize">
+                            <ion-button title="Ver gastos" (click)="IR_btn_acciones('gastos', data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="calculator-outline"></ion-icon>
+                            </ion-button>
+                            <ion-button title="Regresar" (click)="IR_btn_acciones('regresar', data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="arrow-undo-outline"></ion-icon>
+                            </ion-button>
+                        </ion-label>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+    </div>
+    <div *ngIf="segment === 'Adeudos recibidos'" class="class-content_spaces">
+        <div *ngFor="let data of IR_adeudosRecibidos; let i = index;">
+            <ion-grid class="class-div_box" *ngIf="i<limite">
+                <ion-row>
+                    <ion-col size="9" (click)="IR_openModal_detalles(i);">
+                        <ion-label>
+                            <h3>Informe:</h3>
+                            <p>{{data.nombre_informe}}</p>
+                            <h3>Solicitante:</h3>
+                            <p>{{data.solicitante}}</p>
+                            <h3>Clave:</h3>
+                            <p>{{data.gas_claveInforme}}</p>
+                        </ion-label>
+                        <hr class="class-hr_style">
+                        <ion-label>
+                            <h3>Fecha de recepción:</h3>
+                            <p>{{data.gas_fechaElaboracion_n}}</p>
+                        </ion-label>
+                    </ion-col>
+                    <ion-col class="class-icon_center" size="3">
+                        <ion-label class="class-icon_fontSize">
+                            <ion-button title="Depositado" (click)="IR_openModal_adeudo(data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="document-outline"></ion-icon>
+                            </ion-button>
+                            <ion-button title="Comprobante" (click)="IR_btn_acciones('depositado', data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+                            </ion-button>
+                            <ion-button title="Ocultar" (click)="IR_btn_acciones('ocultar', data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="arrow-undo-outline"></ion-icon>
+                            </ion-button>
+                        </ion-label>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+    </div>
+    <div *ngIf="segment === 'Adeudos sin enviar'" class="class-content_spaces">
+        <div *ngFor="let data of IR_adeudosSinEnviar; let i = index;">
+            <ion-grid class="class-div_box" *ngIf="i<limite">
+                <ion-row>
+                    <ion-col size="12" (click)="IR_openModal_detalles(i);">
+                        <ion-label>
+                            <h3>Informe:</h3>
+                            <p>{{data.nombre_informe}}</p>
+                            <h3>Solicitante:</h3>
+                            <p>{{data.solicitante}}</p>
+                            <h3>Clave:</h3>
+                            <p>{{data.gas_claveInforme}}</p>
+                        </ion-label>
+                        <hr class="class-hr_style">
+                        <ion-label>
+                            <h3>Fecha de recepción:</h3>
+                            <p>{{data.gas_fechaElaboracion_n}}</p>
+                        </ion-label>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+    </div>
+    <div *ngIf="segment === 'Adeudos pagados'" class="class-content_spaces">
+        <div *ngFor="let data of IR_adeudosPagados; let i = index;">
+            <ion-grid class="class-div_box" *ngIf="i<limite">
+                <ion-row>
+                    <ion-col size="9" (click)="IR_openModal_detalles(i);">
+                        <ion-label>
+                            <h3>Informe:</h3>
+                            <p>{{data.nombre_informe}}</p>
+                            <h3>Solicitante:</h3>
+                            <p>{{data.solicitante}}</p>
+                            <h3>Clave:</h3>
+                            <p>{{data.gas_claveInforme}}</p>
+                        </ion-label>
+                        <hr class="class-hr_style">
+                        <ion-label>
+                            <h3>Fecha de recepción:</h3>
+                            <p>{{data.gas_fechaElaboracion_n}}</p>
+                        </ion-label>
+                    </ion-col>
+                    <ion-col class="class-icon_center" size="3">
+                        <ion-label class="class-icon_fontSize">
+                            <ion-button title="Comprobante" (click)="IR_btn_acciones('comprobante', data.gas_id)"
+                                        expand="block" fill="clear" shape="round">
+                                <ion-icon slot="icon-only" name="document-outline"></ion-icon>
+                            </ion-button>
+                        </ion-label>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+    </div>
+
+    <!-- DIV BUSCANDO INFORMACIÓN -->
+    <div *ngIf="IR_enProceso">
+        <ion-grid class="class-div_box">
+            <ion-row>
+                <ion-col size="12">
+                    <ion-label class="ion-text-center"><h3>- Búscando información... -</h3></ion-label>
+                    <hr class="class-hr_style">
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+    <!-- DIV NO HAY INFORMACIÓN -->
+    <div *ngIf="length === 0 && !IR_tableFull && !IR_enProceso">
+        <ion-grid class="class-div_box">
+            <ion-row>
+                <ion-col size="12">
+                    <ion-label class="ion-text-center"><h3>- No hay información -</h3></ion-label>
+                    <hr class="class-hr_style">
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+
+    <ion-infinite-scroll *ngIf="length >= 20" (ionInfinite)="addItems($event)">
+        <ion-infinite-scroll-content>
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+</ion-content>
+
+<!-- MODALES -->
+
+<ion-modal #ModalDetalles [isOpen]="modalDetalles" width="auto">
+    <ng-template>
+        <ion-header translucent="true">
+            <ion-toolbar>
+                <ion-title>Detalles del informe</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button (click)="modalDetalles = false;">
+                        <ion-icon slot="icon-only" name="close"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+            </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+            <form #propuestaForm="ngForm">
+                <ion-item>
+                    <ion-label class="class-label class-h3">Informe:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.informe}}</p>
+                </ion-item>
+                <ion-item>
+                    <ion-label class="class-label class-h3">Proyecto o servicio:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.proyecto_servicio}}</p>
+                </ion-item>
+                <ion-item>
+                    <ion-label class="class-label class-h3">Solicitante:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.solicitante}}</p>
+                </ion-item>
+                <ion-item *ngIf="segment === 'Pendientes' ||
+                                 segment === 'Aprobadas' ||
+                                 segment === 'Rechazadas'">
+                    <ion-label class="class-label class-h3">Autoriza:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.autoriza}}</p>
+                </ion-item>
+                <ion-item>
+                    <ion-label class="class-label class-h3">Clave:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.clave}}</p>
+                </ion-item>
+                <ion-item>
+                    <ion-label class="class-label class-h3">Departamento:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.departamento}}</p>
+                </ion-item>
+                <ion-item>
+                    <ion-label class="class-label class-h3">Ubicación Geografica:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.geografica}}</p>
+                </ion-item>
+                <ion-item *ngIf="segment === 'Pendientes' ||
+                                 segment === 'Aprobadas' ||
+                                 segment === 'Rechazadas'">
+                    <ion-label class="class-label class-h3">Monto solicitado:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.monto_adeudo}}</p>
+                </ion-item>
+                <ion-item *ngIf="segment === 'Adeudos recibidos' ||
+                                 segment === 'Adeudos sin enviar' ||
+                                 segment === 'Adeudos pagados'">
+                    <ion-label class="class-label class-h3">Adeudo:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.monto_adeudo}}</p>
+                </ion-item>
+                <ion-item>
+                    <ion-label class="class-label class-h3">Fecha de recepción:</ion-label>
+                    <p class="class-textcolor_gray">{{IR_modalDetalles.fecha}}</p>
+                </ion-item>
+            </form>
+        </ion-content>
+    </ng-template>
+</ion-modal>
+
+<ion-modal #ModalComentario [isOpen]="modalComentario" width="auto">
+  <ng-template>
+      <ion-header translucent="true">
+          <ion-toolbar>
+              <ion-title>Comentarios</ion-title>
+              <ion-buttons slot="end">
+                  <ion-button (click)="modalComentario = false;">
+                      <ion-icon slot="icon-only" name="close"></ion-icon>
+                  </ion-button>
+              </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+          <form #gastoForm="ngForm">
+              <br>
+              <div>
+                <ion-textarea id="Modal_comentario" name="Modal_comentario" [(ngModel)]="modal_comentario.comment" #Modal_comentario="ngModel" rows="5"></ion-textarea>
+                <hr class="class-hr_style">
+              </div>
+              <br>
+          </form>
+      </ion-content>
+      <ion-footer>
+        <ion-grid fixed>
+            <ion-row>
+                <ion-col size="6">
+                    <ion-button (click)="modalComentario = false;" color="warning" expand="block" fill="solid" shape="round">
+                        Regresar
+                    </ion-button>
+                </ion-col>
+                <ion-col size="6">
+                  <ion-button [disabled]="!gastoForm.valid" (click)="modalComentario = false; IR_btn_acciones(modal_comentario.tipo, modal_comentario.id);" color="primary" expand="block" fill="solid" shape="round">
+                      <p>Confirmar</p>
+                  </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+        <br>
+      </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #ModalAdeudo [isOpen]="modalAdeudo" width="auto">
+    <ng-template>
+        <ion-header translucent="true">
+            <ion-toolbar>
+                <ion-title>Adeudo</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button (click)="modalAdeudo = false;">
+                        <ion-icon slot="icon-only" name="close"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+            <form #gastoForm="ngForm">
+                <br>
+                <ion-item>
+                    <ion-label position="stacked"><h3>Monto devuelto:</h3></ion-label>
+                    <input type="number" name="monto_devuelto" id="monto_devuelto" [(ngModel)]="modal_adeudo.monto" #monto_devuelto="ngModel">
+                </ion-item>
+                <br>
+            </form>
+        </ion-content>
+        <ion-footer>
+          <ion-grid fixed>
+              <ion-row>
+                  <ion-col size="6">
+                      <ion-button (click)="modalAdeudo = false;" color="warning" expand="block" fill="solid" shape="round">
+                          Regresar
+                      </ion-button>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-button [disabled]="!gastoForm.valid" (click)="modalAdeudo = false; IR_btn_acciones('depositado', modal_adeudo.id_adeudo);" color="primary" expand="block" fill="solid" shape="round">
+                        <p>Confirmar</p>
+                    </ion-button>
+                  </ion-col>
+              </ion-row>
+          </ion-grid>
+          <br>
+        </ion-footer>
+    </ng-template>
+</ion-modal>
+
+<ion-modal #ModalAnexos [isOpen]="modalAnexos" width="auto">
+    <ng-template>
+        <ion-header translucent="true">
+            <ion-toolbar>
+                <ion-title>Anexos</ion-title>
+                <ion-buttons slot="end">
+                    <ion-button (click)="modalAnexos = false;">
+                        <ion-icon slot="icon-only" name="close"></ion-icon>
+                    </ion-button>
+                </ion-buttons>
+            </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+            <ion-grid>
+                <div *ngIf="!modal_anexosEliminar" style="overflow:auto">
+                    <div>
+                        <ion-row *ngFor="let data of modal_anexos; let i = index;">
+                            <ion-col size="12">
+                                <ion-label *ngIf="data.tipo === 1">
+                                    <a href="http://intranet.ecn.com.mx:8060/intranet/modulos/ecntur/aprobaciones/Anexos/Comprobantes_Pago/{{data.nombre}}" target="_blank">
+                                        <h3>{{data.nombre}}</h3>
+                                    </a>
+                                </ion-label>
+                                <ion-label *ngIf="data.tipo === 2">
+                                    <a href="http://intranet.ecn.com.mx:8060/intranet/modulos/ecntur/aprobaciones/Anexos/Comprobantes_Pago/{{data.nombre}}" target="_blank">
+                                        <h3>{{data.nombre}}</h3>
+                                    </a>
+                                </ion-label>
+                                <ion-label *ngIf="data.tipo !== 2 && data.tipo !== 1">
+                                    <h3>{{data.nombre}}</h3>
+                                </ion-label>
+                            </ion-col>
+                        </ion-row>
+                    </div>
+                </div>
+                <div *ngIf="modal_anexosEliminar" style="overflow:auto">
+                    <ion-row *ngFor="let data of modal_anexos; let i = index;">
+                        <ion-col size="9">
+                            <ion-label *ngIf="data.tipo === 1">
+                                <a href="http://intranet.ecn.com.mx:8060/intranet/modulos/ecntur/aprobaciones/Anexos/Comprobantes_Pago/{{data.nombre}}" target="_blank">
+                                    <h3>{{data.nombre}}</h3>
+                                </a>
+                            </ion-label>
+                            <ion-label *ngIf="data.tipo === 2">
+                                <a href="http://intranet.ecn.com.mx:8060/intranet/modulos/ecntur/aprobaciones/Anexos/{{data.nombre}}" target="_blank">
+                                    <h3>{{data.nombre}}</h3>
+                                </a>
+                            </ion-label>
+                        </ion-col>
+                        <ion-col size="3">
+                            <ion-button>
+                                <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+                            </ion-button>
+                        </ion-col>
+                    </ion-row>
+                </div>
+                <div *ngIf="modal_anexos.length === 0">
+                    <ion-label><h3>- No se encontrarón los anexos -</h3></ion-label>
+                </div>
+            </ion-grid>
+        </ion-content>
+        <ion-footer>
+            <ion-toolbar>
+                <ion-button (click)="modalAnexos = false;" color="warning" expand="block" fill="solid" shape="round">
+                    Cerrar
+                </ion-button>
+            </ion-toolbar>
+        </ion-footer>
+    </ng-template>
+</ion-modal>

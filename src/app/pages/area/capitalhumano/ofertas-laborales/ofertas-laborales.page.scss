@@ -1,0 +1,51 @@
+.class-color_danger{
+    color: brown;
+}
+.class-color_success{
+    color: green;
+}
+.class-color_info{
+    color: rgb(45, 45, 212);
+}
+.class-color_none{
+    color: none;
+}
+
+.class-text_bold{
+    font-weight: bold;
+}
+
+ion-label.class-label_textCenter{
+    text-align: center !important;
+}
+
+.class-icon_center{
+    align-self: center;
+    text-align: center;
+}
+
+hr.class-hr_style{
+    height: 1px;
+    width: 100%;
+    background-color: gray;
+}
+a, ion-item.class-item_pointer {
+    cursor: pointer;
+}
+
+.class-div_spaceList{
+    padding: 0px 20px;
+}
+.class-div_infoCard{
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+}
+
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+}

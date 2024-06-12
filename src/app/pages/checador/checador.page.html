@@ -1,0 +1,165 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Checador</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-grid [fixed]="true" *ngIf="checarEntrada" class="animarElemento">
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-md="6">
+        <ion-card color="light">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-text color="primary" class="ion-text-center">
+                <h1 class="bigFont">{{time | date:'mediumTime'}}</h1>
+              </ion-text>
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <form #checkForm="ngForm" class="form">
+                <ion-select class="ion-margin-bottom" fill="outline" label="Tipo de checada" labelPlacement="stacked" required
+                  name="tipo" [(ngModel)]="checkData.tipo" #tipo="ngModel" interface="popover" cancelText="Cancelar"
+                  placeholder="Seleccionar...">
+                  <ion-icon slot="start" name="clipboard-outline" color="primary" aria-hidden="true"></ion-icon>
+                  <!-- <ion-select-option value="Ejecución">Ejecución</ion-select-option> -->
+                  <!-- <ion-select-option value="Comisión">Comisión</ion-select-option> -->
+                  <ion-select-option value="Oficina">Oficina</ion-select-option>
+                  <ion-select-option value="Teletrabajo">Teletrabajo</ion-select-option>
+                </ion-select>
+                <!-- <ion-select class="ion-margin-bottom" okText="Seleccionar" cancelText="Cancelar" *ngIf="checkData.tipo==='Ejecución'" fill="outline" label="Proyecto" labelPlacement="stacked" cancelText="Cancelar" (ionChange)="proyectoChange()"
+                  placeholder="Seleccionar" id="proyecto" name="proyecto" [(ngModel)]="checkData.proyecto" required>
+                  <ion-icon color="primary" slot="start" name="flag-outline" aria-hidden="true"></ion-icon>
+                  <ion-select-option *ngFor="let proyecto of proyectos" [value]="proyecto.PrjCode">
+                    {{proyecto.PrjCode}}
+                  </ion-select-option>
+                </ion-select> -->
+              <!-- <div *ngIf="tabla">
+                <div *ngFor="let colaborador of colaboradoresSemanales; let i=index;"> -->
+                  <!-- <ion-item lines="none" class="ion-margin-bottom">
+                    <ion-icon slot="start" name="person-outline" color="primary" size="small"></ion-icon>
+                    <ion-label>{{colaborador.nombre}}</ion-label>
+                  </ion-item> -->
+                  <!-- <ion-row>
+                    <ion-col size="6">
+                      <p>{{colaborador.nombre}}</p>
+                    </ion-col>
+                    <ion-col size="6">
+                      <ion-select class="ion-margin-bottom" fill="outline" label="Checar como" labelPlacement="stacked" (ionChange)="detalleChange($event, colaborador.id_colaborador)" interface="popover"
+                      placeholder="Seleccionar">
+                      <ion-icon slot="start" name="time-outline" color="primary" aria-hidden="true"></ion-icon>
+                      <ion-select-option value="1">Asistió</ion-select-option>
+                      <ion-select-option value="2">Falta</ion-select-option>
+                      <ion-select-option value="3">Descanso</ion-select-option>
+                      <ion-select-option value="4">PCS</ion-select-option>
+                      <ion-select-option value="5">PSS</ion-select-option>
+                    </ion-select>
+                    </ion-col>
+                  </ion-row>
+                </div>
+                <ion-input class="ion-margin-bottom" fill="outline" label="Área" labelPlacement="stacked" id="tipo_acceso" name="tipo_acceso" #tipo_acceso="ngModel" [(ngModel)]="checkData.tipo_acceso"
+                  required placeholder="Ej. En mina, en oficina, teletrabajo, etc.">
+                  <ion-icon slot="start" name="map-outline" color="primary" aria-hidden="true"></ion-icon>
+                </ion-input>
+                <ion-input class="ion-margin-bottom" fill="outline" label="Comentarios" labelPlacement="stacked" id="comentarios" name="comentarios" [(ngModel)]="checkData.comentarios"
+                  #comentarios="ngModel">
+                  <ion-icon slot="start" name="chatbox-outline" color="primary" aria-hidden="true"></ion-icon>
+                </ion-input>
+              </div> -->
+                <!-- <ion-input fill="outline" *ngIf="checkData.tipo==='Comisión'" label="Ciudad destino" labelPlacement="stacked" name="destino2" #destino="ngModel" [(ngModel)]="checkData.destino" required>
+                  <ion-icon slot="start" name="map-outline" color="primary" aria-hidden="true"></ion-icon>
+                </ion-input> -->
+              <ion-row class="ion-justify-content-end">
+                <ion-col size="12" size-sm="6">
+                  <ion-button class="btnCheck" [disabled]="!checkForm.valid" (click)="checkIn2()" expand="full" fill="solid"
+              shape="round">
+              <ion-icon slot="start" name="stopwatch-outline"></ion-icon>
+              Checar entrada
+            </ion-button>
+                </ion-col>
+              </ion-row>
+            </form>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid [fixed]="true" *ngIf="!checarEntrada" class="animarElemento">
+        <ion-row class="ion-justify-content-center">
+          <ion-col size="12" size-md="6">
+            <ion-card color="light">
+              <ion-card-header>
+                <ion-card-title>
+                  <ion-text color="primary" class="ion-text-center">
+                  <h1 class="bigFont">{{time | date:'mediumTime'}}</h1>
+                </ion-text>
+              </ion-card-title>
+              <ion-card-subtitle>
+                <ion-text class="ion-text-center" color="primary">
+                  <h2>Datos de entrada registrados</h2>
+                </ion-text>
+              </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <ion-list class="list">
+                <ion-item lines="none">
+                  <ion-label>Colaborador: {{checkData.colaborador}}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-label>Tipo de checada: {{checkData.tipo}}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-label>Hora: {{horaEntrada}}</ion-label>
+                </ion-item>
+                <!-- <ion-item lines="none" *ngIf="checkData.tipo==='Ejecución'">
+                  <ion-label>Proyecto: {{checkData.proyecto}}</ion-label>
+                </ion-item> -->
+                <!-- <ion-item lines="none" *ngIf="checkData.tipo==='Ejecución'">
+                  <ion-label>Tipo de acceso: {{checkData.tipo_acceso}}</ion-label>
+                </ion-item> -->
+                <!-- <ion-item-divider class="ion-margin-horizontal" *ngIf="checkData.tipo==='Ejecución'">
+                  <ion-label>Colaboradores del proyecto</ion-label>
+                </ion-item-divider> -->
+                <!-- <div *ngIf="checkData.tipo==='Ejecución'">
+                <ion-item *ngFor="let detalle of detalleSemanal">
+                  <ion-label>{{detalle.nombre}}
+                    ({{detalle.checada_sem===1?'Asistió':(detalle.checada_sem===2?'Falta':(detalle.checada_sem===3?'Descanso':(detalle.checada_sem===4?'PCS':'PSS')))}})</ion-label>
+                </ion-item>
+                </div> -->
+                </ion-list>
+                <ion-row class="ion-justify-content-end">
+                  <ion-col size="12" size-sm="5">
+                    <ion-button [disabled]="checkData.id_colaborador===0" (click)="checkIn2()" expand="block" fill="solid"
+                      shape="round">
+                      <ion-icon slot="start" name="stopwatch-outline"></ion-icon>
+                      Checar salida
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <!-- <ion-item-divider *ngIf="checkData.tipo==='Ejecución'">
+          <ion-label>Colaboradores del proyecto</ion-label>
+        </ion-item-divider> -->
+        <!-- <div *ngIf="checkData.tipo==='Ejecución'">
+          <ion-item *ngFor="let detalle of detalleSemanal" lines="none">
+            <ion-label>{{detalle.nombre}}
+              ({{detalle.checada_sem===1?'Asistió':(detalle.checada_sem===2?'Falta':(detalle.checada_sem===3?'Descanso':(detalle.checada_sem===4?'PCS':'PSS')))}})
+            </ion-label>
+          </ion-item>
+        </div> -->
+        <!-- <ion-item-divider *ngIf="checkData.tipo==='Comisión'">
+          <ion-label>Destino</ion-label>
+        </ion-item-divider>
+        <ion-item *ngIf="checkData.tipo==='Comisión'">
+          <ion-label>{{checkData.destino}}</ion-label>
+        </ion-item> -->
+  </ion-grid>
+</ion-content>

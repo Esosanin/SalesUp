@@ -1,0 +1,48 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons *ngIf="!showSearchbar" slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-buttons *ngIf="!showSearchbar" slot="start">
+            <ion-back-button defaultHref="tabs/filosofia"></ion-back-button>
+        </ion-buttons>
+        <ion-title *ngIf="!showSearchbar">Seguros / flotilla</ion-title>
+        <ion-searchbar #search *ngIf="showSearchbar" showCancelButton="always" [(ngModel)]="queryText" (ionChange)="updateSeguros()" (ionCancel)="showSearchbar = false; queryText=''; updateSeguros();" placeholder="Buscar"></ion-searchbar>
+        <ion-buttons slot="end">
+            <ion-button *ngIf="!showSearchbar" (click)="showSearchbar = true; focus();">
+                <ion-icon slot="icon-only" name="search"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollEvents]="true" (ionScrollEnd)="logScrollEnd()">
+    <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button class="fadeInOut" [ngClass]="{'hidden':!top}" size="small" color="light" (click)="ScrollToTop()">
+            <ion-icon name="arrow-up"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+    <ion-list *ngIf="seguros.length>0">
+        <div *ngFor="let seguro of seguros; let i = index">
+            <ion-item *ngIf="i<limite" button (click)="openFile(seguro.Name)">
+                <ion-label>
+                    <h3>{{seguro.U_Marca}} | {{seguro.Name}}</h3>
+                    <p>{{seguro.slpname}}</p>
+                    <p>{{seguro.U_Oficina}}</p>
+                </ion-label>
+            </ion-item>
+        </div>
+    </ion-list>
+    <ion-infinite-scroll [disabled]="seguros.length<=0 || limite>seguros.length" (ionInfinite)="updateLimite($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando...">
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <div class="content" *ngIf="seguros.length<=0">
+        <ion-text>
+            <p>No se encontraron registros.</p>
+        </ion-text>
+    </div>
+</ion-content>

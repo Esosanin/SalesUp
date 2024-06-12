@@ -1,0 +1,19 @@
+export class Usuarios {
+    id_usuario: number = 0;
+    correo: string = '';
+    nombres: string = '';
+    apellido_p: string = '';
+    apellido_m: string = '';
+    titulo_curriculum: string = '';
+    pais: string = '';
+    estado: string = '';
+    nom_loc: string = '';
+    edad: number = 0;
+    fecha_nacimiento: string = '';
+    fecha_nacimiento_n: string = '';
+    estado_usuario: number = 0;
+    estado_usuario_n: string = '';
+    nacionalidad: string = '';
+    telefonos: string[] = [];
+    prefijos: string[] = [];
+}

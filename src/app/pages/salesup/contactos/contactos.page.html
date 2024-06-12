@@ -1,0 +1,236 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="!showSearchbar">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="!showSearchbar">
+      <ion-button (click)="showSearchbar = true; focus();">
+        <ion-icon color="primary" slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title *ngIf="!showSearchbar">Contactos</ion-title>
+    <ion-searchbar #searchInput *ngIf="showSearchbar" showCancelButton="always" (ionInput)="searchContactos($event)"
+      (ionCancel)="showSearchbar=false; searchContactos($event);" (ionClear)="searchContactos($event)"
+      placeholder="Buscar">
+    </ion-searchbar>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button value="sap">
+        <ion-label>Contactos en SAP</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="lead">
+        <ion-label>Contactos leads</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding animarElemento">
+  <ion-fab *ngIf="segment==='lead'" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addContacto(false,0)">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-row *ngIf="segment==='sap'">
+    <ion-col size="12" size-sm="4" *ngFor="let contacto of contactosSap.slice(0,limite); let i = index">
+      <ion-item button (click)="verContacto(i)">
+        <ion-label class="items">
+          <h2>{{contacto.Name}}</h2>
+          <p>{{contacto.CardName}}</p>
+          <p>Líder: {{contacto.lider}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row *ngIf="segment==='lead'">
+    <ion-col size="12" size-sm="4" *ngFor="let contacto of contactosLeads.slice(0,limite); let i = index">
+      <ion-item button (click)="addContacto(true,i)">
+        <ion-label class="items">
+          <h2>{{contacto.contacto}}</h2>
+          <p>{{contacto.CardName}}</p>
+          <p>Líder: {{contacto.lider}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-item class="ion-padding-top" lines="none" *ngIf="(segment ==='lead' && contactosLeads.length <=0) || (segment ==='sap' && contactosSap.length <=0)">
+    <ion-icon size="small" slot="start" name="information-circle-outline" color="danger"></ion-icon>
+    <ion-label color="danger">No se encontraron registros.</ion-label>
+  </ion-item>
+  <ion-modal [isOpen]="showFormContacto" class="modalChico" (didDismiss)="showFormContacto = false;">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{modalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showFormContacto = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="contactoForm" (ngSubmit)="saveContacto()">
+          <ion-grid [fixed]="true">
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="id-card-outline" color="primary"></ion-icon>
+                <ion-input label="Contacto" labelPlacement="floating" placeholder="Nombre del contacto..."
+                  formControlName="contacto" type="text"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="hammer-outline" color="primary"></ion-icon>
+                <ion-input label="Posición" labelPlacement="floating" placeholder="Cargo o posición..."
+                  formControlName="posicion" type="text"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="alert-circle-outline" color="primary"></ion-icon>
+                <ion-toggle [enableOnOffLabels]="true" formControlName="clave">¿El contacto es clave?</ion-toggle>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="happy-outline" color="primary"></ion-icon>
+                  <ion-select cancelText="Cancelar" okText="Confirmar" formControlName="relacion" label="Relación" placeholder="Seleccionar" labelPlacement="stacked">
+                    <ion-select-option value="excelente">Excelente</ion-select-option>
+                    <ion-select-option value="buena">Buena</ion-select-option>
+                    <ion-select-option value="mala">Mala</ion-select-option>
+                  </ion-select>
+                </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="call-outline" color="primary"></ion-icon>
+                <ion-input label="Teléfono" labelPlacement="floating" placeholder="Número telefónico..."
+                  formControlName="telefono" type="tel"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="mail-outline" color="primary"></ion-icon>
+                <ion-input label="Email" labelPlacement="floating" placeholder="Correo electrónico..."
+                  formControlName="email" type="text"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12" size-sm="6" *ngIf="tipo!=='Vendedor'">
+              <!-- <ion-item lines="inset">
+                <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Vendedor</ion-label>
+                <ionic-selectable closeButtonText="Cerrar" placeholder="Seleccionar..." modalCssClass="selectModal"
+                  (onChange)="vendedorChange()" [hasInfiniteScroll]="true"
+                  (onInfiniteScroll)="getMoreVendedores($event)" (onSearch)="searchVendedores($event)"
+                  [(ngModel)]="vendedorSelected" [ngModelOptions]="{standalone: true}" [items]="vendedores.slice(0,limiteSelects)" itemValueField="id_sap"
+                  itemTextField="nombre" [canSearch]="true" searchPlaceholder="Buscar"
+                  searchFailText="No se encontraron elementos." #vendedorSelect required> -->
+                  <!-- <ng-template ionicSelectableHeaderTemplate>
+                    <ion-toolbar>
+                      <ion-header>
+                        <ion-toolbar color="light">
+                          <ion-title>Seleccionar vendedor</ion-title>
+                          <ion-buttons slot="end">
+                            <ion-button (click)="vendedorSelect.close()">
+                              <ion-icon slot="icon-only" name="close"></ion-icon>
+                            </ion-button>
+                          </ion-buttons>
+                        </ion-toolbar>
+                      </ion-header>
+                    </ion-toolbar>
+                  </ng-template> -->
+                <!-- </ionic-selectable>
+              </ion-item> -->
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <!-- <ion-item lines="inset">
+                <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+                <ion-label position="stacked">Cuenta asociada</ion-label>
+                <ionic-selectable [disabled]="!showCuenta" closeButtonText="Cerrar" (onChange)="cuentaChange()" modalCssClass="selectModal" [hasInfiniteScroll]="true"
+                  (onInfiniteScroll)="getMoreCuentas($event)" (onSearch)="searchCuentas($event)"
+                  [(ngModel)]="cuentaSelected" [ngModelOptions]="{standalone: true}"
+                  [items]="cuentas.slice(0,limiteSelects)" itemValueField="CardCode" itemTextField="CardName"
+                  [canSearch]="true" searchPlaceholder="Buscar" searchFailText="No se encontraron elementos."
+                  #cuentaSelect placeholder="Seleccionar..."> -->
+                  <!-- <ng-template ionicSelectableHeaderTemplate>
+                    <ion-toolbar>
+                      <ion-header>
+                        <ion-toolbar color="light">
+                          <ion-title>Seleccionar cuenta asociada</ion-title>
+                          <ion-buttons slot="end">
+                            <ion-button (click)="cuentaSelect.close()">
+                              <ion-icon slot="icon-only" name="close"></ion-icon>
+                            </ion-button>
+                          </ion-buttons>
+                        </ion-toolbar>
+                      </ion-header>
+                    </ion-toolbar>
+                  </ng-template> -->
+                <!-- </ionic-selectable>
+              </ion-item> -->
+            </ion-col>
+            <ion-col size="12" size-sm="6">
+              <ion-item>
+                <ion-icon slot="start" name="location-outline" color="primary"></ion-icon>
+                <ion-select formControlName="LineNum" label="Sucursal" labelPlacement="stacked" okText="Seleccionar" cancelText="Cancelar" placeholder="Seleccionar...">
+                  <ion-select-option *ngFor="let sucursal of sucursales" [value]="sucursal.LineNum">{{sucursal.descripcion}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-justify-content-end ion-padding">
+            <ion-col size="12" size-sm="3">
+              <ion-button shape="round" type="submit" expand="full" [disabled]="!contactoForm.valid">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          </ion-grid>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal [isOpen]="detContacto" class="modalNormal" (didDismiss)="detContacto = false;">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Detalles del contacto</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="detContacto = false;">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-row>
+          <ion-col size="12" size-sm="6" *ngFor="let detalle of detalles">
+            <ion-item lines="none">
+              <ion-icon slot="start" [name]="detalle.icon + '-outline'" color="primary"></ion-icon>
+              <ion-label>
+                <h5>{{detalle.title}}</h5>
+                <p style="white-space: pre-line;">{{detalle.text}}</p>
+              </ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-infinite-scroll
+    [disabled]="(segment==='sap' && contactosSap.length <= limite) || (segment==='lead' && contactosLeads.length <= limite)"
+    position="bottom" (ionInfinite)="getMoreContactos($event)">
+    <ion-infinite-scroll-content loadingSpinner="circles" loadingText="Cargando...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

@@ -1,0 +1,50 @@
+.class-content_spaces {
+    padding: 10px;
+    margin: 10px;
+}
+
+ion-label.class-label{
+    //align-self: baseline;
+    flex: 1 1 0% !important;
+    white-space: initial !important;
+    width: auto;
+    max-width: none;
+    min-width: 150px;
+    padding-right: 10px;
+}
+
+.class-label_spacesOrder{
+    padding: 10px 0px 5px 0px;
+}
+
+.class-color_info{
+    color: rgb(45, 45, 212);
+}
+
+.class-div_box {
+    border: 1px solid #eee;
+    padding: 10px;
+    box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.2);
+    margin: 10px 10px;
+
+    cursor: pointer;
+}
+
+.class-div_boxHeight{
+    height: 300px;
+    overflow-y: auto;
+}
+
+hr.class-hr_style{
+    height: 1px;
+    width: 100%;
+    background-color: gray;
+}
+
+ion-input, p{
+    color: #666666;
+}
+
+.class-text_gray {
+    color: #666666;
+}

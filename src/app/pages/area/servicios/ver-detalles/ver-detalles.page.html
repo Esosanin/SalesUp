@@ -1,0 +1,88 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalles #{{ES_docnum}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #detallesCotizacionForm="ngForm">
+    <div class="class-content_spaces">
+      <ion-item>
+        <ion-label position="stacked"><b>Cliente:</b></ion-label>
+        <p>{{ES_encabezado.Cliente}}</p>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked"><b>Etapa:</b></ion-label>
+        <p>{{ES_encabezado.Etapa}}</p>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked"><b>Fecha contabilización:</b></ion-label>
+        <p>{{ES_encabezado.FechaCont_n}}</p>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked"><b>Subtotal:</b></ion-label>
+        <p>{{ES_encabezado.subtotal_n}}</p>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked"><b>Porcentaje de cierre:</b></ion-label>
+        <p>{{ES_encabezado.porc_cierre}}%</p>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked"><b>Fecha de cierre:</b></ion-label>
+        <p>{{ES_encabezado.U_FECHACIERRE_n}}</p>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked"><b>Zona:</b></ion-label>
+        <p>{{ES_encabezado.zona}}</p>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked"><b>Oficina:</b></ion-label>
+        <p>{{ES_encabezado.oficina}}</p>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked"><b>Industria:</b></ion-label>
+        <p>{{ES_encabezado.industria}}</p>
+      </ion-item>
+    </div>
+    
+    <div class="class-content_spaces">
+      <ion-label><h3><b>Comentarios:</b></h3></ion-label>
+      <ion-item>
+        <ion-text color="secondary">
+          <p>{{ES_encabezado.comments}}</p>
+        </ion-text>
+      </ion-item>
+    </div>
+
+    <div class="class-content_spaces">
+      <ion-label><h3><b>Desglose de partidas:</b></h3></ion-label>
+      <br>
+      <div class="class-div_boxHeight">
+        <ion-grid class="class-div_box" *ngFor="let cotizacion of ES_partidas;">
+          <ion-row>
+            <ion-col size="12" size-md="6">
+              <ion-label>
+                <h3>Descripción:</h3>
+                <p>{{cotizacion.Descripcion}}</p>
+                <h3>Referencia:</h3>
+                <p>{{cotizacion.Referencia}}</p>
+              </ion-label>
+            </ion-col>
+            <ion-col size="12" size-md="6">
+              <ion-label>
+                <h3>Cantidad: <span class="class-text_gray">{{cotizacion.Cantidad}}</span></h3>
+                <h3>Total partida: <span class="class-text_gray">{{cotizacion.TotPartida_n}}</span></h3>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </div>
+  </form>
+</ion-content>

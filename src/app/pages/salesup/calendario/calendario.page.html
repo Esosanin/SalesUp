@@ -1,0 +1,531 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button color="primary"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Calendario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding animarElemento">
+  <full-calendar [options]="calendarOptions" #calendar></full-calendar>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" (click)="opciones()">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+    <ion-select label="Agendar" okText="Confirmar" cancelText="Cancelar" class="ion-hide" #opcionesSelect (ionChange)="opcionesChange(opcionesSelect.value)">
+      <ion-select-option value="visita">Visita</ion-select-option>
+      <ion-select-option value="compromiso">Compromiso</ion-select-option>
+      <ion-select-option value="levantamiento">Levantamiento</ion-select-option>
+    </ion-select>
+  <ion-modal #visitaModal [isOpen]="showModalVisita" class="modalChico" (didDismiss)="showModalVisita = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{visitaModalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showModalVisita = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #visitaForm="ngForm">
+          <!-- <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="business-outline"></ion-icon>
+            <ion-label position="stacked">Cuenta</ion-label>
+            <ionic-selectable #cuenta (onChange)="cuentaChange()" closeButtonText="Cerrar" modalCssClass="selectModal" placeholder="Seleccionar" [hasInfiniteScroll]="true"
+              (onInfiniteScroll)="getMoreCuentas($event)" [(ngModel)]="cuentaSelected"
+              [items]="cuentas.slice(0,limiteSelects)" itemValueField="CardCode" itemTextField="CardName"
+              (onSearch)="searchCuentas($event)" [canSearch]="true" searchPlaceholder="Buscar"
+              searchFailText="No se encontraron elementos." name="CardCode" #cuentaSelect required> -->
+              <!-- <ng-template ionicSelectableHeaderTemplate>
+                <ion-toolbar>
+                  <ion-header>
+                    <ion-toolbar color="light">
+                      <ion-title>Seleccionar cuenta</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button (click)="cuentaSelect.close()">
+                          <ion-icon slot="icon-only" name="close"></ion-icon>
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ion-toolbar>
+              </ng-template> -->
+              <!-- <ng-template ionicSelectableFooterTemplate>
+                <ion-row class="ion-justify-content-center">
+                  <ion-col size="6">
+                    <ion-button (click)="nuevaCuenta()" size="small" expand="full" shape="round">
+                      <ion-icon slot="start" name="add"></ion-icon>
+                      Agregar cuenta
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ng-template> -->
+            <!-- </ionic-selectable>
+          </ion-item> -->
+          <!-- <ion-item lines="none" *ngIf="cuenta.value && tipo!=='Vendedor'">
+            <ion-label class="vendedor">
+              <p>Vendedor: {{vendedorTitle}}</p>
+            </ion-label>
+          </ion-item> -->
+          <ion-item>
+            <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+            <ion-input labelPlacement="floating" label="Fecha de visita"
+              value="{{ visita.fecha_comp | date: 'dd/MM/yyyy' }}" id="date" required></ion-input>
+            <ion-popover trigger="date" show-backdrop="false" class="dateTimePopover" alignment="center">
+              <ng-template>
+                <ion-datetime [showDefaultButtons]="true" doneText="Listo" cancelText="Cancelar" presentation="date"
+                  name="fecha_comp" [(ngModel)]="visita.fecha_comp"></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="clipboard-outline"></ion-icon>
+            <ion-input labelPlacement="floating" label="Objetivo general" #objetivo_gen="ngModel"
+              [(ngModel)]="visita.objetivo_gen" name="objetivo_gen" type="text"
+              placeholder="Objetivo general de la visita" required></ion-input>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+            <ion-label position="fixed">Hora inicio</ion-label>
+            <ion-datetime-button datetime="datetime"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime [(ngModel)]="visita.hora_inicio" name="hora_inicio" id="datetime"
+                  presentation="time"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+            <ion-label position="fixed">Hora fin</ion-label>
+            <ion-datetime-button datetime="datetime2"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime [(ngModel)]="visita.hora_fin" name="hora_fin" id="datetime2"
+                  presentation="time"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+          <ion-row class="ion-justify-content-end ion-padding-top">
+            <ion-col size="12" size-sm="4">
+              <ion-button [disabled]="!visitaForm.valid" size="medium" (click)="saveVisita()" expand="full"
+                shape="round">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal #levantamientoModal [isOpen]="showModalLevantamiento" class="modalChico"
+    (didDismiss)="showModalLevantamiento = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{levantamientoModalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showModalLevantamiento = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #formLevantamiento="ngForm">
+          <!-- <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="business-outline"></ion-icon>
+            <ion-label position="stacked">Contacto</ion-label>
+            <ionic-selectable closeButtonText="Cerrar" [disabled]="disableContacto" modalCssClass="selectModal" placeholder="Seleccionar"
+              [hasInfiniteScroll]="true" (onInfiniteScroll)="getMoreContactos($event)" [(ngModel)]="contactoSelected"
+              [items]="contactos.slice(0,limiteSelects)" itemValueField="CntctCode" itemTextField="Name"
+              (onSearch)="searchContactos($event)" [canSearch]="true" searchPlaceholder="Buscar"
+              searchFailText="No se encontraron elementos." name="CntctCode" #contactoSelect required> -->
+              <!-- <ng-template ionicSelectableHeaderTemplate>
+                <ion-toolbar>
+                  <ion-header>
+                    <ion-toolbar color="light">
+                      <ion-title>Seleccionar contacto</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button (click)="contactoSelect.close()">
+                          <ion-icon slot="icon-only" name="close"></ion-icon>
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ion-toolbar>
+              </ng-template>
+              <ng-template ionicSelectableFooterTemplate>
+                <ion-row class="ion-justify-content-center">
+                  <ion-col size="6">
+                    <ion-button (click)="nuevoContacto()" size="small" expand="full" shape="round">
+                      <ion-icon slot="start" name="add"></ion-icon>
+                      Agregar contacto
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ng-template> -->
+            <!-- </ionic-selectable>
+          </ion-item> -->
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="pricetags-outline"></ion-icon>
+            <ion-label position="stacked">Nombre de la aplicación</ion-label>
+            <ion-input required type="text" [(ngModel)]="levantamiento.nombre_apli" name="nombre_apli"
+              #nombre_apli="ngModel" placeholder="Ej. Válvulas, servicios, etc."></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+            <ion-input labelPlacement="floating" label="Fecha de visita"
+              value="{{ levantamiento.fecha_entrega | date: 'dd/MM/yyyy' }}" id="date4" required></ion-input>
+            <ion-popover trigger="date4" show-backdrop="false" class="dateTimePopover" alignment="center">
+              <ng-template>
+                <ion-datetime [showDefaultButtons]="true" doneText="Listo" cancelText="Cancelar" presentation="date"
+                  name="fecha_entrega" [(ngModel)]="levantamiento.fecha_entrega"></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="chatbox-outline"></ion-icon>
+            <ion-label position="stacked">Comentarios</ion-label>
+            <ion-textarea placeholder="Detalles del levantamiento" required [(ngModel)]="levantamiento.comentarios"
+              name="comentarios" #comentarios="ngModel">
+            </ion-textarea>
+          </ion-item>
+          <ion-row class="ion-justify-content-end">
+            <ion-col size="12" size-sm="4">
+              <ion-button [disabled]="!formLevantamiento.valid" style="margin-top: 12px;" (click)="saveLevantamiento()"
+                expand="full" shape="round">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal [isOpen]="showModalDetalleLevantamiento" class="modalNormal" (didDismiss)="showModalDetalleLevantamiento = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Detalles del levantamiento</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="addLevantamiento(true,levantamientoIndex,false)">
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="confirmEliminarLevantamiento(levantamientoIndex)">
+              <ion-icon slot="icon-only" name="trash-outline" color="danger"></ion-icon>
+            </ion-button>
+            <ion-button (click)="showModalDetalleLevantamiento = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-text>
+          <h1 class="ion-text-center">{{levantamientoTitulo}}</h1>
+          <h5 class="ion-text-center">Levantamiento</h5>
+        </ion-text>
+        <ion-list>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+            <ion-label>Estatus: {{levantamientos[levantamientoIndex].estatus}}</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="attach-outline" color="primary"></ion-icon>
+            <ion-label>Nombre aplicación: {{levantamientos[levantamientoIndex].nombre_apli}}</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="chatbox-outline" color="primary"></ion-icon>
+            <ion-label>Comentarios: {{levantamientos[levantamientoIndex].comentarios}}</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+            <ion-label>Fecha de entrega: {{levantamientos[levantamientoIndex].fecha_entrega | date: 'dd/MM/yyyy'}}</ion-label>
+          </ion-item>
+          <ion-item-divider class="ion-padding-top">
+            <ion-label>Imágenes del levantamiento: {{imagenes.length}}</ion-label>
+          </ion-item-divider>
+          <ion-row *ngIf="imagenes.length > 0">
+            <ion-col size="12" size-sm="6" *ngFor="let imagen of imagenes; let i=index;">
+              <ion-item button (click)="addImagen(true,i)">
+                <ion-label class="items">
+                  <h2>{{imagen.imagen}}</h2>
+                  <p>{{imagen.numparte}}</p>
+                  <p>{{imagen.comentarios}}</p>
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-justify-content-end">
+            <ion-col size="5" size-sm="3">
+              <ion-button (click)="addImagen(false,0)" expand="block" fill="clear" shape="round">
+                <ion-icon slot="start" name="add"></ion-icon>
+                Agregar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal [isOpen]="showModalImagenes" class="modalChico" (didDismiss)="showModalImagenes = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Imágenes del levantamiento</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="deleteImagen()" *ngIf="editarImagen">
+              <ion-icon slot="icon-only" name="trash-outline" color="danger"></ion-icon>
+            </ion-button>
+            <ion-button (click)="showModalImagenes = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="imagenForm" (ngSubmit)="saveImagen()">
+          <ion-input #file (ionChange)="changeFile(file)" formControlName="archivo" type="file" class="ion-hide" accept="application/pdf,image/*"></ion-input>
+          <ion-item button (click)="addFile(file)" lines="none">
+            <ion-icon slot="start" name="attach-outline"color="primary"></ion-icon>
+            <ion-label>
+              <h2>Imágen o archivo</h2>
+              <p style="text-wrap:wrap;">{{nombreArchivo}}</p>
+            </ion-label>
+          </ion-item>
+          <ion-img *ngIf="isImage" style="width: 200px; margin: 0 auto;" [src]="srcImage" (click)="addFile(file)"></ion-img>
+          <ion-item>
+            <ion-icon slot="start" name="pricetag-outline"color="primary"></ion-icon>
+            <ion-input label="Número parte" labelPlacement="floating" formControlName="numParte" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="chatbox-outline"color="primary"></ion-icon>
+            <ion-textarea label="Comentarios" labelPlacement="floating" formControlName="comentarios" type="text"></ion-textarea>
+          </ion-item>
+          <ion-row class="ion-justify-content-end ion-padding-top">
+            <ion-col size="12" size-sm="4">
+              <ion-button type="submit" shape="round" expand="full" [disabled]="!imagenForm.valid">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal #compromisoModal [isOpen]="showModalCompromiso" class="modalChico"
+    (didDismiss)="showModalCompromiso = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{compromisoModalTitle}}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="showModalCompromiso = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form #formCompromiso="ngForm">
+          <!-- <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="id-card-outline"></ion-icon>
+            <ion-label position="stacked">Contacto</ion-label>
+            <ionic-selectable closeButtonText="CerrarcloseButtonText" [disabled]="disableContacto" modalCssClass="selectModal" required
+              placeholder="Seleccionar" [hasInfiniteScroll]="true" (onInfiniteScroll)="getMoreContactos($event)"
+              [(ngModel)]="contactoSelected" [items]="contactos.slice(0,limiteSelects)" itemValueField="CntctCode"
+              itemTextField="Name" [canSearch]="true" (onSearch)="searchContactos($event)" searchPlaceholder="Buscar"
+              searchFailText="No se encontraron elementos." name="CntctCode" #contactoSelect required> -->
+              <!-- <ng-template ionicSelectableHeaderTemplate>
+                <ion-toolbar>
+                  <ion-header>
+                    <ion-toolbar color="light">
+                      <ion-title>Seleccionar contacto</ion-title>
+                      <ion-buttons slot="end">
+                        <ion-button (click)="contactoSelect.close()">
+                          <ion-icon slot="icon-only" name="close"></ion-icon>
+                        </ion-button>
+                      </ion-buttons>
+                    </ion-toolbar>
+                  </ion-header>
+                </ion-toolbar>
+              </ng-template>
+              <ng-template ionicSelectableFooterTemplate>
+                <ion-row class="ion-justify-content-center">
+                  <ion-col size="6">
+                    <ion-button (click)="nuevoContacto()" size="small" expand="full" shape="round">
+                      <ion-icon slot="start" name="add"></ion-icon>
+                      Agregar contacto
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </ng-template> -->
+            <!-- </ionic-selectable>
+          </ion-item> -->
+          <ion-item lines="inset">
+            <ion-icon color="primary" slot="start" name="clipboard-outline"></ion-icon>
+            <ion-input label="Detalles" labelPlacement="stacked" required type="text" [(ngModel)]="compromiso.detalles" name="detalles"
+              placeholder="Detalles del compromiso"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+            <ion-input labelPlacement="floating" label="Fecha" value="{{ compromiso.fecha | date: 'dd/MM/yyyy' }}"
+              id="date3" required></ion-input>
+            <ion-popover trigger="date3" show-backdrop="false" class="dateTimePopover" alignment="center">
+              <ng-template>
+                <ion-datetime [showDefaultButtons]="true" doneText="Listo" cancelText="Cancelar" presentation="date"
+                  name="fecha" [(ngModel)]="compromiso.fecha"></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+          <ion-item lines="inset">
+            <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+            <ion-label position="fixed">Hora</ion-label>
+            <ion-datetime-button datetime="datetime2"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime [(ngModel)]="compromiso.hora" name="hora_inicio" id="datetime2"
+                  presentation="time"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+          <ion-row class="ion-justify-content-end ion-padding-top">
+            <ion-col size="12" size-sm="4">
+              <ion-button [disabled]="!formCompromiso.valid" (click)="saveCompromiso()" style="margin-top: 12px;"
+                shape="round" expand="full">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  <ion-modal #detalleVisitaModal [isOpen]="showModalDetalleVisita" class="modalNormal"
+    (didDismiss)="showModalDetalleVisita = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Detalles de la visita</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="addVisita(true,visitaIndex)"
+              *ngIf="visitas[visitaIndex].estatus!=='Finalizada' && visitas[visitaIndex].estatus!=='En ejecución'">
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="confirmEliminarVisita()"
+              *ngIf="visitas[visitaIndex].estatus!=='Finalizada' && visitas[visitaIndex].estatus!=='En ejecución'">
+              <ion-icon color="danger" slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="showModalDetalleVisita = false">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item lines="none">
+          <ion-label>
+            <h3 class="ion-text-center" style="white-space: pre-line !important; font-size: large;">{{visitaTitle}}</h3>
+            <h4 class="ion-text-center" style="white-space: pre-line !important; font-size: large;">{{visitaSubtitle}}</h4>
+            <p class="ion-text-center ion-padding-top" style="font-size:medium;">{{visitaEstatus}}</p>
+          </ion-label>
+        </ion-item>
+        <!-- <ion-button (click)="enviarReporte()" fill="clear" shape="round">
+              <ion-icon slot="start" name="mail"></ion-icon>
+              Enviar
+            </ion-button>
+            <ion-button (click)="enviarReporte()" fill="clear" shape="round">
+              <ion-icon slot="start" name="document-text"></ion-icon>
+              Plan estratégico
+            </ion-button> -->
+        <ion-row class="ion-justify-content-center">
+          <ion-col size="12" size-sm="4">
+            <ion-button
+              *ngIf="actividades.length > 0 && !checkIn2 && !visitaCompleta && today === visitas[visitaIndex].fecha_comp"
+              (click)="checkIn(false)" shape="round" expand="full">
+              <ion-icon slot="start" name="time-outline"></ion-icon>
+              Check in
+            </ion-button>
+            <ion-button *ngIf="actividades.length > 0 && checkIn2 && !visitaCompleta && actividadesCompletas"
+              (click)="checkIn(true)" shape="round" expand="full">
+              <ion-icon slot="start" name="time-outline"></ion-icon>
+              Check out
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-list class="ion-padding-top">
+          <ion-item *ngFor="let det of detVisitas" lines="none">
+            <ion-icon slot="start" name="{{det.icon}}-outline" color="primary"></ion-icon>
+            <ion-label>{{det.detalle}}</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-icon slot="start" name="map-outline" color="primary"></ion-icon>
+            <iframe width="100%" height="100px" [src]="mapUrl" frameborder="0" scrolling="no" marginheight="0"
+              marginwidth="0"></iframe>
+          </ion-item>
+        </ion-list>
+        <ion-item-divider style="margin-top:24px">
+          <ion-label>Actividades: {{actividades.length}}</ion-label>
+        </ion-item-divider>
+        <ion-list>
+          <ion-item button (click)="detalleActividad(i)" *ngFor="let actividad of actividades; let i = index;">
+            <ion-label
+              [ngClass]="{enproceso: actividad.estatus==='Programada',finalizada: actividad.estatus==='Finalizada',pendiente: actividad.estatus==='Cancelada'}">
+              <h3>{{actividad.contacto}}</h3>
+              <p>{{actividad.objetivo}}</p>
+              <p>{{actividad.detalles}}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <ion-row class="ion-justify-content-end" *ngIf="visitaEstatus!=='Finalizada'">
+          <ion-col size="5" size-sm="3">
+            <ion-button (click)="addActividad(false,0)" shape="round" fill="clear">
+              <ion-icon slot="start" name="add"></ion-icon>
+              Agregar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-item-divider>
+          <ion-label>Acompañamientos: {{acompanamientos.length}}</ion-label>
+        </ion-item-divider>
+        <ion-list *ngIf="acompanamientos.length > 0">
+          <ion-item-sliding *ngFor="let acompanamiento of acompanamientos; let i = index;">
+            <ion-item>
+              <ion-label class="items">
+                <h3>{{acompanamiento.nombre}}</h3>
+              </ion-label>
+            </ion-item>
+            <ion-item-options side="start">
+              <ion-item-option *ngIf="visitaEstatus!=='Finalizada'" color="transparent"
+                (click)="addAcompanamiento(true, i)">
+                <ion-icon slot="icon-only" name="create"></ion-icon>
+              </ion-item-option>
+              <ion-item-option *ngIf="visitaEstatus!=='Finalizada'" color="transparent"
+                (click)="confirmEliminarAcompanamiento(i)">
+                <ion-icon color="danger" slot="icon-only" name="trash"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+        <ion-row class="ion-justify-content-end" *ngIf="visitaEstatus!=='Finalizada'">
+          <ion-col size="5" size-sm="3">
+            <ion-button (click)="addAcompanamiento(false,0)" shape="round" fill="clear">
+              <ion-icon slot="start" name="add"></ion-icon>
+              Agregar
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
